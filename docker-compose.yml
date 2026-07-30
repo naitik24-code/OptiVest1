@@ -1,0 +1,61 @@
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: optivest_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres_password_dev}
+      POSTGRES_DB: ${POSTGRES_DB:-optivest_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata_vol:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - optivest_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: optivest_backend
+    restart: always
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres_password_dev@database:5432/optivest_db}
+      JWT_SECRET: ${JWT_SECRET:-super_secret_jwt_key_change_in_production_environment_32chars}
+      PORT: 8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      database:
+        condition: service_healthy
+    networks:
+      - optivest_network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    container_name: optivest_frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - optivest_network
+
+networks:
+  optivest_network:
+    driver: bridge
+
+volumes:
+  pgdata_vol:
+    driver: local
