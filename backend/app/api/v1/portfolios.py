@@ -91,3 +91,49 @@ def record_transaction(
 ):
     tx = portfolio_service.record_transaction(current_user.id, req)
     return ResponseEnvelope.success_response(tx)
+
+
+@router.get("/{portfolio_id}/candidates", response_model=ResponseEnvelope[List[dict]])
+def get_portfolio_candidates(
+    portfolio_id: UUID,
+    candidate_type: str = "NEW_ALLOCATION",
+    target_holding: str = None,
+    limit: int = 5,
+    portfolio_service: PortfolioService = Depends(get_portfolio_service),
+    current_user: User = Depends(get_current_user)
+):
+    from app.services.candidate_discovery_service import CandidateDiscoveryService
+    
+    # Authorize ownership implicitly through portfolio_service
+    portfolio = portfolio_service.get_portfolio_by_id(portfolio_id, current_user.id)
+    
+    # Run CDE
+    cde = CandidateDiscoveryService(portfolio_service.repo.db)
+    candidates = cde.discover_candidates(
+        portfolio_id=str(portfolio.id),
+        candidate_type=candidate_type,
+        target_holding=target_holding,
+        top_n=limit
+    )
+    
+    return ResponseEnvelope.success_response(candidates)
+
+
+@router.get("/{portfolio_id}/transactions", response_model=ResponseEnvelope[List[TransactionResponse]])
+def list_portfolio_transactions(
+    portfolio_id: UUID,
+    skip: int = 0,
+    limit: int = 50,
+    transaction_type: str | None = None,
+    portfolio_service: PortfolioService = Depends(get_portfolio_service),
+    current_user: User = Depends(get_current_user)
+):
+    txs = portfolio_service.list_portfolio_transactions(
+        portfolio_id=portfolio_id,
+        user_id=current_user.id,
+        skip=skip,
+        limit=limit,
+        transaction_type=transaction_type
+    )
+    return ResponseEnvelope.success_response(txs)
+

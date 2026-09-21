@@ -3,7 +3,6 @@ from uuid import UUID
 from fastapi import HTTPException, status
 from app.models.asset import Asset
 from app.repositories.asset_repository import AssetRepository
-from app.schemas.asset import AssetCreate
 
 
 class AssetService:

@@ -8,42 +8,44 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        background: 'var(--bg-main)',
+        foreground: 'var(--text-main)',
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
-        },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: 'var(--bg-card)',
+          foreground: 'var(--text-main)',
         },
         primary: {
           DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          foreground: '#ffffff',
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
+          DEFAULT: 'var(--bg-surface)',
+          foreground: 'var(--text-muted)',
         },
-        accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
-        },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
+        border: 'var(--border-color)',
+        input: 'var(--border-color)',
+        ring: 'hsl(var(--primary))',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+        heading: ['Outfit', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      },
+      boxShadow: {
+        'glow-sm': '0 0 10px hsl(var(--primary) / 0.3)',
+        'glow-md': '0 0 20px hsl(var(--primary) / 0.5)',
+        'glow-lg': '0 0 30px hsl(var(--primary) / 0.7)',
+        'glow-admin': '0 0 20px hsl(var(--admin-primary, 38 92% 50%) / 0.5)',
+        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+      },
+      animation: {
+        'float': 'float 6s ease-in-out infinite',
+      },
+      keyframes: {
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-5px)' },
+        }
       },
     },
   },

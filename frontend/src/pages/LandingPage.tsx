@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import {
   TrendingUp,
   TrendingDown,
@@ -14,6 +15,7 @@ import {
   Eye
 } from 'lucide-react';
 import { Navbar } from '../components/shared/Navbar';
+import { InteractiveChart } from '../components/ui/InteractiveChart';
 
 export const LandingPage: React.FC = () => {
   const [selectedTimeframe, setSelectedTimeframe] = useState<'1D' | '1W' | '1M' | '1Y' | 'ALL'>('1M');
@@ -47,7 +49,7 @@ export const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] flex flex-col font-sans selection:bg-[#2563EB] selection:text-white transition-colors duration-200">
+    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] flex flex-col font-sans selection:bg-primary selection:text-white transition-colors duration-200">
       <Navbar />
 
       {/* ==================== 1. HERO SECTION (TWO-COLUMN) ==================== */}
@@ -55,15 +57,20 @@ export const LandingPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
           {/* LEFT COLUMN: Headlines & CTAs */}
-          <div className="lg:col-span-5 space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[var(--bg-card)] border border-[var(--border-color)] text-[11px] font-mono text-[#0EA5E9] font-medium">
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }} 
+            animate={{ opacity: 1, x: 0 }} 
+            transition={{ duration: 0.8 }} 
+            className="lg:col-span-5 space-y-6 text-left"
+          >
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[var(--bg-card)] border border-[var(--border-color)] text-[11px] font-mono text-primary font-medium">
               <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
               INSTITUTIONAL PORTFOLIO INTELLIGENCE
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-heading tracking-tight text-[var(--text-main)] leading-[1.1]">
               Invest Smarter. <br />
-              <span className="text-[#2563EB]">Manage Wealth</span> with Confidence.
+              <span className="text-primary">Manage Wealth</span> with Confidence.
             </h1>
 
             <p className="text-base text-[var(--text-muted)] leading-relaxed max-w-lg font-normal">
@@ -72,16 +79,16 @@ export const LandingPage: React.FC = () => {
 
             <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <Link to="/register">
-                <button className="w-full sm:w-auto px-6 py-3 bg-[#2563EB] hover:bg-blue-500 text-white font-heading font-bold text-sm rounded-lg shadow-lg shadow-blue-900/30 transition-all border border-blue-400/30 flex items-center justify-center gap-2">
+                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto px-6 py-3 bg-primary hover:bg-primary/90 text-white font-heading font-bold text-sm rounded-lg shadow-lg shadow-primary/30 transition-all border border-primary/30 flex items-center justify-center gap-2">
                   <span>Open Investor Account</span>
                   <ArrowRight className="w-4 h-4" />
-                </button>
+                </motion.button>
               </Link>
               <Link to="/login">
-                <button className="w-full sm:w-auto px-6 py-3 bg-[var(--bg-card)] hover:bg-[var(--border-color)] text-[var(--text-main)] font-heading font-semibold text-sm rounded-lg border border-[var(--border-color)] transition-all flex items-center justify-center gap-2">
+                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto px-6 py-3 bg-[var(--bg-card)] hover:bg-[var(--border-color)] text-[var(--text-main)] font-heading font-semibold text-sm rounded-lg border border-[var(--border-color)] transition-all flex items-center justify-center gap-2">
                   <Eye className="w-4 h-4 text-[var(--text-muted)]" />
                   <span>View Live Demo</span>
-                </button>
+                </motion.button>
               </Link>
             </div>
 
@@ -95,7 +102,7 @@ export const LandingPage: React.FC = () => {
               </div>
               <div>
                 <div className="text-xs font-mono font-bold text-[var(--text-main)] flex items-center gap-1">
-                  <Zap className="w-3.5 h-3.5 text-[#0EA5E9]" /> &lt; 15ms
+                  <Zap className="w-3.5 h-3.5 text-primary" /> &lt; 15ms
                 </div>
                 <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Execution Latency</div>
               </div>
@@ -106,10 +113,15 @@ export const LandingPage: React.FC = () => {
                 <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Clean Architecture</div>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* RIGHT COLUMN: Investor-Grade Dashboard Preview */}
-          <div className="lg:col-span-7">
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }} 
+            animate={{ opacity: 1, x: 0 }} 
+            transition={{ duration: 0.8, delay: 0.2 }} 
+            className="lg:col-span-7"
+          >
             <div className="inst-card rounded-xl p-5 border border-[var(--border-color)] shadow-2xl relative">
               {/* Header Bar */}
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-[var(--border-color)]">
@@ -125,7 +137,7 @@ export const LandingPage: React.FC = () => {
                       key={t}
                       onClick={() => setSelectedTimeframe(t)}
                       className={`px-2 py-0.5 rounded ${
-                        selectedTimeframe === t ? 'bg-[#2563EB] text-white font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                        selectedTimeframe === t ? 'bg-primary text-white font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
                       }`}
                     >
                       {t}
@@ -147,50 +159,38 @@ export const LandingPage: React.FC = () => {
                 <div className="bg-[var(--bg-main)] p-3.5 rounded-lg border border-[var(--border-color)]">
                   <div className="text-[11px] font-mono text-[var(--text-muted)] uppercase">Sharpe Ratio</div>
                   <div className="text-xl font-mono font-bold text-[var(--text-main)] mt-0.5">2.48</div>
-                  <div className="text-[11px] font-mono text-[#0EA5E9] font-semibold mt-1">
+                  <div className="text-[11px] font-mono text-primary font-semibold mt-1">
                     Top 5% Risk-Adjusted Return
                   </div>
                 </div>
 
                 <div className="bg-[var(--bg-main)] p-3.5 rounded-lg border border-[var(--border-color)]">
                   <div className="text-[11px] font-mono text-[var(--text-muted)] uppercase">Reallocation Cap (C_realloc)</div>
-                  <div className="text-xl font-mono font-bold text-[#0EA5E9] mt-0.5">15.0%</div>
+                  <div className="text-xl font-mono font-bold text-primary mt-0.5">15.0%</div>
                   <div className="text-[11px] font-mono text-[var(--text-muted)] mt-1">
                     Risk Penalty &lambda; = 3/5
                   </div>
                 </div>
               </div>
 
-              {/* Performance SVG Line Chart Mock */}
-              <div className="bg-[var(--bg-main)] p-4 rounded-lg border border-[var(--border-color)] mb-5">
-                <div className="flex items-center justify-between text-xs font-mono text-[var(--text-muted)] mb-2">
-                  <span>HISTORICAL EQUITY CURVE (USD)</span>
-                  <span className="text-[#16A34A] font-bold">+18.4% YTD</span>
-                </div>
-                <div className="h-36 w-full relative">
-                  <svg className="w-full h-full overflow-visible" viewBox="0 0 500 120" preserveAspectRatio="none">
-                    <defs>
-                      <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#2563EB" stopOpacity="0.3" />
-                        <stop offset="100%" stopColor="#2563EB" stopOpacity="0.0" />
-                      </linearGradient>
-                    </defs>
-                    <path
-                      d="M0,90 Q50,85 100,70 T200,60 T300,45 T400,30 T500,15 L500,120 L0,120 Z"
-                      fill="url(#chartGradient)"
-                    />
-                    <path
-                      d="M0,90 Q50,85 100,70 T200,60 T300,45 T400,30 T500,15"
-                      fill="none"
-                      stroke="#2563EB"
-                      strokeWidth="2.5"
-                    />
-                    {/* Horizontal Grid lines */}
-                    <line x1="0" y1="30" x2="500" y2="30" stroke="var(--border-color)" strokeDasharray="3 3" strokeWidth="0.8" />
-                    <line x1="0" y1="60" x2="500" y2="60" stroke="var(--border-color)" strokeDasharray="3 3" strokeWidth="0.8" />
-                    <line x1="0" y1="90" x2="500" y2="90" stroke="var(--border-color)" strokeDasharray="3 3" strokeWidth="0.8" />
-                  </svg>
-                </div>
+              {/* Interactive Performance Curve with Google-style crosshair & percentage axis */}
+              <div className="mb-5">
+                <InteractiveChart
+                  data={[
+                    { date: 'Jul 1', price: 1054600 },
+                    { date: 'Jul 5', price: 1062000 },
+                    { date: 'Jul 10', price: 1089400 },
+                    { date: 'Jul 15', price: 1075200 },
+                    { date: 'Jul 20', price: 1112000 },
+                    { date: 'Jul 25', price: 1145000 },
+                    { date: 'Jul 30', price: 1130000 },
+                    { date: 'Aug 4', price: 1182000 },
+                    { date: 'Aug 8', price: 1198000 },
+                    { date: 'Aug 12', price: 1215000 },
+                    { date: 'Aug 17', price: 1248950 },
+                  ]}
+                  height={220}
+                />
               </div>
 
               {/* Asset Allocation & Watchlist Preview */}
@@ -204,7 +204,7 @@ export const LandingPage: React.FC = () => {
                         <span className="font-bold text-[var(--text-main)]">65%</span>
                       </div>
                       <div className="w-full h-1.5 bg-[var(--bg-card)] rounded-full overflow-hidden">
-                        <div className="h-full bg-[#2563EB] rounded-full" style={{ width: '65%' }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: '65%' }}></div>
                       </div>
                     </div>
                     <div>
@@ -213,7 +213,7 @@ export const LandingPage: React.FC = () => {
                         <span className="font-bold text-[var(--text-main)]">20%</span>
                       </div>
                       <div className="w-full h-1.5 bg-[var(--bg-card)] rounded-full overflow-hidden">
-                        <div className="h-full bg-[#0EA5E9] rounded-full" style={{ width: '20%' }}></div>
+                        <div className="h-full bg-primary rounded-full" style={{ width: '20%' }}></div>
                       </div>
                     </div>
                     <div>
@@ -250,16 +250,16 @@ export const LandingPage: React.FC = () => {
               </div>
 
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </section>
 
       {/* ==================== 2. MARKET OVERVIEW SECTION ==================== */}
-      <section id="markets" className="py-16 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
+      <motion.section id="markets" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.7 }} className="py-16 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
           <div>
-            <div className="text-xs font-mono text-[#0EA5E9] font-bold uppercase tracking-wider mb-1">
+            <div className="text-xs font-mono text-primary font-bold uppercase tracking-wider mb-1">
               REAL-TIME MARKET INTELLIGENCE
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold font-heading text-[var(--text-main)]">
@@ -342,7 +342,7 @@ export const LandingPage: React.FC = () => {
             <div className="space-y-3">
               {newsItems.map((item, i) => (
                 <div key={i} className="p-3 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] space-y-1">
-                  <h4 className="text-xs font-semibold text-[var(--text-main)] leading-snug line-clamp-2 hover:text-[#0EA5E9] cursor-pointer transition-colors">
+                  <h4 className="text-xs font-semibold text-[var(--text-main)] leading-snug line-clamp-2 hover:text-primary cursor-pointer transition-colors">
                     {item.title}
                   </h4>
                   <div className="flex justify-between text-[10px] font-mono text-[var(--text-muted)]">
@@ -354,12 +354,12 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ==================== 3. PORTFOLIO FEATURES & INTELLIGENCE ==================== */}
-      <section id="features" className="py-20 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
+      <motion.section id="features" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.7 }} className="py-20 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <div className="text-xs font-mono text-[#2563EB] font-bold uppercase tracking-wider">
+          <div className="text-xs font-mono text-primary font-bold uppercase tracking-wider">
             ENTERPRISE CAPABILITIES
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold font-heading text-[var(--text-main)]">
@@ -373,7 +373,7 @@ export const LandingPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="inst-card p-6 rounded-xl inst-card-hover flex flex-col justify-between">
             <div className="space-y-4">
-              <div className="w-10 h-10 rounded-lg bg-[#2563EB]/15 border border-[#2563EB]/30 text-[#2563EB] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-primary/15 border border-primary/30 text-primary flex items-center justify-center">
                 <BarChart2 className="w-5 h-5" />
               </div>
               <h3 className="text-lg font-bold font-heading text-[var(--text-main)]">Multi-Horizon Risk Analytics</h3>
@@ -381,7 +381,7 @@ export const LandingPage: React.FC = () => {
                 Compute VaR (Value at Risk), Sharpe ratio, and Maximum Drawdown metrics continuously across equity and fixed income holdings under various market stress scenarios.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-[var(--border-color)] flex items-center gap-2 text-xs font-mono text-[#0EA5E9]">
+            <div className="mt-6 pt-4 border-t border-[var(--border-color)] flex items-center gap-2 text-xs font-mono text-primary">
               <Check className="w-4 h-4 text-[#16A34A]" />
               <span>Real-Time Factor Attribution</span>
             </div>
@@ -389,7 +389,7 @@ export const LandingPage: React.FC = () => {
 
           <div className="inst-card p-6 rounded-xl inst-card-hover flex flex-col justify-between">
             <div className="space-y-4">
-              <div className="w-10 h-10 rounded-lg bg-[#0EA5E9]/15 border border-[#0EA5E9]/30 text-[#0EA5E9] flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-primary/15 border border-primary/30 text-primary flex items-center justify-center">
                 <Sliders className="w-5 h-5" />
               </div>
               <h3 className="text-lg font-bold font-heading text-[var(--text-main)]">Adaptive Rebalancing Solver</h3>
@@ -397,7 +397,7 @@ export const LandingPage: React.FC = () => {
                 Execute constrained multi-objective utility optimizations bounded strictly by your custom reallocation cap (C_realloc) and risk tolerance level (&lambda;).
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-[var(--border-color)] flex items-center gap-2 text-xs font-mono text-[#0EA5E9]">
+            <div className="mt-6 pt-4 border-t border-[var(--border-color)] flex items-center gap-2 text-xs font-mono text-primary">
               <Check className="w-4 h-4 text-[#16A34A]" />
               <span>Quadratic Program Utility</span>
             </div>
@@ -413,18 +413,18 @@ export const LandingPage: React.FC = () => {
                 Every trade recommendation is coupled with explicit Shapley feature attributions detailing momentum, volatility, and macroeconomic drivers for complete transparency.
               </p>
             </div>
-            <div className="mt-6 pt-4 border-t border-[var(--border-color)] flex items-center gap-2 text-xs font-mono text-[#0EA5E9]">
+            <div className="mt-6 pt-4 border-t border-[var(--border-color)] flex items-center gap-2 text-xs font-mono text-primary">
               <Check className="w-4 h-4 text-[#16A34A]" />
               <span>Audit-Ready SHAP Rationales</span>
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ==================== 4. HOW IT WORKS ==================== */}
-      <section className="py-20 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
+      <motion.section initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.7 }} className="py-20 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <div className="text-xs font-mono text-[#0EA5E9] font-bold uppercase tracking-wider">
+          <div className="text-xs font-mono text-primary font-bold uppercase tracking-wider">
             WORKFLOW &amp; EXECUTION
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold font-heading text-[var(--text-main)]">
@@ -434,7 +434,7 @@ export const LandingPage: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="inst-card p-5 rounded-xl border border-[var(--border-color)] relative">
-            <div className="text-3xl font-mono font-black text-[#2563EB]/40 mb-3">01</div>
+            <div className="text-3xl font-mono font-black text-primary/40 mb-3">01</div>
             <h3 className="text-sm font-bold font-heading text-[var(--text-main)] mb-2">Set Risk Governance</h3>
             <p className="text-xs text-[var(--text-muted)] leading-relaxed">
               Define your maximum reallocation cap (C_realloc) and risk penalty coefficient (&lambda;).
@@ -442,7 +442,7 @@ export const LandingPage: React.FC = () => {
           </div>
 
           <div className="inst-card p-5 rounded-xl border border-[var(--border-color)] relative">
-            <div className="text-3xl font-mono font-black text-[#0EA5E9]/40 mb-3">02</div>
+            <div className="text-3xl font-mono font-black text-primary/40 mb-3">02</div>
             <h3 className="text-sm font-bold font-heading text-[var(--text-main)] mb-2">Continuous Factor Analysis</h3>
             <p className="text-xs text-[var(--text-muted)] leading-relaxed">
               Ingest real-time pricing, macro indicators, and technical metrics across multi-asset universes.
@@ -465,10 +465,10 @@ export const LandingPage: React.FC = () => {
             </p>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ==================== 5. SECURITY & TRUST ==================== */}
-      <section id="security" className="py-20 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
+      <motion.section id="security" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.7 }} className="py-20 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6 space-y-6">
             <div className="text-xs font-mono text-[#16A34A] font-bold uppercase tracking-wider">
@@ -537,12 +537,12 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ==================== 6. TECHNOLOGY STACK ==================== */}
-      <section id="technology" className="py-16 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
+      <motion.section id="technology" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.7 }} className="py-16 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-2">
-          <div className="text-xs font-mono text-[#2563EB] font-bold uppercase tracking-wider">
+          <div className="text-xs font-mono text-primary font-bold uppercase tracking-wider">
             SYSTEM ENGINEERING
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold font-heading text-[var(--text-main)]">
@@ -568,10 +568,10 @@ export const LandingPage: React.FC = () => {
             <div className="text-[11px] font-mono text-[var(--text-muted)] mt-1">Containerized Deployment</div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ==================== 7. INSTITUTIONAL CALL TO ACTION ==================== */}
-      <section className="py-20 px-6 max-w-5xl mx-auto w-full text-center">
+      <motion.section initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="py-20 px-6 max-w-5xl mx-auto w-full text-center">
         <div className="inst-card p-10 rounded-2xl border border-[var(--border-color)] shadow-2xl space-y-6">
           <h2 className="text-3xl sm:text-4xl font-extrabold font-heading text-[var(--text-main)]">
             Ready to Elevate Your Wealth Management?
@@ -581,26 +581,26 @@ export const LandingPage: React.FC = () => {
           </p>
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/register">
-              <button className="px-8 py-3.5 bg-[#2563EB] hover:bg-blue-500 text-white font-heading font-bold text-sm rounded-lg shadow-lg shadow-blue-900/30 transition-all border border-blue-400/30 flex items-center gap-2">
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-3.5 bg-primary hover:bg-primary/90 text-white font-heading font-bold text-sm rounded-lg shadow-lg shadow-primary/30 transition-all border border-primary/30 flex items-center gap-2">
                 <span>Create Investor Account</span>
                 <ArrowRight className="w-4 h-4" />
-              </button>
+              </motion.button>
             </Link>
             <Link to="/login">
-              <button className="px-8 py-3.5 bg-[var(--bg-main)] hover:bg-[var(--border-color)] text-[var(--text-main)] font-heading font-semibold text-sm rounded-lg border border-[var(--border-color)] transition-all">
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-3.5 bg-[var(--bg-main)] hover:bg-[var(--border-color)] text-[var(--text-main)] font-heading font-semibold text-sm rounded-lg border border-[var(--border-color)] transition-all">
                 Sign In to Platform
-              </button>
+              </motion.button>
             </Link>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* ==================== 8. PROFESSIONAL INSTITUTIONAL FOOTER ==================== */}
       <footer className="mt-auto border-t border-[var(--border-color)] py-12 px-6 bg-[var(--bg-surface)]">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-xs text-[var(--text-muted)]">
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-[var(--text-main)] font-bold font-heading text-sm">
-              <TrendingUp className="w-4 h-4 text-[#2563EB]" />
+              <TrendingUp className="w-4 h-4 text-primary" />
               <span>OptiVest Intelligence</span>
             </div>
             <p className="leading-relaxed">

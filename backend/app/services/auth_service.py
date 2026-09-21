@@ -23,7 +23,7 @@ class AuthService:
         new_user = User(
             email=request.email.lower(),
             hashed_password=hashed_password,
-            role="INVESTOR_USER",
+            role="USER",
             is_active=True
         )
 

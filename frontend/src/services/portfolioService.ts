@@ -57,6 +57,16 @@ export const portfolioService = {
     }
   },
 
+  async updatePortfolio(id: string, payload: Partial<CreatePortfolioPayload>): Promise<Portfolio> {
+    try {
+      const res = await apiClient.put<ResponseEnvelope<Portfolio>>(`/portfolios/${id}`, payload);
+      if (!res.data.data) throw new Error('Failed to update portfolio');
+      return res.data.data;
+    } catch (err) {
+      throw new Error(extractErrorMessage(err, 'Failed to update portfolio'));
+    }
+  },
+
   async deletePortfolio(id: string): Promise<void> {
     try {
       await apiClient.delete(`/portfolios/${id}`);
@@ -97,6 +107,16 @@ export const portfolioService = {
     }
   },
 
+  async getPortfolioTransactions(portfolioId: string, transactionType?: string): Promise<Transaction[]> {
+    try {
+      const query = transactionType ? `?transaction_type=${transactionType}` : '';
+      const res = await apiClient.get<ResponseEnvelope<Transaction[]>>(`/portfolios/${portfolioId}/transactions${query}`);
+      return res.data.data || [];
+    } catch (err) {
+      throw new Error(extractErrorMessage(err, 'Failed to fetch portfolio transactions'));
+    }
+  },
+
   // --- Asset Master ---
   async getAssets(): Promise<Asset[]> {
     try {
@@ -126,6 +146,24 @@ export const portfolioService = {
     }
   },
 
+  async createWatchlist(name: string, description?: string): Promise<Watchlist> {
+    try {
+      const res = await apiClient.post<ResponseEnvelope<Watchlist>>('/watchlists', { name, description });
+      if (!res.data.data) throw new Error('Failed to create watchlist');
+      return res.data.data;
+    } catch (err) {
+      throw new Error(extractErrorMessage(err, 'Failed to create watchlist'));
+    }
+  },
+
+  async deleteWatchlist(watchlistId: string): Promise<void> {
+    try {
+      await apiClient.delete(`/watchlists/${watchlistId}`);
+    } catch (err) {
+      throw new Error(extractErrorMessage(err, 'Failed to delete watchlist'));
+    }
+  },
+
   async addWatchlistItem(watchlistId: string, assetId: string): Promise<Watchlist> {
     try {
       const res = await apiClient.post<ResponseEnvelope<Watchlist>>(`/watchlists/${watchlistId}/items`, { asset_id: assetId });
@@ -146,3 +184,4 @@ export const portfolioService = {
     }
   },
 };
+

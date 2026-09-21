@@ -11,7 +11,7 @@ from alembic import context
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 from app.core.config import settings
-from app.db.session import Base
+from app.db.session import Base, engine
 import app.models  # Import all ORM models for autogenerate detection
 
 config = context.config
@@ -19,7 +19,7 @@ config = context.config
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+config.set_main_option("sqlalchemy.url", str(engine.url))
 
 target_metadata = Base.metadata
 

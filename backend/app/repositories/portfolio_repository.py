@@ -42,15 +42,6 @@ class PortfolioRepository:
             .all()
         )
 
-    def get_default_portfolio(self, user_id: Union[UUID, str]) -> Optional[Portfolio]:
-        if isinstance(user_id, str):
-            user_id = UUID(user_id)
-        return (
-            self.db.query(Portfolio)
-            .options(joinedload(Portfolio.holdings).joinedload(Holding.asset))
-            .filter(Portfolio.user_id == user_id, Portfolio.is_default.is_(True))
-            .first()
-        )
 
     def create(self, portfolio: Portfolio) -> Portfolio:
         if portfolio.is_default:

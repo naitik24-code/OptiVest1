@@ -27,7 +27,7 @@ class User(Base):
     )
     role: Mapped[str] = mapped_column(
         String(50),
-        default="INVESTOR_USER",
+        default="USER",
         nullable=False
     )
     is_active: Mapped[bool] = mapped_column(

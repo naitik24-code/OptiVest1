@@ -55,6 +55,11 @@ class Asset(Base):
         default="USA",
         nullable=False
     )
+    tier: Mapped[str] = mapped_column(
+        String(50),
+        default="TIER_1_SP500",
+        nullable=True
+    )
     price: Mapped[float] = mapped_column(
         Float,
         default=100.0,

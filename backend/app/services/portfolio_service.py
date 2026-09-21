@@ -10,7 +10,7 @@ from app.repositories.holding_repository import HoldingRepository
 from app.repositories.transaction_repository import TransactionRepository
 from app.repositories.asset_repository import AssetRepository
 from app.schemas.portfolio import PortfolioCreate, PortfolioUpdate, PortfolioResponse
-from app.schemas.holding import HoldingCreate, HoldingUpdate
+from app.schemas.holding import HoldingCreate
 from app.schemas.transaction import TransactionCreate, TransactionResponse
 from app.services.portfolio_calculation_engine import PortfolioCalculationEngine
 
@@ -286,3 +286,44 @@ class PortfolioService:
             created_at=created_tx.created_at,
             asset=asset
         )
+
+    def list_portfolio_transactions(
+        self,
+        portfolio_id: UUID,
+        user_id: UUID,
+        skip: int = 0,
+        limit: int = 50,
+        transaction_type: str | None = None
+    ) -> List[TransactionResponse]:
+        portfolio = self.portfolio_repo.get_by_id(portfolio_id, user_id=user_id)
+        if not portfolio:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Portfolio not found or access denied."
+            )
+
+        txs = self.transaction_repo.list_by_portfolio(
+            portfolio_id=portfolio_id,
+            skip=skip,
+            limit=limit,
+            transaction_type=transaction_type
+        )
+
+        return [
+            TransactionResponse(
+                id=tx.id,
+                portfolio_id=tx.portfolio_id,
+                asset_id=tx.asset_id,
+                transaction_type=tx.transaction_type,
+                quantity=tx.quantity,
+                price=tx.price,
+                fees=tx.fees,
+                total_amount=round((tx.quantity * tx.price) + tx.fees, 2),
+                notes=tx.notes,
+                timestamp=tx.timestamp,
+                created_at=tx.created_at,
+                asset=tx.asset
+            )
+            for tx in txs
+        ]
+

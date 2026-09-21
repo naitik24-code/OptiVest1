@@ -40,3 +40,45 @@ class AssetRepository:
         self.db.commit()
         self.db.refresh(asset)
         return asset
+
+    def create_or_get(
+        self,
+        symbol: str,
+        company_name: str,
+        exchange: str = "NASDAQ",
+        sector: str = "Technology",
+        industry: str = "General",
+        asset_type: str = "EQUITY",
+        currency: str = "USD",
+        country: str = "USA",
+        price: float = 100.0
+    ) -> Asset:
+        existing = self.get_by_symbol(symbol)
+        if existing:
+            return existing
+
+        from app.models.asset import AssetType, Currency
+        atype = AssetType.EQUITY
+        curr = Currency.USD
+        try:
+            atype = AssetType(asset_type.upper())
+        except Exception:
+            pass
+        try:
+            curr = Currency(currency.upper())
+        except Exception:
+            pass
+
+        new_asset = Asset(
+            symbol=symbol.upper(),
+            company_name=company_name,
+            exchange=exchange,
+            sector=sector,
+            industry=industry,
+            asset_type=atype,
+            currency=curr,
+            country=country,
+            price=price,
+            is_active=True
+        )
+        return self.create(new_asset)

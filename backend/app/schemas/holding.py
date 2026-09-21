@@ -14,9 +14,7 @@ class HoldingCreate(HoldingBase):
     portfolio_id: uuid.UUID
 
 
-class HoldingUpdate(BaseModel):
-    quantity: float = Field(..., gt=0)
-    average_buy_price: float = Field(..., ge=0)
+
 
 
 class HoldingResponse(BaseModel):

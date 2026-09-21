@@ -21,17 +21,29 @@ class TransactionRepository:
             .first()
         )
 
-    def list_by_portfolio(self, portfolio_id: Union[UUID, str], limit: int = 50) -> List[Transaction]:
+    def list_by_portfolio(
+        self,
+        portfolio_id: Union[UUID, str],
+        skip: int = 0,
+        limit: int = 50,
+        transaction_type: Optional[str] = None
+    ) -> List[Transaction]:
         if isinstance(portfolio_id, str):
             portfolio_id = UUID(portfolio_id)
-        return (
+        query = (
             self.db.query(Transaction)
             .options(joinedload(Transaction.asset))
             .filter(Transaction.portfolio_id == portfolio_id)
-            .order_by(Transaction.timestamp.desc())
+        )
+        if transaction_type:
+            query = query.filter(Transaction.transaction_type == transaction_type.upper())
+        return (
+            query.order_by(Transaction.timestamp.desc())
+            .offset(skip)
             .limit(limit)
             .all()
         )
+
 
     def create(self, transaction: Transaction) -> Transaction:
         self.db.add(transaction)

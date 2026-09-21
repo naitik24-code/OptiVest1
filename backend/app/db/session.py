@@ -20,7 +20,9 @@ if "postgresql" in db_url:
         engine_kwargs["max_overflow"] = 20
     except Exception:
         # Fallback to local SQLite database when PostgreSQL container is not running locally
-        db_url = "sqlite:///./optivest_dev.db"
+        import os
+        db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "optivest_dev.db"))
+        db_url = f"sqlite:///{db_path}"
         engine_kwargs = {"connect_args": {"check_same_thread": False}}
 
 engine = create_engine(

@@ -45,7 +45,43 @@ def get_current_user(
 def require_role(required_role: str):
     """Factory dependency enforcing Role-Based Access Control (RBAC)."""
     def role_checker(current_user: User = Depends(get_current_user)) -> User:
-        if current_user.role != required_role and current_user.role != "SYSTEM_ADMIN":
+        user_role = (current_user.role or "USER").upper()
+        target_role = required_role.upper()
+        if user_role not in ("ADMIN", "SYSTEM_ADMIN") and user_role != target_role:
             raise PermissionDeniedException(f"Operation requires '{required_role}' permission")
         return current_user
     return role_checker
+
+
+def require_admin(current_user: User = Depends(get_current_user)) -> User:
+    """Dependency enforcing ADMIN access control."""
+    user_role = (current_user.role or "USER").upper()
+    if user_role not in ("ADMIN", "SYSTEM_ADMIN"):
+        raise PermissionDeniedException("Operation requires 'ADMIN' permission")
+    return current_user
+
+
+oauth2_scheme_optional = OAuth2PasswordBearer(
+    tokenUrl=f"{settings.API_V1_STR}/auth/login",
+    auto_error=False
+)
+
+
+def get_optional_current_user(
+    token: str | None = Depends(oauth2_scheme_optional),
+    user_repo: UserRepository = Depends(get_user_repository)
+) -> User | None:
+    """Optional bearer access token validation. Returns User if valid, None otherwise."""
+    if not token:
+        return None
+    try:
+        payload = security.decode_token(token)
+        if not payload or payload.get("type") != "access":
+            return None
+        user_id_str = payload.get("sub")
+        if not user_id_str:
+            return None
+        user = user_repo.get_by_id(user_id_str)
+        return user if user and user.is_active else None
+    except Exception:
+        return None

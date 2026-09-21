@@ -2,9 +2,11 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from contextlib import asynccontextmanager
 import uuid
 import time
 
@@ -13,6 +15,8 @@ from app.core.config import settings
 from app.core.exceptions import OptiVestException
 from app.core.logging import logger
 from app.db.session import Base, engine
+import app.models  # Ensures all ORM models are registered
+from app.core.scheduler import start_scheduler, shutdown_scheduler
 
 # Initialize Database Schema if running outside Alembic
 Base.metadata.create_all(bind=engine)
@@ -28,11 +32,18 @@ try:
 except Exception as e:
     print(f"Asset seeding skipped/failed: {e}")
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    start_scheduler()
+    yield
+    shutdown_scheduler()
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
     docs_url=f"{settings.API_V1_STR}/docs",
     redoc_url=f"{settings.API_V1_STR}/redoc",
+    lifespan=lifespan,
 )
 
 # Configure CORS Middleware
@@ -99,6 +110,32 @@ def health_check():
 # Mount Versioned API V1 Routers
 app.include_router(api_v1_router, prefix=settings.API_V1_STR)
 
+# Mount Frontend Production Build (SPA Fallback)
+frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "dist"))
+index_file = os.path.join(frontend_dist, "index.html")
+
+if os.path.exists(frontend_dist):
+    assets_dir = os.path.join(frontend_dist, "assets")
+    if os.path.exists(assets_dir):
+        from fastapi.staticfiles import StaticFiles
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+    from fastapi.responses import FileResponse
+
+    @app.get("/")
+    async def serve_root():
+        return FileResponse(index_file)
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(request: Request, full_path: str):
+        if full_path.startswith("api") or full_path == "health":
+            return JSONResponse(status_code=404, content={"detail": "Not Found"})
+        target_path = os.path.abspath(os.path.join(frontend_dist, full_path))
+        if os.path.exists(target_path) and os.path.isfile(target_path):
+            return FileResponse(target_path)
+        return FileResponse(index_file)
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=settings.PORT, reload=True)
+

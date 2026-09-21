@@ -16,8 +16,14 @@ class ResponseEnvelope(BaseModel, Generic[T]):
     error: Optional[dict] = None
     meta: MetaEnvelope = Field(default_factory=MetaEnvelope)
 
+    @classmethod
+    def success_response(cls, data: T) -> "ResponseEnvelope[T]":
+        return cls(success=True, data=data)
 
-class ErrorDetail(BaseModel):
-    code: str
+
+
+class MessagePayload(BaseModel):
     message: str
-    details: Optional[dict] = None
+
+
+

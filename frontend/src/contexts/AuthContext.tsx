@@ -6,6 +6,7 @@ import { userService } from '../services/userService';
 interface AuthContextType {
   user: UserProfile | null;
   isAuthenticated: boolean;
+  isAdmin: boolean;
   isLoading: boolean;
   login: (email: string, pass: string) => Promise<void>;
   register: (email: string, pass: string) => Promise<void>;
@@ -54,19 +55,27 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async () => {
-    await authService.logout();
-    setUser(null);
+    try {
+      await authService.logout();
+    } finally {
+      setUser(null);
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+    }
   };
 
   const refreshProfile = async () => {
     await fetchProfile();
   };
 
+  const isAdmin = !!user && (user.role === 'ADMIN' || user.role === 'SYSTEM_ADMIN');
+
   return (
     <AuthContext.Provider
       value={{
         user,
         isAuthenticated: !!user,
+        isAdmin,
         isLoading,
         login,
         register,

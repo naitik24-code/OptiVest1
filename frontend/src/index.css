@@ -3,39 +3,40 @@
 @tailwind utilities;
 
 @layer base {
-  /* Dark Theme Default */
-  :root, .dark {
-    --bg-main: #0A0E17;
-    --bg-surface: #111827;
-    --bg-card: #1A2332;
-    --border-color: #2A3441;
-    --primary: #2563EB;
-    --secondary: #0EA5E9;
+  :root {
+    --bg-main: #ffffff;
+    --bg-surface: #f8fafc;
+    --bg-card: #ffffff;
+    --border-color: #e2e8f0;
+    --primary: 221 83% 53%; /* Blue in light mode */
+    --admin-primary: 221 83% 53%;
+    --secondary: #0f172a;
     --success: #16A34A;
     --warning: #F59E0B;
     --danger: #DC2626;
-    --text-main: #F8FAFC;
-    --text-muted: #94A3B8;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
   }
 
-  /* Light Theme Overrides */
-  .light {
-    --bg-main: #F8FAFC;
-    --bg-surface: #FFFFFF;
-    --bg-card: #FFFFFF;
-    --border-color: #E2E8F0;
-    --primary: #2563EB;
-    --secondary: #0EA5E9;
+  .dark {
+    --bg-main: #0c0d0e; 
+    --bg-surface: rgba(20, 21, 22, 0.6);
+    --bg-card: rgba(20, 21, 22, 0.8);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --primary: 17 80% 52%; /* Vibrant Orange in dark mode */
+    --admin-primary: 17 80% 52%; 
+    --secondary: #f4f3ef;
     --success: #16A34A;
     --warning: #F59E0B;
     --danger: #DC2626;
-    --text-main: #0F172A;
-    --text-muted: #475569;
+    --text-main: #f4f3ef;
+    --text-muted: #a0a0a0;
+    --shadow-card: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   }
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-main);
   color: var(--text-main);
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -43,7 +44,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6, .font-heading {
-  font-family: 'Manrope', 'Inter', sans-serif;
+  font-family: 'Outfit', sans-serif;
 }
 
 .font-mono, .ticker, .financial-data {
@@ -77,22 +78,27 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 .inst-surface {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .inst-card {
   background-color: var(--bg-card);
   border: 1px solid var(--border-color);
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-card, 0 8px 32px 0 rgba(0, 0, 0, 0.08));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 12px;
 }
 
 .inst-card-hover {
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .inst-card-hover:hover {
-  border-color: var(--primary);
-  box-shadow: 0 8px 30px -4px rgba(37, 99, 235, 0.15);
-  transform: translateY(-1px);
+  border-color: hsl(var(--primary) / 0.8);
+  box-shadow: 0 0 20px hsl(var(--primary) / 0.4);
+  transform: translateY(-2px);
 }
 
 .inst-text {
@@ -109,30 +115,18 @@ h1, h2, h3, h4, h5, h6, .font-heading {
 
 .inst-badge-success {
   background-color: rgba(22, 163, 74, 0.12);
-  color: #16A34A;
-  border: 1px solid rgba(22, 163, 74, 0.3);
-}
-
-.dark .inst-badge-success {
   color: #4ADE80;
+  border: 1px solid rgba(22, 163, 74, 0.3);
 }
 
 .inst-badge-danger {
   background-color: rgba(220, 38, 38, 0.12);
-  color: #DC2626;
+  color: #F87171;
   border: 1px solid rgba(220, 38, 38, 0.3);
 }
 
-.dark .inst-badge-danger {
-  color: #F87171;
-}
-
 .inst-badge-primary {
-  background-color: rgba(37, 99, 235, 0.12);
-  color: #2563EB;
-  border: 1px solid rgba(37, 99, 235, 0.3);
-}
-
-.dark .inst-badge-primary {
-  color: #60A5FA;
+  background-color: rgba(230, 92, 36, 0.12);
+  color: #e65c24;
+  border: 1px solid rgba(230, 92, 36, 0.3);
 }
