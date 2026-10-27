@@ -72,7 +72,7 @@ class FundamentalEngine:
                                 "revenue", "gross_profit", "operating_income", "net_income", "eps",
                                 "total_assets", "total_liabilities", "total_debt", "total_equity",
                                 "cash_and_equivalents", "operating_cash_flow", "capital_expenditure",
-                                "free_cash_flow", "shares_outstanding"
+                                "free_cash_flow", "shares_outstanding", "pe_ratio", "peg_ratio", "pb_ratio"
                             ]:
                                 setattr(existing, key, period_data.get(key))
                             existing.updated_at = now
@@ -95,7 +95,10 @@ class FundamentalEngine:
                                 operating_cash_flow=period_data.get("operating_cash_flow"),
                                 capital_expenditure=period_data.get("capital_expenditure"),
                                 free_cash_flow=period_data.get("free_cash_flow"),
-                                shares_outstanding=period_data.get("shares_outstanding")
+                                shares_outstanding=period_data.get("shares_outstanding"),
+                                pe_ratio=period_data.get("pe_ratio"),
+                                peg_ratio=period_data.get("peg_ratio"),
+                                pb_ratio=period_data.get("pb_ratio")
                             )
                             self.db.add(new_fund)
                     self.db.commit()
@@ -392,6 +395,46 @@ class FundamentalEngine:
             dimension_scores["earnings_quality"] = {"earned": cf_earned, "max": cf_max}
             earned_points += cf_earned
             max_points += cf_max
+
+        # ---------------------------------------------------------------------
+        # Dimension 5: Valuation Intelligence (up to 25 pts)
+        # ---------------------------------------------------------------------
+        val_earned = 0.0
+        val_max = 0.0
+        
+        if getattr(p0, "pe_ratio", None) is not None:
+            val_max += 10.0
+            pe = p0.pe_ratio
+            if 0 < pe < 15.0:
+                val_earned += 10.0
+                reasons.append(f"Attractive valuation (P/E: {pe:.1f})")
+            elif 0 < pe < 25.0:
+                val_earned += 5.0
+            else:
+                warnings.append(f"High valuation multiple (P/E: {pe:.1f})")
+
+        if getattr(p0, "peg_ratio", None) is not None:
+            val_max += 10.0
+            peg = p0.peg_ratio
+            if 0 < peg < 1.0:
+                val_earned += 10.0
+                reasons.append(f"Growth at a reasonable price (PEG: {peg:.2f})")
+            elif 0 < peg < 2.0:
+                val_earned += 5.0
+            else:
+                warnings.append(f"Overvalued relative to growth (PEG: {peg:.2f})")
+
+        if getattr(p0, "pb_ratio", None) is not None:
+            val_max += 5.0
+            pb = p0.pb_ratio
+            if 0 < pb < 3.0:
+                val_earned += 5.0
+                reasons.append(f"Attractive asset valuation (P/B: {pb:.2f})")
+
+        if val_max > 0:
+            dimension_scores["valuation"] = {"earned": val_earned, "max": val_max}
+            earned_points += val_earned
+            max_points += val_max
 
         # ---------------------------------------------------------------------
         # Final Score Normalization & Qualitative Classification

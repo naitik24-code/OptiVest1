@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, ForeignKey, JSON, Enum, Text
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 import enum
@@ -71,7 +72,7 @@ class Notification(Base):
     __tablename__ = "notifications"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=True) # Nullable for system-wide
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True) # Nullable for system-wide
     type = Column(Enum(NotificationType), nullable=False)
     title = Column(String, nullable=False)
     message = Column(Text, nullable=False)
@@ -117,7 +118,7 @@ class PredictionQueue(Base):
     __tablename__ = "prediction_queue"
 
     id = Column(Integer, primary_key=True, index=True)
-    asset_id = Column(Integer, ForeignKey("assets.id"), nullable=False)
+    asset_id = Column(UUID(as_uuid=True), ForeignKey("assets.id"), nullable=False)
     model_id = Column(Integer, nullable=True) # References TrainedModel/ModelRegistry
     status = Column(String, default="QUEUED") # QUEUED, PROCESSING, COMPLETED, FAILED
     priority = Column(Integer, default=0)

@@ -1,0 +1,41 @@
+Metric / Table Item,Manuscript Claim,Recalculated / Code Output Value,Absolute Difference,Relative Difference,Verification Status
+XGBoost RMSE (Table III),0.0845,0.0845,0.0000,0.00%,Verified
+XGBoost MAE (Table III),0.0598,0.0598,0.0000,0.00%,Verified
+XGBoost Dir. Acc. (Table III),56.28%,56.28%,0.00%,0.00%,Verified
+XGBoost Rank IC (Table III),0.008,0.0081,0.0001,1.25%,Verified
+XGBoost t-stat (Table III),0.34,0.3364,0.0036,1.06%,Verified
+XGBoost R2 vs zero (Table III),-2.1%,-2.1006%,0.0006%,0.03%,Verified
+Positive Base Rate (Section V-A),58.21%,58.21%,0.00%,0.00%,Verified
+EW CAGR (Table IV),14.83%,14.83%,0.00%,0.00%,Verified
+EW Volatility (Table IV),14.73%,14.73%,0.00%,0.00%,Verified
+EW Sharpe (Table IV),1.02,1.02,0.00,0.00%,Verified
+EW Turnover (Table IV),57.8%,57.80%,0.00%,0.00%,Verified
+MV 20% cap CAGR (Table IV),20.26%,20.26%,0.00%,0.00%,Verified
+MV 20% cap Volatility (Table IV),19.56%,19.56%,0.00%,0.00%,Verified
+MV 20% cap Sharpe (Table IV),1.05,1.05,0.00,0.00%,Verified
+MV 20% cap Turnover (Table IV),700.7%,700.65%,0.05%,0.01%,Verified
+APDE full CAGR (Table IV),8.19%,8.19%,0.00%,0.00%,Verified
+APDE full Volatility (Table IV),14.31%,14.31%,0.00%,0.00%,Verified
+APDE full Sharpe (Table IV),0.62,0.62,0.00,0.00%,Verified
+APDE full Turnover (Table IV),180.0%,180.00%,0.00%,0.00%,Verified
+APDE soft 20% cap CAGR (Table IV),4.39%,4.39%,0.00%,0.00%,Verified
+APDE soft 20% cap Vol (Table IV),19.64%,19.64%,0.00%,0.00%,Verified
+APDE soft 20% cap Sharpe (Table IV),0.32,0.32,0.00,0.00%,Verified
+APDE soft 20% cap Turnover (Table IV),1383.8%,1383.80%,0.00%,0.00%,Verified
+Controls mu=zero Sharpe (Section V-B),0.71,0.71,0.00,0.00%,Verified
+Controls mu=trailing Sharpe (Section V-B),0.95,0.95,0.00,0.00%,Verified
+Deterministic Shuffled Seeds 42-46 (Section V-B),"0.59, 1.04, 0.41, 0.58, 0.86","0.59, 1.04, 0.41, 0.58, 0.86",0.00,0.00%,Verified
+Table VI No CDE Return,11.85%,11.848%,0.002%,0.02%,Verified (research_backtest_50asset_comparison.json)
+Table VI No CDE Volatility,15.71%,15.709%,0.001%,0.01%,Verified
+Table VI No CDE Sharpe,0.754,0.7542,0.0002,0.03%,Verified
+Table VI No CDE Turnover,15.00%,15.003%,0.003%,0.02%,Verified
+Table VI CDE->APDE Return,10.49%,10.492%,0.002%,0.02%,Verified
+Table VI CDE->APDE Volatility,13.90%,13.896%,0.004%,0.03%,Verified
+Table VI CDE->APDE Sharpe,0.755,0.7551,0.0001,0.01%,Verified
+Table VI CDE->APDE Turnover,13.43%,13.426%,0.004%,0.03%,Verified
+Table VII tau=0.5 Volatility,16.01%,16.006%,0.004%,0.02%,Verified (Table VII matches Risk_Aversion_Sweep.csv)
+Table VII tau=5.0 Volatility,14.75%,14.748%,0.002%,0.01%,Verified
+Section V-E Prose Volatility,"21.1% to 13.6%","16.01% to 14.75%",5.09% / 1.15%,24.1% / 7.8%,CONTRADICTION with Table VII & code
+Section V-E Prose Effective N,"Peaks at 14.8 at tau=3","37.2 to 38.8 (38.5 at tau=3)",23.7,61.6%,CONTRADICTION with Table VII & code
+Table VIII Wall Latency N=50,9.07 ms,9.07 ms,0.00 ms,0.00%,Verified (cvxpy solve wall-time)
+Table VIII Wall Latency N=500,309.95 ms,309.95 ms,0.00 ms,0.00%,Verified (cvxpy solve wall-time)

@@ -21,6 +21,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy Backend Application Source Code
 COPY backend /app
+# Research and reproducibility runners are imported by the backend test suite.
+# Keep them available in the image so clean-container tests match the repository.
+COPY scripts /app/scripts
 
 EXPOSE 8000
 

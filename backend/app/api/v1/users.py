@@ -1,5 +1,6 @@
+from typing import List
 from fastapi import APIRouter, Depends
-from app.dependencies.auth import get_current_user, get_user_repository
+from app.dependencies.auth import get_current_user, get_user_repository, require_admin
 from app.models.user import User
 from app.repositories.user_repository import UserRepository
 from app.schemas.common import ResponseEnvelope
@@ -7,6 +8,20 @@ from app.schemas.user import UserProfileResponse, UserProfileUpdateRequest, User
 from app.services.user_service import UserService
 
 router = APIRouter(prefix="/users", tags=["Users Profile"])
+
+
+@router.get("", response_model=ResponseEnvelope[List[UserResponse]], dependencies=[Depends(require_admin)])
+def list_all_users(
+    skip: int = 0,
+    limit: int = 200,
+    user_repo: UserRepository = Depends(get_user_repository)
+):
+    """Admin endpoint to fetch all registered users directly from database."""
+    users = user_repo.list_all(skip=skip, limit=limit)
+    return ResponseEnvelope(
+        success=True,
+        data=[UserResponse.model_validate(u) for u in users]
+    )
 
 
 @router.get("/me", response_model=ResponseEnvelope[UserResponse])

@@ -1,0 +1,62 @@
+{
+  "RESEARCH_PAPER/optivest_upgrade_paper.tex": {
+    "sha256": "c010aa5c565a7efac212b7dc5fa4d8003b5db2b9b8e496d1d36a1047e47abb52",
+    "size": 66733
+  },
+  "RESEARCH_PAPER/RESULTS_AND_DISCUSSION.md": {
+    "sha256": "d0f226f7ecd3a8949925efd7fbc7c91f50d8af68bf947a18e4c46c9999c3abea",
+    "size": 6009
+  },
+  "market_data_cache.pkl": {
+    "sha256": "ccd244362a482d553a9a4a2e9950f14bd9ac7b9856a73859e133f8b02d020d01",
+    "size": 5479439
+  },
+  "results_v7/Table_Master_10Arm.csv": {
+    "sha256": "66501b5e9cb9c2808ac43c01ec010952370ff5532c5806720b08660e912fd94f",
+    "size": 887
+  },
+  "results_v7/Forecast_Metrics.csv": {
+    "sha256": "370e937dea0981a5797e94f1f6101b8e568a373fc9679cfc8bbbab35e2600f0c",
+    "size": 309
+  },
+  "results_v7/WalkForward_Predictions.csv": {
+    "sha256": "8b028cee27e68894784b2ec6f726480b21c56e0e56d707b6eae12b0c4769317c",
+    "size": 191101
+  },
+  "results_v7/Cap_Sweep.csv": {
+    "sha256": "3ba3a4d69cfd8db00aff5fd57af238ba6586f49ad79aaaad603554fa376f43f6",
+    "size": 578
+  },
+  "results_v7/Risk_Aversion_Sweep.csv": {
+    "sha256": "c6da63c951733d52adef6e413b65bf5ece34f3997031c40e28e1665bcb684ca9",
+    "size": 580
+  },
+  "results_v7/Controls.csv": {
+    "sha256": "c310dbf74a43836ad6914cce14f6d0b3b5d55ac13a592e5279c2870bc0080461",
+    "size": 312
+  },
+  "results_v7/deterministic_shuffled_control.csv": {
+    "sha256": "a7e44b30443a2056e8f2972ede479818a967c7b83b70ff518d0c92bda76421b5",
+    "size": 522
+  },
+  "results_v7/Solver_Timing_Scalability.csv": {
+    "sha256": "091beb81a9e0609453541b0272d6cb9b4c29876e3f00509c1bebcd5d179c49c3",
+    "size": 359
+  },
+  "research_backtest_50asset_comparison.json": {
+    "sha256": "87fc6895e490e17a310a88e08a5eaede731d8ac3f19c0223da2c0af1371c1dde",
+    "size": 3712
+  },
+  "backend/results_v7/production_cde_k2_apde.json": {
+    "sha256": "caf20e171aefa1f9611053e6d0e3cec0c84eb4d35064b612e27ce0a03dd22625",
+    "size": 3708
+  },
+  "scripts/xai_real_data_example.json": {
+    "sha256": "2bdbd919ac486351aa3855fc31dd9c14889521c51961cb4b8c987cf986a035b0",
+    "size": 844
+  },
+  "scripts/xai_stability.json": {
+    "sha256": "41b6ef86c77fc65bd9c1c522ddbb4bfab36a27f2bd294d5bbca7e1003afd6a81",
+    "size": 2146
+  }
+}

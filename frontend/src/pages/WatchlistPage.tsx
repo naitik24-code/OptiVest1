@@ -3,9 +3,7 @@ import { useCurrency } from '../context/CurrencyContext';
 import { portfolioService } from '../services/portfolioService';
 import { marketService, MarketQuote } from '../services/marketService';
 import { Watchlist, Asset } from '../types/portfolio';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Bookmark, Trash2, Plus, X } from 'lucide-react';
+import { Bookmark, Trash2, Plus, X, LineChart } from 'lucide-react';
 
 export const WatchlistPage: React.FC = () => {
   const { formatAmount } = useCurrency();
@@ -122,46 +120,58 @@ export const WatchlistPage: React.FC = () => {
   const items = activeWatchlist?.items || [];
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="max-w-[1120px] mx-auto space-y-6">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-extrabold font-heading tracking-tight text-[var(--text-main)]">
+          <div className="flex items-center gap-2 text-[12px] font-mono font-bold text-[#14b8a6] uppercase tracking-wider mb-1">
+            <LineChart className="w-4 h-4" />
+            <span>Markets &bull; Price Discovery</span>
+          </div>
+          <h2 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)]">
             Custom Asset Watchlists
-          </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
+          </h2>
+          <p className="text-[14px] text-[var(--text-muted)] m-0 mt-1 font-mono">
             Monitor target equity symbols, price points, and custom watchlist tracking.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="secondary" onClick={() => setIsCreateWlModalOpen(true)} className="flex items-center gap-1.5 text-xs">
+        <div className="flex items-center gap-[12px]">
+          <button
+            onClick={() => setIsCreateWlModalOpen(true)}
+            className="px-[16px] py-[10px] bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--text-muted)] text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-main)] rounded-[6px] flex items-center gap-2 transition-all cursor-pointer"
+          >
             <Plus className="w-3.5 h-3.5" />
             <span>New Watchlist</span>
-          </Button>
-          <Button onClick={() => setIsAddModalOpen(true)} disabled={!activeWatchlist} className="flex items-center gap-1.5 text-xs">
-            <Plus className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={() => setIsAddModalOpen(true)}
+            disabled={!activeWatchlist}
+            className="px-[16px] py-[10px] bg-[var(--primary)] hover:bg-[#ff7a45] disabled:opacity-50 text-[#050608] text-[11px] font-mono font-bold uppercase tracking-wider rounded-[6px] flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(255,90,31,0.3)] cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5 fill-current" />
             <span>Add Symbol</span>
-          </Button>
+          </button>
         </div>
       </div>
 
       {errorMsg && (
-        <div className="p-3 rounded-lg bg-[#DC2626]/10 border border-[#DC2626]/30 text-xs font-mono text-[#F87171]">
+        <div className="p-[16px] rounded-[8px] bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[13px] font-mono text-[var(--danger)] flex items-center gap-2 shadow-[0_0_10px_rgba(255,74,99,0.1)]">
+          <div className="w-2 h-2 rounded-full bg-[var(--danger)] animate-pulse" />
           {errorMsg}
         </div>
       )}
 
       {/* Multi-Watchlist Selector Bar */}
       {watchlists.length > 0 && (
-        <div className="flex items-center justify-between gap-4 p-3 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)]">
-          <div className="flex items-center gap-3">
-            <label className="text-xs font-mono font-bold text-[var(--text-muted)] uppercase">Active Watchlist:</label>
+        <div className="flex items-center justify-between gap-[16px] p-[16px] rounded-[8px] bg-background border border-[var(--border-color)]">
+          <div className="flex items-center gap-[12px]">
+            <label className="text-[11px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider">Active Watchlist:</label>
             <select
               value={activeWatchlist?.id || ''}
               onChange={(e) => {
                 const found = watchlists.find(w => w.id === e.target.value);
                 if (found) setActiveWatchlist(found);
               }}
-              className="px-3 py-1.5 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs font-mono font-bold text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+              className="px-[12px] py-[8px] bg-surface border border-[var(--border-color)] rounded-[6px] text-[13px] font-mono font-bold text-[var(--text-main)] focus:outline-none focus:border-[var(--secondary)] transition-colors cursor-pointer min-w-[250px]"
             >
               {watchlists.map((wl) => (
                 <option key={wl.id} value={wl.id}>
@@ -174,7 +184,7 @@ export const WatchlistPage: React.FC = () => {
           {activeWatchlist && (
             <button
               onClick={handleDeleteWatchlist}
-              className="flex items-center gap-1 text-xs text-[var(--text-muted)] hover:text-[#DC2626] transition-colors"
+              className="flex items-center gap-2 px-[12px] py-[8px] rounded-[6px] text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--danger)] hover:bg-[var(--danger)]/10 transition-all cursor-pointer"
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Delete Watchlist</span>
@@ -183,23 +193,28 @@ export const WatchlistPage: React.FC = () => {
         </div>
       )}
 
-      <Card title={`Tracked Instruments (${activeWatchlist?.name || 'Watchlist'})`} subtitle="Personalized Intelligence Targets">
+      <div className="inst-card p-[32px]">
+        <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-[16px] mb-[24px]">
+          <Bookmark className="w-5 h-5 text-[var(--secondary)]" />
+          Tracked Instruments ({activeWatchlist?.name || 'Watchlist'})
+        </h3>
+        
         {isLoading ? (
-          <div className="p-8 text-center text-xs font-mono text-[var(--text-muted)]">
+          <div className="p-[60px] text-center text-[13px] font-mono text-[var(--text-muted)] uppercase tracking-wider">
             Loading watchlist data...
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs font-mono">
-              <thead className="bg-[var(--bg-main)] text-[var(--text-muted)] border-b border-[var(--border-color)]">
+            <table className="w-full text-left font-mono text-[13px]">
+              <thead className="bg-background/50 border-b border-[var(--border-color)]">
                 <tr>
-                  <th className="p-3">SYMBOL</th>
-                  <th className="p-3">COMPANY NAME</th>
-                  <th className="p-3">EXCHANGE</th>
-                  <th className="p-3">SECTOR</th>
-                  <th className="p-3 text-right">MARKET PRICE</th>
-                  <th className="p-3 text-right">24H CHANGE</th>
-                  <th className="p-3 text-center">ACTIONS</th>
+                  <th className="py-4 px-4 font-bold tracking-wider uppercase text-[var(--text-muted)] text-[10px] border-b border-[var(--border-color)]">Symbol</th>
+                  <th className="py-4 px-4 font-bold tracking-wider uppercase text-[var(--text-muted)] text-[10px] border-b border-[var(--border-color)]">Company Name</th>
+                  <th className="py-4 px-4 font-bold tracking-wider uppercase text-[var(--text-muted)] text-[10px] border-b border-[var(--border-color)]">Exchange</th>
+                  <th className="py-4 px-4 font-bold tracking-wider uppercase text-[var(--text-muted)] text-[10px] border-b border-[var(--border-color)]">Sector</th>
+                  <th className="py-4 px-4 font-bold tracking-wider uppercase text-[var(--text-muted)] text-[10px] border-b border-[var(--border-color)] text-right">Market Price</th>
+                  <th className="py-4 px-4 font-bold tracking-wider uppercase text-[var(--text-muted)] text-[10px] border-b border-[var(--border-color)] text-right">24H Change</th>
+                  <th className="py-4 px-4 font-bold tracking-wider uppercase text-[var(--text-muted)] text-[10px] border-b border-[var(--border-color)] text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border-color)]">
@@ -210,25 +225,23 @@ export const WatchlistPage: React.FC = () => {
                     const chgPct = quote?.change_percent || 0.0;
 
                     return (
-                      <tr key={item.id} className="hover:bg-[var(--bg-main)]/50 transition-colors">
-                        <td className="p-3 font-bold text-[#2563EB] flex items-center gap-2">
-                          <Bookmark className="w-3.5 h-3.5 text-[#2563EB]" />
-                          <span>{item.asset?.symbol}</span>
+                      <tr key={item.id} className="hover:bg-background transition-colors">
+                        <td className="py-4 px-4 font-extrabold text-[15px] text-[var(--secondary)] flex items-center gap-2 drop-shadow-[0_0_5px_rgba(76,139,255,0.4)]">
+                          {item.asset?.symbol}
                         </td>
-                        <td className="p-3 text-[var(--text-main)] font-sans">{item.asset?.company_name}</td>
-                        <td className="p-3 text-[var(--text-muted)]">{item.asset?.exchange}</td>
-                        <td className="p-3 text-[var(--text-muted)]">{item.asset?.sector}</td>
-                        <td className="p-3 text-right font-bold text-[var(--text-main)]">
+                        <td className="py-4 px-4 text-[var(--text-main)] font-heading uppercase tracking-wider">{item.asset?.company_name}</td>
+                        <td className="py-4 px-4 text-[var(--text-muted)]">{item.asset?.exchange}</td>
+                        <td className="py-4 px-4 text-[var(--text-muted)]">{item.asset?.sector}</td>
+                        <td className="py-4 px-4 text-right font-extrabold text-[15px] text-[var(--text-main)]">
                           {formatAmount(price)}
                         </td>
-
-                        <td className={`p-3 text-right font-bold ${chgPct >= 0 ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
+                        <td className={`py-4 px-4 text-right font-bold ${chgPct >= 0 ? 'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.3)]' : 'text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.3)]'}`}>
                           {chgPct >= 0 ? '+' : ''}{chgPct.toFixed(2)}%
                         </td>
-                        <td className="p-3 text-center">
+                        <td className="py-4 px-4 text-center">
                           <button
                             onClick={() => handleRemoveItem(item.asset_id)}
-                            className="p-1 rounded text-[var(--text-muted)] hover:text-[#DC2626] transition-colors"
+                            className="p-[8px] rounded-[6px] text-[var(--text-muted)] hover:text-[var(--danger)] hover:bg-[var(--danger)]/10 transition-all cursor-pointer"
                             title="Remove from Watchlist"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -239,8 +252,8 @@ export const WatchlistPage: React.FC = () => {
                   })
                 ) : (
                   <tr>
-                    <td colSpan={6} className="p-6 text-center text-[var(--text-muted)] font-sans">
-                      No items in this watchlist. Click <strong>Add Symbol</strong> to start tracking assets.
+                    <td colSpan={7} className="p-[60px] text-center text-[var(--text-muted)] font-mono text-[13px]">
+                      No items in this watchlist. Click <span className="text-[var(--primary)] font-bold">Add Symbol</span> to start tracking assets.
                     </td>
                   </tr>
                 )}
@@ -248,49 +261,49 @@ export const WatchlistPage: React.FC = () => {
             </table>
           </div>
         )}
-      </Card>
+      </div>
 
       {/* Create Watchlist Modal */}
       {isCreateWlModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl w-full max-w-md p-6 space-y-4">
-            <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-3">
-              <h3 className="text-base font-bold font-heading text-[var(--text-main)]">Create New Watchlist</h3>
-              <button onClick={() => setIsCreateWlModalOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)]">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="inst-card w-full max-w-md p-[32px] space-y-[24px]">
+            <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-[16px]">
+              <h3 className="text-[16px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] m-0">Create New Watchlist</h3>
+              <button onClick={() => setIsCreateWlModalOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleCreateWatchlist} className="space-y-4">
+            <form onSubmit={handleCreateWatchlist} className="space-y-[16px]">
               <div>
-                <label className="text-xs font-mono text-[var(--text-muted)]">Watchlist Name</label>
+                <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2 block">Watchlist Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Tech Leaders, Dividend Stocks"
                   value={newWlName}
                   onChange={(e) => setNewWlName(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full bg-background border border-[var(--border-color)] rounded-[8px] px-[16px] py-[12px] text-[13px] font-mono font-bold text-[var(--text-main)] focus:outline-none focus:border-[var(--secondary)] transition-colors"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-mono text-[var(--text-muted)] font-bold">Description (Optional)</label>
+                <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2 block">Description (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. High growth tech portfolio candidates"
                   value={newWlDesc}
                   onChange={(e) => setNewWlDesc(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full bg-background border border-[var(--border-color)] rounded-[8px] px-[16px] py-[12px] text-[13px] font-mono font-bold text-[var(--text-main)] focus:outline-none focus:border-[var(--secondary)] transition-colors"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="secondary" onClick={() => setIsCreateWlModalOpen(false)}>
+              <div className="flex justify-end gap-[12px] pt-[16px] border-t border-[var(--border-color)]">
+                <button type="button" onClick={() => setIsCreateWlModalOpen(false)} className="px-[16px] py-[10px] bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--text-muted)] text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-main)] rounded-[6px] transition-all cursor-pointer">
                   Cancel
-                </Button>
-                <Button type="submit">
+                </button>
+                <button type="submit" className="px-[16px] py-[10px] bg-[var(--primary)] hover:bg-[#ff7a45] text-[#050608] font-bold font-mono text-[11px] uppercase tracking-wider rounded-[6px] transition-all shadow-[0_0_15px_rgba(255,90,31,0.3)] cursor-pointer">
                   Create Watchlist
-                </Button>
+                </button>
               </div>
             </form>
           </div>
@@ -299,21 +312,21 @@ export const WatchlistPage: React.FC = () => {
 
       {/* Add Symbol Modal */}
       {isAddModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl w-full max-w-md p-6 space-y-4">
-            <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-3">
-              <h3 className="text-base font-bold font-heading text-[var(--text-main)]">Add Symbol to Watchlist</h3>
-              <button onClick={() => setIsAddModalOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)]">
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="inst-card w-full max-w-md p-[32px] space-y-[24px]">
+            <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-[16px]">
+              <h3 className="text-[16px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] m-0">Add Symbol to Watchlist</h3>
+              <button onClick={() => setIsAddModalOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)] transition-colors cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleAddItem} className="space-y-4">
+            <form onSubmit={handleAddItem} className="space-y-[16px]">
               <div>
-                <label className="text-xs font-mono text-[var(--text-muted)]">Select Asset Symbol</label>
+                <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2 block">Select Asset Symbol</label>
                 <select
                   value={selectedAssetId}
                   onChange={(e) => setSelectedAssetId(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full bg-background border border-[var(--border-color)] rounded-[8px] px-[16px] py-[12px] text-[13px] font-mono font-bold text-[var(--text-main)] focus:outline-none focus:border-[var(--secondary)] transition-colors cursor-pointer"
                 >
                   {assets.map((a) => (
                     <option key={a.id} value={a.id}>
@@ -323,13 +336,13 @@ export const WatchlistPage: React.FC = () => {
                 </select>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="secondary" onClick={() => setIsAddModalOpen(false)}>
+              <div className="flex justify-end gap-[12px] pt-[16px] border-t border-[var(--border-color)]">
+                <button type="button" onClick={() => setIsAddModalOpen(false)} className="px-[16px] py-[10px] bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--text-muted)] text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-main)] rounded-[6px] transition-all cursor-pointer">
                   Cancel
-                </Button>
-                <Button type="submit">
+                </button>
+                <button type="submit" className="px-[16px] py-[10px] bg-[var(--primary)] hover:bg-[#ff7a45] text-[#050608] font-bold font-mono text-[11px] uppercase tracking-wider rounded-[6px] transition-all shadow-[0_0_15px_rgba(255,90,31,0.3)] cursor-pointer">
                   Add to Watchlist
-                </Button>
+                </button>
               </div>
             </form>
           </div>
@@ -339,3 +352,4 @@ export const WatchlistPage: React.FC = () => {
   );
 };
 
+export default WatchlistPage;

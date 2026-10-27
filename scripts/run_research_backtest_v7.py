@@ -298,6 +298,34 @@ def run_portfolio_optimization(predictions, prices):
 
     return master_df, controls_df, eps_df, sweep_df
 
+def export_forecast_metrics(predictions):
+    """Export claim-audit metrics from the actual walk-forward predictions."""
+    y = predictions['target'].to_numpy()
+    p = predictions['pred_xgb'].to_numpy()
+    errors = y - p
+    date_ics = predictions.groupby('date').apply(
+        lambda d: stats.spearmanr(d['target'], d['pred_xgb']).statistic
+        if len(d) >= 3 else np.nan
+    ).dropna()
+    loss_by_date = predictions.assign(loss_model=errors ** 2, loss_zero=y ** 2).groupby('date')[['loss_model', 'loss_zero']].mean()
+    diff = loss_by_date['loss_model'] - loss_by_date['loss_zero']
+    dm_stat = float(diff.mean() / (diff.std(ddof=1) / np.sqrt(len(diff)))) if len(diff) > 1 and diff.std(ddof=1) > 0 else np.nan
+    out = pd.DataFrame([{
+        'n_observations': len(predictions),
+        'n_dates': predictions['date'].nunique(),
+        'rmse': float(np.sqrt(np.mean(errors ** 2))),
+        'mae': float(np.mean(np.abs(errors))),
+        'directional_accuracy': float(np.mean(np.sign(y) == np.sign(p))),
+        'rank_ic_mean': float(date_ics.mean()),
+        'rank_ic_t_stat': float(date_ics.mean() / (date_ics.std(ddof=1) / np.sqrt(len(date_ics)))) if len(date_ics) > 1 and date_ics.std(ddof=1) > 0 else np.nan,
+        'out_of_sample_r2_vs_zero': float(1 - np.sum(errors ** 2) / np.sum(y ** 2)),
+        'diebold_mariano_stat_vs_zero': dm_stat,
+        'diebold_mariano_dates': len(diff)
+    }])
+    out.to_csv('results_v7/Forecast_Metrics.csv', index=False)
+    predictions.to_csv('results_v7/WalkForward_Predictions.csv', index=False)
+    return out
+
 def slsqp_vs_scs_objective_check():
     print("\nRunning SLSQP vs SCS Objective Benchmark...")
     sizes = [50, 100]
@@ -351,6 +379,7 @@ if __name__ == "__main__":
     dataset, prices = engineer_features(prices, vix)
     
     predictions = run_ml_backtest(dataset)
+    export_forecast_metrics(predictions)
     master_df, controls_df, eps_df, sweep_df = run_portfolio_optimization(predictions, prices)
     
     print("\n--- Master 10-Arm Suite (V7) ---")
@@ -371,4 +400,5 @@ if __name__ == "__main__":
     controls_df.to_csv('results_v7/Controls.csv', index=False)
     eps_df.to_csv('results_v7/EPS_Sensitivity.csv', index=False)
     sweep_df.to_csv('results_v7/Cap_Sweep.csv', index=False)
+    slsqp_df.to_csv('results_v7/Solver_Benchmark.csv', index=False)
     print("\nBacktest V7 complete. Artifacts saved in 'results_v7/'.")

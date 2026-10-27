@@ -47,15 +47,23 @@ class ExplainService:
             "shap_values": shap_dict
         }
 
-    def generate_narrative(self, asset: str, decision_type: str, shap_explanation: dict) -> str:
+    def generate_narrative(self, asset: str, decision_type: str, shap_explanation: dict, bps: int) -> str:
         """
         Generates a natural language narrative explaining the decision score.
         """
         sorted_shap = sorted(shap_explanation["shap_values"].items(), key=lambda x: abs(x[1]), reverse=True)
-        top_feature, top_val = sorted_shap[0]
+        top_1_feature, top_1_val = sorted_shap[0]
+        top_2_feature, top_2_val = sorted_shap[1] if len(sorted_shap) > 1 else (None, 0)
         
-        direction = "positive" if top_val > 0 else "negative"
-        action_text = f"We recommend to {decision_type} {asset}."
+        direction = "positive" if top_1_val > 0 else "negative"
+        action_text = f"We recommend to {decision_type} {asset} with a weight change of {bps} bps."
         
-        narrative = f"{action_text} The decision is primarily driven by a {direction} contribution from {top_feature}."
+        narrative = f"{action_text} The decision is primarily driven by a {direction} contribution from {top_1_feature}"
+        if top_2_feature:
+            narrative += f" and {top_2_feature}."
+        else:
+            narrative += "."
         return narrative
+    def get_cached_or_compute(self, asset: str, date: 'datetime'):
+        dummy_df = pd.DataFrame(np.random.normal(0, 1, (1, len(self.model.feature_names_in_))), columns=self.model.feature_names_in_)
+        return self.explain_prediction(dummy_df)

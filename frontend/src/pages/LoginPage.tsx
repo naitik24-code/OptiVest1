@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Input } from '../components/ui/Input';
-import { Button } from '../components/ui/Button';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, Lock, ShieldCheck, UserCheck, KeyRound, Sparkles } from 'lucide-react';
+import { ShieldCheck, UserCheck } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'investor' | 'admin'>('investor');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const { login, isLoading } = useAuth();
@@ -26,10 +22,6 @@ export const LoginPage: React.FC = () => {
       setEmail('investor_fat@optivest.ai');
       setPassword('Investor123!');
     }
-  };
-
-  const fillDemo = (tab: 'investor' | 'admin') => {
-    handleTabChange(tab);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,140 +40,111 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 30 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ duration: 0.6 }}
-      className="w-full max-w-md space-y-6"
-    >
-      {/* Role Switcher Tabs */}
-      <div className="flex bg-[var(--bg-surface)] p-1 rounded-xl border border-[var(--border-color)] shadow-inner">
-        <button
-          type="button"
-          onClick={() => handleTabChange('investor')}
-          className={`flex-1 py-2.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-            activeTab === 'investor'
-              ? 'bg-[#2563EB] text-white shadow-md shadow-blue-500/20'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-card)]'
-          }`}
-        >
-          <UserCheck className="w-4 h-4" />
-          <span>Investor Sign In</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleTabChange('admin')}
-          className={`flex-1 py-2.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-            activeTab === 'admin'
-              ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
-              : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-[var(--bg-card)]'
-          }`}
-        >
-          <ShieldCheck className="w-4 h-4" />
-          <span>Admin Console</span>
-        </button>
-      </div>
-
-      <div className="text-center space-y-2">
-        <h2 className="text-2xl font-extrabold font-heading text-[var(--text-main)] flex items-center justify-center gap-2">
-          {activeTab === 'admin' ? (
-            <>
-              <ShieldCheck className="w-6 h-6 text-amber-500" />
-              <span>Admin Console Sign In</span>
-            </>
-          ) : (
-            <span>Investor Platform Sign In</span>
-          )}
+    <div className="w-full max-w-[440px] mx-auto px-[20px]">
+      <div className="text-center mb-[28px]">
+        <h2 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)]">
+          {activeTab === 'admin' ? 'System Authentication' : 'Platform Sign In'}
         </h2>
-        <p className="text-xs text-[var(--text-muted)]">
+        <p className="text-[14px] text-[var(--text-muted)] m-0 mt-[12px] font-mono">
           {activeTab === 'admin'
-            ? 'Authenticate with system privileges to access MLOps, APDE models, and infra controls.'
-            : 'Access real-time portfolio analytics and continuous APDE risk governance.'}
+            ? 'Access the MLOps and Founder Command Console'
+            : 'Access real-time portfolio analytics and risk governance'}
         </p>
       </div>
 
-      {/* Demo Credentials Quick Fill Banner */}
-      <div className="p-3 rounded-xl bg-[var(--bg-card)] border border-[var(--border-color)] flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2 text-[var(--text-muted)] font-mono text-[11px]">
-          <KeyRound className="w-3.5 h-3.5 text-[#2563EB]" />
-          <span>Demo Account:</span>
-        </div>
+      <div className="flex bg-[var(--surface2)] rounded-[10px] p-[6px] mb-[24px] border border-[var(--border-color)]">
         <button
           type="button"
-          onClick={() => fillDemo(activeTab)}
-          className="px-2.5 py-1 rounded bg-[#2563EB]/10 border border-[#2563EB]/30 hover:bg-[#2563EB]/20 text-[#2563EB] font-mono text-[10px] font-bold transition-all flex items-center gap-1"
+          onClick={() => handleTabChange('investor')}
+          className={`flex-1 py-[12px] text-[13px] font-bold rounded-[6px] transition-all flex items-center justify-center gap-[8px] cursor-pointer ${
+            activeTab === 'investor'
+              ? 'bg-[var(--primary)] text-[#08090b] shadow-[0_0_15px_rgba(255,90,31,0.2)]'
+              : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
+          }`}
         >
-          <Sparkles className="w-3 h-3" />
-          <span>Auto-Fill {activeTab === 'admin' ? 'Admin' : 'Investor'} Credentials</span>
+          <UserCheck className="w-[16px] h-[16px]" />
+          Investor
+        </button>
+        <button
+          type="button"
+          onClick={() => handleTabChange('admin')}
+          className={`flex-1 py-[12px] text-[13px] font-bold rounded-[6px] transition-all flex items-center justify-center gap-[8px] cursor-pointer ${
+            activeTab === 'admin'
+              ? 'bg-[var(--secondary)] text-[#08090b] shadow-[0_0_15px_rgba(76,139,255,0.2)]'
+              : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
+          }`}
+        >
+          <ShieldCheck className="w-[16px] h-[16px]" />
+          Admin
         </button>
       </div>
 
-      {error && (
-        <div className="p-3 rounded-lg bg-[#DC2626]/10 border border-[#DC2626]/30 text-[#F87171] text-xs font-mono">
-          {error}
-        </div>
-      )}
-
-      <motion.form 
-        initial={{ opacity: 0, scale: 0.95 }} 
-        animate={{ opacity: 1, scale: 1 }} 
-        transition={{ duration: 0.6, delay: 0.15 }}
+      <form 
         onSubmit={handleSubmit} 
-        className="inst-card p-6 rounded-xl space-y-4 border border-[var(--border-color)]"
+        className={`inst-card p-[32px] transition-colors ${activeTab === 'admin' ? 'hover:border-[var(--secondary)]/50' : ''}`}
       >
-        <Input
-          label={activeTab === 'admin' ? "System Admin Email" : "Institutional Email"}
-          type="email"
-          placeholder={activeTab === 'admin' ? "admin@optivest.ai" : "investor@firm.com"}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          icon={<Mail className="w-4 h-4" />}
-        />
+        {error && (
+          <div className="mb-[24px] p-[16px] rounded-[8px] bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[var(--danger)] text-[13px] font-mono">
+            {error}
+          </div>
+        )}
 
-        <Input
-          label="Password"
-          type="password"
-          placeholder="••••••••••••"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          icon={<Lock className="w-4 h-4" />}
-        />
-
-        <div className="flex items-center justify-between text-xs pt-1">
-          <label className="flex items-center gap-2 cursor-pointer text-[var(--text-muted)] hover:text-[var(--text-main)]">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="rounded accent-[#2563EB]"
-            />
-            <span>Remember device</span>
-          </label>
-          <Link to="/forgot-password" className="text-[#2563EB] font-bold hover:underline">
-            Forgot password?
-          </Link>
+        <div className="mb-[24px]">
+          <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-[8px] uppercase tracking-wider">Email Address</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className={`w-full bg-background border border-[var(--border-color)] rounded-[8px] p-[14px_16px] text-[14px] font-mono text-[var(--text-main)] focus:outline-none transition-colors placeholder:text-[var(--text-muted)]/50 ${
+              activeTab === 'admin' ? 'focus:border-[var(--secondary)]' : 'focus:border-[var(--primary)]'
+            }`}
+          />
         </div>
 
-        <Button
+        <div className="mb-[32px]">
+          <label className="block text-[11px] font-mono text-[var(--text-muted)] mb-[8px] uppercase tracking-wider">Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className={`w-full bg-background border border-[var(--border-color)] rounded-[8px] p-[14px_16px] text-[14px] font-mono text-[var(--text-main)] focus:outline-none transition-colors placeholder:text-[var(--text-muted)]/50 ${
+              activeTab === 'admin' ? 'focus:border-[var(--secondary)]' : 'focus:border-[var(--primary)]'
+            }`}
+          />
+          <div className="text-right mt-[12px]">
+            <Link to="/forgot-password" className={`text-[12px] font-mono text-[var(--text-muted)] transition-colors ${
+              activeTab === 'admin' ? 'hover:text-[var(--secondary)]' : 'hover:text-[var(--primary)]'
+            }`}>
+              Forgot password?
+            </Link>
+          </div>
+        </div>
+
+        <button
           type="submit"
-          isLoading={isLoading}
-          className={`w-full py-2.5 mt-2 ${
-            activeTab === 'admin' ? 'bg-amber-600 hover:bg-amber-700 text-white' : ''
+          disabled={isLoading}
+          className={`w-full cursor-pointer p-[14px] rounded-[8px] font-bold text-[14px] transition-all disabled:opacity-50 text-[#08090b] ${
+            activeTab === 'admin'
+              ? 'bg-[var(--secondary)] hover:bg-[#3b78ff] shadow-[0_0_15px_rgba(76,139,255,0.2)]'
+              : 'bg-[var(--primary)] hover:bg-[#ff713b] shadow-[0_0_15px_rgba(255,90,31,0.2)]'
           }`}
         >
-          {activeTab === 'admin' ? 'Sign In as System Admin' : 'Sign In to Platform'}
-        </Button>
+          {isLoading ? 'Authenticating...' : 'Sign In'}
+        </button>
+      </form>
 
-        <div className="text-center pt-2 text-xs text-[var(--text-muted)]">
-          New institutional investor?{' '}
-          <Link to="/register" className="text-[#2563EB] font-bold hover:underline">
-            Open Account
-          </Link>
-        </div>
-      </motion.form>
-    </motion.div>
+      <div className="text-center mt-[32px] text-[13px] font-mono text-[var(--text-muted)]">
+        New institutional investor?{' '}
+        <Link to="/register" className={`font-bold hover:underline ${
+          activeTab === 'admin' ? 'text-[var(--secondary)]' : 'text-[var(--primary)]'
+        }`}>
+          Open Account
+        </Link>
+      </div>
+    </div>
   );
 };
+
+export default LoginPage;

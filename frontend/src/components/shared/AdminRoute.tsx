@@ -9,7 +9,7 @@ export const AdminRoute: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-main)]">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="w-8 h-8 border-4 border-[#2563EB] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );

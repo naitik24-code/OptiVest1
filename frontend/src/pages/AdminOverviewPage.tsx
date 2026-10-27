@@ -15,21 +15,21 @@ const getH = (): HeadersInit => {
 
 // ─── Sub-section navigation tiles ────────────────────────────────────────────
 const ADMIN_TILES = [
-  { label: 'Users Control',       path: '/admin/users',            icon: Users,           color: 'text-sky-400',     bg: 'bg-sky-500/10 border-sky-500/20',    desc: 'RBAC & user registry' },
-  { label: 'Global Portfolios',   path: '/admin/portfolios',       icon: Layers,          color: 'text-violet-400',  bg: 'bg-violet-500/10 border-violet-500/20', desc: 'Platform-wide AUM' },
-  { label: 'MLOps Hub',           path: '/admin/mlops',            icon: Activity,        color: 'text-purple-400',  bg: 'bg-purple-500/10 border-purple-500/20', desc: 'ML pipeline control' },
-  { label: 'AI Config',           path: '/admin/ai-config',        icon: Sliders,         color: 'text-[#0EA5E9]',   bg: 'bg-sky-500/10 border-sky-500/20',    desc: 'Hyperparameter governance' },
-  { label: 'Training Queue',      path: '/admin/training-queue',   icon: Cpu,             color: 'text-teal-400',    bg: 'bg-teal-500/10 border-teal-500/20',  desc: 'Async job orchestration' },
-  { label: 'Model Health',        path: '/admin/model-health',     icon: ShieldCheck,     color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', desc: 'Drift & accuracy telemetry' },
-  { label: 'Model Compare',       path: '/admin/model-comparison', icon: ArrowRightLeft,  color: 'text-indigo-400',  bg: 'bg-indigo-500/10 border-indigo-500/20', desc: 'Side-by-side metrics' },
-  { label: 'Research Analytics',  path: '/admin/research',         icon: FileText,        color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', desc: 'Publication-grade reports' },
-  { label: 'Autonomous Center',   path: '/admin/autonomous',       icon: Zap,             color: 'text-amber-400',   bg: 'bg-amber-500/10 border-amber-500/20', desc: 'Event-driven orchestration' },
-  { label: 'Scheduler',           path: '/admin/scheduler',        icon: Clock,           color: 'text-orange-400',  bg: 'bg-orange-500/10 border-orange-500/20', desc: 'Cron job management' },
-  { label: 'System Health',       path: '/admin/system-health',    icon: Server,          color: 'text-blue-400',    bg: 'bg-blue-500/10 border-blue-500/20',  desc: 'Infrastructure telemetry' },
-  { label: 'Worker Nodes',        path: '/admin/workers',          icon: Database,        color: 'text-cyan-400',    bg: 'bg-cyan-500/10 border-cyan-500/20',  desc: 'Distributed task nodes' },
-  { label: 'Benchmark',           path: '/admin/benchmark',        icon: BarChart3,       color: 'text-sky-400',     bg: 'bg-sky-500/10 border-sky-500/20',    desc: 'Alpha vs benchmarks' },
-  { label: 'Strategy Compare',    path: '/admin/strategy-comparison', icon: TrendingUp,   color: 'text-purple-400',  bg: 'bg-purple-500/10 border-purple-500/20', desc: 'Long-term simulator' },
-  { label: 'Notifications',       path: '/admin/notifications',    icon: Bell,            color: 'text-rose-400',    bg: 'bg-rose-500/10 border-rose-500/20',  desc: 'System alert feeds' },
+  { label: 'Users Control', path: '/admin/users', icon: Users, color: 'text-sky-400', bg: 'bg-sky-500/10 border-sky-500/20', desc: 'RBAC & user registry' },
+  { label: 'Global Portfolios', path: '/admin/portfolios', icon: Layers, color: 'text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20', desc: 'Platform-wide AUM' },
+  { label: 'MLOps Hub', path: '/admin/mlops', icon: Activity, color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20', desc: 'ML pipeline control' },
+  { label: 'AI Config', path: '/admin/ai-config', icon: Sliders, color: 'text-[#0EA5E9]', bg: 'bg-sky-500/10 border-sky-500/20', desc: 'Hyperparameter governance' },
+  { label: 'Training Queue', path: '/admin/training-queue', icon: Cpu, color: 'text-teal-400', bg: 'bg-teal-500/10 border-teal-500/20', desc: 'Async job orchestration' },
+  { label: 'Model Health', path: '/admin/model-health', icon: ShieldCheck, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', desc: 'Drift & accuracy telemetry' },
+  { label: 'Model Compare', path: '/admin/model-comparison', icon: ArrowRightLeft, color: 'text-indigo-400', bg: 'bg-indigo-500/10 border-indigo-500/20', desc: 'Side-by-side metrics' },
+  { label: 'Research Analytics', path: '/admin/research', icon: FileText, color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20', desc: 'Publication-grade reports' },
+  { label: 'Autonomous Center', path: '/admin/autonomous', icon: Zap, color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20', desc: 'Event-driven orchestration' },
+  { label: 'Scheduler', path: '/admin/scheduler', icon: Clock, color: 'text-orange-400', bg: 'bg-orange-500/10 border-orange-500/20', desc: 'Cron job management' },
+  { label: 'System Health', path: '/admin/system-health', icon: Server, color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20', desc: 'Infrastructure telemetry' },
+  { label: 'Worker Nodes', path: '/admin/workers', icon: Database, color: 'text-cyan-400', bg: 'bg-cyan-500/10 border-cyan-500/20', desc: 'Distributed task nodes' },
+  { label: 'Benchmark', path: '/admin/benchmark', icon: BarChart3, color: 'text-sky-400', bg: 'bg-sky-500/10 border-sky-500/20', desc: 'Alpha vs benchmarks' },
+  { label: 'Strategy Compare', path: '/admin/strategy-comparison', icon: TrendingUp, color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/20', desc: 'Long-term simulator' },
+  { label: 'Notifications', path: '/admin/notifications', icon: Bell, color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/20', desc: 'System alert feeds' },
 ];
 
 interface HealthData {
@@ -56,7 +56,7 @@ const MiniGauge: React.FC<{ label: string; value: number; icon: React.ReactNode 
         {value.toFixed(1)}%
       </span>
     </div>
-    <div className="w-full h-1.5 bg-[var(--bg-main)] rounded-full overflow-hidden border border-[var(--border-color)]">
+    <div className="w-full h-1.5 bg-background rounded-full overflow-hidden border border-[var(--border-color)]">
       <div
         className={`h-full rounded-full transition-all duration-700 ${value > 90 ? 'bg-red-500' : value > 75 ? 'bg-amber-500' : 'bg-emerald-500'}`}
         style={{ width: `${Math.min(value, 100)}%` }}
@@ -81,7 +81,7 @@ export const AdminOverviewPage: React.FC = () => {
       if (hRes.ok) setHealth(await hRes.json());
       if (pRes.ok) setPipeline(await pRes.json());
       setLastUpdated(new Date());
-    } catch (_) {}
+    } catch (_) { }
     setLoading(false);
   }, []);
 
@@ -98,7 +98,7 @@ export const AdminOverviewPage: React.FC = () => {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
       });
-    } catch (_) {}
+    } catch (_) { }
   };
 
   const isHealthy = health?.overall_status === 'HEALTHY';
@@ -127,7 +127,7 @@ export const AdminOverviewPage: React.FC = () => {
         </div>
         <button
           onClick={fetchAll}
-          className="px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-color)] hover:bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-main)] rounded-lg flex items-center gap-2 transition-all"
+          className="px-3 py-2 bg-[var(--bg-[var(--bg-card)])] border border-[var(--border-color)] hover:bg-surface text-xs font-semibold text-[var(--text-main)] rounded-lg flex items-center gap-2 transition-all"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           <span>Refresh</span>
@@ -164,12 +164,12 @@ export const AdminOverviewPage: React.FC = () => {
       {qs && (
         <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3">
           {[
-            { label: 'Total Jobs',   value: qs.total_jobs,  color: 'text-[var(--text-main)]' },
-            { label: 'Running',      value: qs.running,     color: 'text-blue-400' },
-            { label: 'Completed',    value: qs.completed,   color: 'text-emerald-400' },
-            { label: 'Queued',       value: qs.queued,      color: 'text-amber-400' },
-            { label: 'Failed',       value: qs.failed,      color: 'text-red-400' },
-            { label: 'Workers',      value: health?.workers?.length ?? 0, color: 'text-purple-400' },
+            { label: 'Total Jobs', value: qs.total_jobs, color: 'text-[var(--text-main)]' },
+            { label: 'Running', value: qs.running, color: 'text-blue-400' },
+            { label: 'Completed', value: qs.completed, color: 'text-emerald-400' },
+            { label: 'Queued', value: qs.queued, color: 'text-amber-400' },
+            { label: 'Failed', value: qs.failed, color: 'text-red-400' },
+            { label: 'Workers', value: health?.workers?.length ?? 0, color: 'text-purple-400' },
           ].map((item) => (
             <Card key={item.label} className="p-3 text-center space-y-0.5">
               <div className={`text-xl font-extrabold font-mono ${item.color}`}>{item.value}</div>
@@ -187,10 +187,10 @@ export const AdminOverviewPage: React.FC = () => {
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: 'Force Market Scan',    job: 'market_regime',     color: 'bg-blue-500/10 border-blue-500/20 hover:bg-blue-500/20 text-blue-400' },
-            { label: 'Prediction Refresh',   job: 'prediction_refresh', color: 'bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20 text-emerald-400' },
-            { label: 'APDE Reallocation',    job: 'apde_analysis',     color: 'bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20 text-amber-400' },
-            { label: 'Drift Analysis',       job: 'health_watcher',    color: 'bg-purple-500/10 border-purple-500/20 hover:bg-purple-500/20 text-purple-400' },
+            { label: 'Force Market Scan', job: 'market_regime', color: 'bg-blue-500/10 border-blue-500/20 hover:bg-blue-500/20 text-blue-400' },
+            { label: 'Prediction Refresh', job: 'prediction_refresh', color: 'bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20 text-emerald-400' },
+            { label: 'APDE Reallocation', job: 'apde_analysis', color: 'bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20 text-amber-400' },
+            { label: 'Drift Analysis', job: 'health_watcher', color: 'bg-purple-500/10 border-purple-500/20 hover:bg-purple-500/20 text-purple-400' },
           ].map((action) => (
             <button
               key={action.job}
@@ -232,3 +232,4 @@ export const AdminOverviewPage: React.FC = () => {
 };
 
 export default AdminOverviewPage;
+

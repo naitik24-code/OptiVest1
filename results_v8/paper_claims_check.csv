@@ -1,0 +1,5 @@
+claim_id,claim_text,status,evidence
+C1,All unit tests pass,UNVERIFIED,pytest evidence log not found
+C2,CDE with fundamentals improves Sharpe vs price-only,MISSING,cde_ablation.csv not found
+C3,SHAP records saved per decision,MISSING,replay_cycles.csv not found
+C4,Ledger captures transaction costs on turnover,MISSING,replay_metrics.csv not found

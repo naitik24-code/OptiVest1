@@ -63,7 +63,7 @@ class CandidateDiscoveryService:
         
     def discover_candidates(
         self, portfolio_id: str, candidate_type: str = "NEW_ALLOCATION", 
-        target_holding: Optional[str] = None, top_n: int = 5
+        target_holding: Optional[str] = None, top_n: int = 2
     ) -> List[Dict[str, Any]]:
         # Validate portfolio
         try:
@@ -80,6 +80,10 @@ class CandidateDiscoveryService:
         health = self.apde_engine.calculate_portfolio_health(portfolio_id)
         allocations = health.get("asset_allocations", {})
         existing_symbols = list(allocations.keys())
+
+        if candidate_type == "REPLACEMENT" and target_holding and target_holding not in existing_symbols:
+            logger.info("Replacement target %s is not held in portfolio %s", target_holding, portfolio_id)
+            return []
         
         user_pref = self.db.query(UserPreference).filter(UserPreference.user_id == portfolio.user_id).first()
         risk_level = user_pref.risk_tolerance_level if user_pref else 3 # 1-5
@@ -97,9 +101,6 @@ class CandidateDiscoveryService:
                 continue
             if candidate_type == "REPLACEMENT" and asset.symbol == target_holding:
                 continue
-            if candidate_type == "REPLACEMENT" and target_holding and target_holding not in existing_symbols:
-                 pass
-                 
             if asset.symbol in existing_symbols:
                 continue
                 

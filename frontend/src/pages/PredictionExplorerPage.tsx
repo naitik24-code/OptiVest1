@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Card } from '../components/ui/Card';
 import { Brain, TrendingUp, TrendingDown, RefreshCw, Zap } from 'lucide-react';
 
 const ALGORITHMS = ['LSTM','GRU','XGBOOST','LIGHTGBM','RANDOM_FOREST','EXTRA_TREES','LINEAR_REGRESSION'];
@@ -7,7 +6,7 @@ const HORIZONS   = ['1D','5D','10D','20D','30D'];
 const ASSETS     = ['AAPL','MSFT','GOOGL','AMZN','NVDA','TSLA','META'];
 
 const getH = (): HeadersInit => { const t = localStorage.getItem('access_token'); return t ? { Authorization: `Bearer ${t}` } : {}; };
-const DIR_COLOR = (d: string) => d === 'UP' ? 'text-emerald-400' : d === 'DOWN' ? 'text-red-400' : 'text-slate-400';
+const DIR_COLOR = (d: string) => d === 'UP' ? 'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.3)]' : d === 'DOWN' ? 'text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.3)]' : 'text-[var(--text-muted)]';
 
 export const PredictionExplorerPage: React.FC = () => {
   const [asset, setAsset] = useState('AAPL');
@@ -46,149 +45,185 @@ export const PredictionExplorerPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl">
-      <div>
-        <div className="flex items-center gap-2 text-xs font-mono font-bold text-purple-400 uppercase tracking-wider mb-1">
-          <Zap className="w-4 h-4" /><span>Module 8 · Prediction Engine</span>
+    <div className="max-w-[1120px] mx-auto space-y-6">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+        <div>
+          <div className="flex items-center gap-2 text-[12px] font-mono font-bold text-[#a855f7] uppercase tracking-wider mb-1">
+            <Zap className="w-4 h-4" />
+            <span>Module 8 &bull; Prediction Engine</span>
+          </div>
+          <h2 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)]">
+            Prediction Explorer
+          </h2>
+          <p className="text-[14px] text-[var(--text-muted)] m-0 mt-1 font-mono">
+            Generate confidence-scored AI predictions for any asset and horizon.
+          </p>
         </div>
-        <h1 className="text-2xl font-extrabold font-heading tracking-tight text-[var(--text-main)]">Prediction Explorer</h1>
-        <p className="text-xs text-[var(--text-muted)] mt-1">Generate confidence-scored AI predictions for any asset and horizon.</p>
       </div>
 
       {/* Controls */}
-      <Card className="p-5">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+      <div className="inst-card p-[24px]">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-[16px] mb-[20px]">
           <div>
-            <label className="text-[10px] font-bold uppercase text-[var(--text-muted)] mb-1 block">Asset</label>
-            <select value={asset} onChange={e => setAsset(e.target.value)} className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]">
+            <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2 block">Asset</label>
+            <select value={asset} onChange={e => setAsset(e.target.value)} className="w-full bg-background border border-[var(--border-color)] rounded-[8px] px-[14px] py-[12px] text-[13px] font-mono font-bold text-[var(--text-main)] focus:outline-none focus:border-[#a855f7] transition-colors cursor-pointer">
               {ASSETS.map(a => <option key={a}>{a}</option>)}
             </select>
           </div>
           <div>
-            <label className="text-[10px] font-bold uppercase text-[var(--text-muted)] mb-1 block">Horizon</label>
-            <select value={horizon} onChange={e => setHorizon(e.target.value)} className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]">
+            <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2 block">Horizon</label>
+            <select value={horizon} onChange={e => setHorizon(e.target.value)} className="w-full bg-background border border-[var(--border-color)] rounded-[8px] px-[14px] py-[12px] text-[13px] font-mono font-bold text-[var(--text-main)] focus:outline-none focus:border-[#a855f7] transition-colors cursor-pointer">
               {HORIZONS.map(h => <option key={h}>{h}</option>)}
             </select>
           </div>
           <div>
-            <label className="text-[10px] font-bold uppercase text-[var(--text-muted)] mb-1 block">Algorithm</label>
-            <select value={algorithm} onChange={e => setAlgorithm(e.target.value)} className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2 text-xs text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]">
+            <label className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2 block">Algorithm</label>
+            <select value={algorithm} onChange={e => setAlgorithm(e.target.value)} className="w-full bg-background border border-[var(--border-color)] rounded-[8px] px-[14px] py-[12px] text-[13px] font-mono font-bold text-[var(--text-main)] focus:outline-none focus:border-[#a855f7] transition-colors cursor-pointer">
               {ALGORITHMS.map(a => <option key={a}>{a}</option>)}
             </select>
           </div>
           <div className="flex flex-col justify-end gap-2">
-            <button onClick={runSingle} disabled={loading} className="px-4 py-2 bg-[#2563EB] hover:bg-blue-600 disabled:opacity-50 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-2 transition-all">
-              {loading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Brain className="w-3.5 h-3.5" />}
+            <button onClick={runSingle} disabled={loading} className="px-4 py-[14px] bg-[var(--primary)] hover:bg-[#ff7a45] disabled:opacity-50 text-[#050608] shadow-[0_0_15px_rgba(255,90,31,0.3)] text-[13px] font-bold font-mono tracking-wider rounded-[8px] flex items-center justify-center gap-2 transition-all cursor-pointer">
+              {loading ? <RefreshCw className="w-4 h-4 animate-spin fill-current" /> : <Brain className="w-4 h-4 fill-current" />}
               Predict
             </button>
           </div>
         </div>
-        <div className="flex gap-3">
-          <button onClick={runMultiModel} disabled={loading} className="px-3 py-1.5 bg-purple-700 hover:bg-purple-600 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-all">
+        
+        <div className="flex flex-wrap gap-[12px] pt-[20px] border-t border-[var(--border-color)]">
+          <button onClick={runMultiModel} disabled={loading} className="px-[16px] py-[10px] bg-[#a855f7]/10 hover:bg-[#a855f7]/20 border border-[#a855f7]/30 disabled:opacity-50 text-[#a855f7] shadow-[0_0_15px_rgba(168,85,247,0.1)] text-[11px] font-mono font-bold uppercase tracking-wider rounded-[6px] transition-all cursor-pointer">
             Multi-Model + Ensemble
           </button>
-          <button onClick={runBatch} disabled={loading} className="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 text-white text-xs font-semibold rounded-lg transition-all">
+          <button onClick={runBatch} disabled={loading} className="px-[16px] py-[10px] bg-[var(--surface2)] hover:border-[var(--text-muted)] border border-[var(--border-color)] disabled:opacity-50 text-[var(--text-main)] text-[11px] font-mono font-bold uppercase tracking-wider rounded-[6px] transition-all cursor-pointer">
             Batch ({ASSETS.length} Assets)
           </button>
         </div>
-      </Card>
+      </div>
 
       {/* Single Prediction Result */}
       {prediction && (
-        <Card className="p-5 border-[var(--border-color)] bg-gradient-to-r from-slate-900/50 to-slate-950/50">
-          <div className="flex items-start justify-between mb-4">
+        <div className="inst-card p-[32px] border-l-4 border-l-[var(--primary)] relative overflow-hidden group">
+          <div className="absolute top-0 left-0 w-[200px] h-[200px] bg-[radial-gradient(ellipse_at_top_left,rgba(255,90,31,0.1)_0%,rgba(0,0,0,0)_60%)] pointer-events-none" />
+          
+          <div className="flex items-start justify-between mb-8 z-10 relative">
             <div>
-              <div className="text-lg font-extrabold text-[var(--text-main)]">{prediction.asset_symbol}</div>
-              <div className="text-xs text-[var(--text-muted)]">{prediction.algorithm} · {prediction.prediction_horizon} · {prediction.model_version}</div>
+              <div className="text-[28px] font-extrabold font-heading text-[var(--text-main)] drop-shadow-sm">{prediction.asset_symbol}</div>
+              <div className="text-[12px] font-mono text-[var(--text-muted)] uppercase tracking-wider mt-1">
+                {prediction.algorithm} &bull; {prediction.prediction_horizon} &bull; {prediction.model_version}
+              </div>
             </div>
-            <div className={`text-2xl font-extrabold font-mono ${DIR_COLOR(prediction.predicted_direction)}`}>
-              {prediction.predicted_direction === 'UP' ? <TrendingUp className="w-8 h-8" /> : <TrendingDown className="w-8 h-8" />}
+            <div className={`text-[42px] font-extrabold font-mono ${DIR_COLOR(prediction.predicted_direction)}`}>
+              {prediction.predicted_direction === 'UP' ? <TrendingUp className="w-10 h-10 drop-shadow-[0_0_8px_rgba(23,217,140,0.4)]" /> : <TrendingDown className="w-10 h-10 drop-shadow-[0_0_8px_rgba(255,74,99,0.4)]" />}
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-[20px] z-10 relative">
             {[
-              {l:'Expected Return', v:`${(prediction.predicted_return * 100).toFixed(3)}%`, c: prediction.predicted_return >= 0 ? 'text-emerald-400' : 'text-red-400'},
-              {l:'Confidence', v:`${(prediction.confidence_score * 100).toFixed(1)}%`, c:'text-blue-400'},
-              {l:'Risk Score', v:`${(prediction.risk_score * 100).toFixed(1)}%`, c:'text-amber-400'},
-              {l:'Prob UP', v:`${(prediction.probability_up * 100).toFixed(1)}%`, c:'text-emerald-400'},
+              {l:'Expected Return', v:`${(prediction.predicted_return * 100).toFixed(3)}%`, c: prediction.predicted_return >= 0 ? 'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.3)]' : 'text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.3)]'},
+              {l:'Confidence', v:`${(prediction.confidence_score * 100).toFixed(1)}%`, c:'text-[var(--secondary)] drop-shadow-[0_0_5px_rgba(76,139,255,0.3)]'},
+              {l:'Risk Score', v:`${(prediction.risk_score * 100).toFixed(1)}%`, c:'text-[#eab308] drop-shadow-[0_0_5px_rgba(234,179,8,0.3)]'},
+              {l:'Prob UP', v:`${(prediction.probability_up * 100).toFixed(1)}%`, c:'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.3)]'},
             ].map(item => (
-              <div key={item.l} className="bg-[var(--bg-main)] rounded-lg p-3 text-center">
-                <div className={`text-xl font-extrabold font-mono ${item.c}`}>{item.v}</div>
-                <div className="text-[9px] uppercase font-bold text-[var(--text-muted)]">{item.l}</div>
+              <div key={item.l} className="bg-background border border-[var(--border-color)] rounded-[8px] p-[20px] flex flex-col items-center justify-center transition-colors hover:border-[var(--primary)]/30">
+                <div className={`text-[24px] font-extrabold font-mono ${item.c} mb-2 leading-none`}>{item.v}</div>
+                <div className="text-[10px] uppercase tracking-wider font-bold font-mono text-[var(--text-muted)]">{item.l}</div>
               </div>
             ))}
           </div>
-          <div className="mt-3 px-3 py-2 bg-slate-800/60 rounded text-xs text-slate-300 font-mono">
-            <span className="text-purple-400 font-bold">{prediction.reason_code}</span> — {prediction.reason_description}
+
+          <div className="mt-[24px] px-[20px] py-[16px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] text-[var(--text-main)] font-mono z-10 relative">
+            <span className="text-[#a855f7] font-extrabold mr-3 drop-shadow-[0_0_5px_rgba(168,85,247,0.3)]">{prediction.reason_code}</span>
+            <span className="text-[var(--text-muted)]">— {prediction.reason_description}</span>
           </div>
-          <div className="mt-2 grid grid-cols-3 gap-2 text-[10px] text-[var(--text-muted)]">
-            <span>CI: [{(prediction.confidence_interval_low * 100).toFixed(2)}%, {(prediction.confidence_interval_high * 100).toFixed(2)}%]</span>
-            <span>Signal Strength: {prediction.signal_strength?.toFixed(3)}</span>
-            <span>Actionable: <span className={prediction.is_actionable ? 'text-emerald-400' : 'text-red-400'}>{prediction.is_actionable ? 'YES' : 'NO'}</span></span>
+
+          <div className="mt-[16px] grid grid-cols-1 sm:grid-cols-3 gap-[16px] text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] z-10 relative">
+            <div className="bg-background px-[12px] py-[8px] rounded-[6px] border border-[var(--border-color)] text-center">
+              CI: [{(prediction.confidence_interval_low * 100).toFixed(2)}%, {(prediction.confidence_interval_high * 100).toFixed(2)}%]
+            </div>
+            <div className="bg-background px-[12px] py-[8px] rounded-[6px] border border-[var(--border-color)] text-center">
+              Signal Strength: <span className="text-[var(--text-main)]">{prediction.signal_strength?.toFixed(3)}</span>
+            </div>
+            <div className="bg-background px-[12px] py-[8px] rounded-[6px] border border-[var(--border-color)] text-center">
+              Actionable: <span className={prediction.is_actionable ? 'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.3)]' : 'text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.3)]'}>{prediction.is_actionable ? 'YES' : 'NO'}</span>
+            </div>
           </div>
-        </Card>
+        </div>
       )}
 
       {/* Multi-Model + Ensemble */}
       {multiPred && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          <Card className="lg:col-span-2 p-5 space-y-3">
-            <h3 className="text-sm font-bold text-[var(--text-main)] border-b border-[var(--border-color)] pb-2">Individual Algorithm Predictions</h3>
-            {(multiPred.individual_predictions || []).map((p: any) => (
-              <div key={p.model_id} className="flex items-center justify-between py-1.5 border-b border-[var(--border-color)]/40">
-                <span className="text-xs font-mono text-[var(--text-main)] w-36">{p.algorithm}</span>
-                <span className={`text-xs font-bold ${DIR_COLOR(p.predicted_direction)}`}>{p.predicted_direction}</span>
-                <span className="text-xs font-mono text-[var(--text-main)]">{(p.predicted_return * 100).toFixed(3)}%</span>
-                <div className="w-20 bg-[var(--bg-main)] rounded-full h-1.5 overflow-hidden">
-                  <div className="h-full bg-blue-500 rounded-full" style={{width: `${p.confidence_score * 100}%`}} />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="inst-card p-[24px] lg:col-span-2">
+            <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] border-b border-[var(--border-color)] pb-4 mb-4">
+              Individual Algorithm Predictions
+            </h3>
+            <div className="space-y-[8px]">
+              {(multiPred.individual_predictions || []).map((p: any) => (
+                <div key={p.model_id} className="flex items-center justify-between p-[12px] bg-background rounded-[6px] border border-[var(--border-color)] hover:border-[var(--primary)]/30 transition-colors">
+                  <span className="text-[13px] font-mono font-bold text-[var(--text-main)] w-36 uppercase tracking-wider">{p.algorithm}</span>
+                  <span className={`text-[13px] font-extrabold font-mono tracking-wider ${DIR_COLOR(p.predicted_direction)}`}>{p.predicted_direction}</span>
+                  <span className="text-[14px] font-mono font-bold text-[var(--text-main)] w-24 text-right">{(p.predicted_return * 100).toFixed(3)}%</span>
+                  
+                  <div className="w-[100px] mx-4 bg-surface rounded-full h-[6px] overflow-hidden border border-[var(--border-color)]">
+                    <div className="h-full bg-[var(--primary)] text-[#08090b] rounded-full shadow-[0_0_5px_rgba(255,90,31,0.5)]" style={{width: `${p.confidence_score * 100}%`}} />
+                  </div>
+                  <span className="text-[12px] font-mono font-bold text-[var(--text-muted)] w-12 text-right">{(p.confidence_score * 100).toFixed(1)}%</span>
                 </div>
-                <span className="text-[11px] text-[var(--text-muted)]">{(p.confidence_score * 100).toFixed(1)}%</span>
-              </div>
-            ))}
-          </Card>
-          <Card className="p-5 bg-gradient-to-b from-purple-900/20 to-slate-950/50 border-purple-700/30">
-            <h3 className="text-sm font-bold text-purple-300 mb-3">Ensemble Prediction</h3>
+              ))}
+            </div>
+          </div>
+
+          <div className="inst-card p-[32px] bg-gradient-to-b from-[#a855f7]/10 to-[#050608] border-t-4 border-t-[#a855f7] shadow-[0_0_20px_rgba(168,85,247,0.1)] flex flex-col justify-center items-center relative overflow-hidden">
+             <div className="absolute top-0 right-0 w-[150px] h-[150px] bg-[radial-gradient(ellipse_at_top_right,rgba(168,85,247,0.2)_0%,rgba(0,0,0,0)_60%)] pointer-events-none" />
+             
+            <h3 className="text-[12px] font-bold font-mono uppercase tracking-wider text-[#a855f7] mb-[24px] z-10 relative">
+              Ensemble Prediction
+            </h3>
             {multiPred.ensemble_prediction && (
-              <div className="space-y-3">
-                <div className={`text-3xl font-extrabold font-mono text-center ${DIR_COLOR(multiPred.ensemble_prediction.predicted_direction)}`}>
+              <div className="space-y-[16px] w-full z-10 relative">
+                <div className={`text-[48px] font-extrabold font-mono text-center leading-none ${DIR_COLOR(multiPred.ensemble_prediction.predicted_direction)}`}>
                   {multiPred.ensemble_prediction.predicted_direction}
                 </div>
-                <div className="text-center text-lg font-mono text-[var(--text-main)]">
+                <div className="text-center text-[24px] font-extrabold font-mono text-[var(--text-main)]">
                   {(multiPred.ensemble_prediction.predicted_return * 100).toFixed(3)}%
                 </div>
-                <div className="text-center text-xs text-[var(--text-muted)]">
-                  Agreement: {((multiPred.ensemble_prediction.model_agreement || 0) * 100).toFixed(1)}%
+                <div className="text-center bg-background border border-[var(--border-color)] rounded-[6px] py-[8px] mt-4">
+                  <span className="text-[10px] font-bold uppercase tracking-wider font-mono text-[var(--text-muted)]">Agreement</span>
+                  <div className="text-[14px] font-bold font-mono text-[var(--text-main)] mt-1">
+                    {((multiPred.ensemble_prediction.model_agreement || 0) * 100).toFixed(1)}%
+                  </div>
                 </div>
               </div>
             )}
-          </Card>
+          </div>
         </div>
       )}
 
       {/* Batch Results */}
       {batchResults.length > 0 && (
-        <Card className="p-5">
-          <h3 className="text-sm font-bold text-[var(--text-main)] mb-3 border-b border-[var(--border-color)] pb-2">
-            Batch Predictions — {algorithm} · {horizon}
+        <div className="inst-card p-[24px]">
+          <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] mb-[24px] border-b border-[var(--border-color)] pb-4 flex justify-between items-center">
+            <span>Batch Predictions</span>
+            <span className="text-[11px] font-mono text-[var(--text-muted)] px-3 py-1 bg-background border border-[var(--border-color)] rounded-[4px]">{algorithm} &bull; {horizon}</span>
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[16px]">
             {batchResults.map((p: any) => (
-              <div key={p.asset_symbol} className="bg-[var(--bg-main)] rounded-lg p-3 border border-[var(--border-color)]">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-bold text-[var(--text-main)]">{p.asset_symbol}</span>
-                  <span className={`text-xs font-bold ${DIR_COLOR(p.predicted_direction)}`}>{p.predicted_direction}</span>
+              <div key={p.asset_symbol} className="bg-background rounded-[8px] p-[16px] border border-[var(--border-color)] hover:border-[var(--primary)]/30 transition-colors group">
+                <div className="flex justify-between items-center mb-[12px]">
+                  <span className="text-[16px] font-extrabold font-heading text-[var(--text-main)] group-hover:text-[var(--primary)] transition-colors">{p.asset_symbol}</span>
+                  <span className={`text-[12px] font-extrabold font-mono tracking-wider ${DIR_COLOR(p.predicted_direction)}`}>{p.predicted_direction}</span>
                 </div>
-                <div className={`text-lg font-mono font-bold ${p.predicted_return >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                <div className={`text-[24px] font-extrabold font-mono leading-none mb-[16px] ${p.predicted_return >= 0 ? 'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.2)]' : 'text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.2)]'}`}>
                   {(p.predicted_return * 100).toFixed(3)}%
                 </div>
-                <div className="flex justify-between mt-1 text-[10px] text-[var(--text-muted)]">
+                <div className="flex justify-between mt-1 text-[10px] font-bold font-mono uppercase tracking-wider text-[var(--text-muted)] border-t border-[var(--border-color)] pt-3">
                   <span>Conf: {(p.confidence_score * 100).toFixed(1)}%</span>
                   <span>Risk: {(p.risk_score * 100).toFixed(1)}%</span>
                 </div>
               </div>
             ))}
           </div>
-        </Card>
+        </div>
       )}
     </div>
   );

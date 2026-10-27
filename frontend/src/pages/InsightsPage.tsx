@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from '../components/ui/Card';
 import { RefreshCw, BrainCircuit, Activity } from 'lucide-react';
 
 const getH = (): HeadersInit => { const t = localStorage.getItem('access_token'); return t ? { Authorization: `Bearer ${t}` } : {}; };
@@ -61,77 +60,96 @@ export const InsightsPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="max-w-[1120px] mx-auto space-y-6">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-extrabold font-heading tracking-tight text-[var(--text-main)] flex items-center gap-2">
-            <BrainCircuit className="w-6 h-6 text-purple-500" />
-            Quantitative Investment Insights &amp; Explainability
-          </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
+          <div className="flex items-center gap-2 text-[12px] font-mono font-bold text-[#a855f7] uppercase tracking-wider mb-1">
+            <BrainCircuit className="w-4 h-4" />
+            <span>Explainable AI</span>
+          </div>
+          <h2 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)]">
+            Quantitative Investment Insights
+          </h2>
+          <p className="text-[14px] text-[var(--text-muted)] m-0 mt-1 font-mono">
             Dynamic Explainable AI (XAI) feature attributions and APDE reallocation rationales.
           </p>
         </div>
         <button
           onClick={fetchData}
           disabled={loading}
-          className="flex items-center gap-1.5 bg-purple-600 hover:bg-purple-500 text-white font-medium text-sm px-3.5 py-1.5 rounded-lg transition-all disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-[13px] font-bold bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[#a855f7] text-[var(--text-main)] transition-all cursor-pointer disabled:opacity-50"
         >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#a855f7]' : ''}`} />
+          Refresh Insights
         </button>
       </div>
 
       {!cards.length && !loading ? (
-        <Card className="p-8 text-center text-[var(--text-muted)]">No active insights or recommendations.</Card>
+        <div className="inst-card p-12 text-center text-[var(--text-muted)] font-mono text-[13px]">No active insights or recommendations available.</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {cards.map((rec) => (
-            <Card key={rec.id} title={`${rec.target_asset || 'CASH'} — ${rec.recommendation_type}`} subtitle={`Confidence Level: ${(rec.confidence_score * 100).toFixed(1)}%`}>
-              <div className="space-y-4 pt-2">
-                <div className="flex items-center justify-between p-3 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)]">
+            <div key={rec.id} className="inst-card p-[24px] relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-[3px] bg-[#a855f7] group-hover:shadow-[0_0_15px_rgba(168,85,247,0.5)] transition-shadow" />
+              
+              <div className="mb-5 pb-4 border-b border-[var(--border-color)]">
+                <div className="text-[18px] font-bold font-heading text-[var(--text-main)] mb-1">
+                  {rec.target_asset || 'CASH'} &mdash; {rec.recommendation_type}
+                </div>
+                <div className="text-[12px] font-mono text-[var(--text-muted)] uppercase tracking-wider">
+                  Confidence Level: <span className="text-[#a855f7] font-bold">{(rec.confidence_score * 100).toFixed(1)}%</span>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <div className="flex items-center justify-between p-[16px] rounded-[10px] bg-background border border-[var(--border-color)]">
                   <div>
-                    <div className="text-[11px] font-mono text-[var(--text-muted)] uppercase">Suggested Reallocation</div>
-                    <div className="text-base font-bold font-heading text-[var(--text-main)] mt-0.5">{rec.recommendation_type}</div>
+                    <div className="text-[11px] font-mono text-[var(--text-muted)] uppercase tracking-wider mb-1">Suggested Reallocation</div>
+                    <div className="text-[15px] font-bold font-heading text-[var(--text-main)]">{rec.recommendation_type}</div>
                   </div>
-                  <div className="text-lg font-mono font-black text-[#16A34A]">
+                  <div className="text-[28px] font-mono font-extrabold text-[var(--success)] leading-none drop-shadow-[0_0_8px_rgba(23,217,140,0.3)]">
                     +{(rec.reallocation_pct * 100).toFixed(1)}%
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-mono font-bold text-[var(--text-muted)] uppercase mb-2 flex items-center gap-1">
-                     <Activity className="w-3.5 h-3.5" /> Expected Portfolio Impact
+                  <h4 className="text-[12px] font-mono font-bold text-[var(--text-muted)] uppercase mb-[10px] tracking-wider flex items-center gap-2">
+                     <Activity className="w-4 h-4 text-[var(--primary)]" /> Expected Portfolio Impact
                   </h4>
-                  <p className="text-xs text-[var(--text-main)] leading-relaxed bg-[var(--bg-main)] p-3 rounded-lg border border-[var(--border-color)]">
-                    Expected return improvement: +{(rec.expected_return_improvement * 100).toFixed(2)}%. 
-                    Risk reduction: {(rec.risk_reduction_pct * 100).toFixed(2)}%.
-                    Optimization target aligned with {rec.market_regime.toLowerCase()} market regime.
+                  <p className="text-[13px] text-[var(--text-muted)] font-mono leading-relaxed bg-background p-[16px] rounded-[10px] border border-[var(--border-color)]">
+                    Expected return improvement: <span className="text-[var(--success)] font-bold">+{(rec.expected_return_improvement * 100).toFixed(2)}%</span>.<br/> 
+                    Risk reduction: <span className="text-[var(--secondary)] font-bold">{(rec.risk_reduction_pct * 100).toFixed(2)}%</span>.<br/>
+                    Optimization target aligned with <span className="text-[var(--text-main)] font-bold uppercase">{rec.market_regime.toLowerCase()}</span> market regime.
                   </p>
                 </div>
 
                 <div>
-                  <h4 className="text-xs font-mono font-bold text-[var(--text-muted)] uppercase mb-2">Explainable AI Attributions</h4>
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center text-xs font-mono p-2 rounded bg-[var(--bg-main)] border border-[var(--border-color)] gap-4">
-                      <span className="text-[var(--text-muted)] w-24 flex-shrink-0">Why Stock</span>
-                      <span className="font-bold text-[#16A34A] text-right line-clamp-2">{rec.why_this_stock}</span>
+                  <h4 className="text-[12px] font-mono font-bold text-[var(--text-muted)] uppercase mb-[10px] tracking-wider flex items-center gap-2">
+                    <BrainCircuit className="w-4 h-4 text-[#a855f7]" />
+                    Explainable AI Attributions
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center text-[12px] font-mono p-[14px] rounded-[8px] bg-background border border-[var(--border-color)] gap-4">
+                      <span className="text-[var(--text-muted)] uppercase tracking-wider w-[100px] flex-shrink-0">Why Stock</span>
+                      <span className="font-bold text-[var(--success)] text-right line-clamp-2 leading-relaxed">{rec.why_this_stock}</span>
                     </div>
-                    <div className="flex justify-between items-center text-xs font-mono p-2 rounded bg-[var(--bg-main)] border border-[var(--border-color)] gap-4">
-                      <span className="text-[var(--text-muted)] w-24 flex-shrink-0">Why Now</span>
-                      <span className="font-bold text-amber-500 text-right line-clamp-2">{rec.why_now}</span>
+                    <div className="flex justify-between items-center text-[12px] font-mono p-[14px] rounded-[8px] bg-background border border-[var(--border-color)] gap-4">
+                      <span className="text-[var(--text-muted)] uppercase tracking-wider w-[100px] flex-shrink-0">Why Now</span>
+                      <span className="font-bold text-[#eab308] text-right line-clamp-2 leading-relaxed">{rec.why_now}</span>
                     </div>
-                    <div className="flex justify-between items-center text-xs font-mono p-2 rounded bg-[var(--bg-main)] border border-[var(--border-color)] gap-4">
-                      <span className="text-[var(--text-muted)] w-24 flex-shrink-0">Percentage</span>
-                      <span className="font-bold text-blue-500 text-right line-clamp-2">{rec.why_this_percentage}</span>
+                    <div className="flex justify-between items-center text-[12px] font-mono p-[14px] rounded-[8px] bg-background border border-[var(--border-color)] gap-4">
+                      <span className="text-[var(--text-muted)] uppercase tracking-wider w-[100px] flex-shrink-0">Percentage</span>
+                      <span className="font-bold text-[var(--secondary)] text-right line-clamp-2 leading-relaxed">{rec.why_this_percentage}</span>
                     </div>
                   </div>
                 </div>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}
     </div>
   );
 };
+
+export default InsightsPage;

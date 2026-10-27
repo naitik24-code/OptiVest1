@@ -1,655 +1,110 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import {
-  TrendingUp,
-  TrendingDown,
-  ShieldCheck,
-  Cpu,
-  ArrowRight,
-  BarChart2,
-  Sliders,
-  Layers,
-  Zap,
-  Check,
-  Eye
-} from 'lucide-react';
 import { Navbar } from '../components/shared/Navbar';
-import { InteractiveChart } from '../components/ui/InteractiveChart';
 
 export const LandingPage: React.FC = () => {
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'1D' | '1W' | '1M' | '1Y' | 'ALL'>('1M');
-
-  // Market indices data
-  const indices = [
-    { symbol: 'S&P 500', name: 'SPX', value: '5,088.80', change: '+24.60', pct: '+0.49%', isUp: true },
-    { symbol: 'NASDAQ 100', name: 'NDX', value: '17,937.60', change: '+142.10', pct: '+0.80%', isUp: true },
-    { symbol: 'DOW JONES', name: 'DJI', value: '38,989.84', change: '-23.40', pct: '-0.06%', isUp: false },
-    { symbol: 'FTSE 100', name: 'UKX', value: '7,706.28', change: '+18.90', pct: '+0.25%', isUp: true },
-  ];
-
-  // Top gainers/losers
-  const topGainers = [
-    { ticker: 'NVDA', name: 'NVIDIA Corp', price: '$788.17', change: '+4.2% ', isUp: true },
-    { ticker: 'MSFT', name: 'Microsoft Corp', price: '$410.34', change: '+1.8%', isUp: true },
-    { ticker: 'AMD', name: 'Adv Micro Devices', price: '$176.50', change: '+3.1%', isUp: true },
-  ];
-
-  const topLosers = [
-    { ticker: 'TSLA', name: 'Tesla Inc', price: '$197.40', change: '-2.4%', isUp: false },
-    { ticker: 'AAPL', name: 'Apple Inc', price: '$182.52', change: '-0.8%', isUp: false },
-    { ticker: 'INTC', name: 'Intel Corp', price: '$42.80', change: '-1.5%', isUp: false },
-  ];
-
-  // Market news items
-  const newsItems = [
-    { title: 'Fed Signals Patience on Interest Rate Adjustments', source: 'Bloomberg', time: '12m ago' },
-    { title: 'Tech Sector Earnings Outperform Consensus Targets by 8.4%', source: 'Reuters', time: '45m ago' },
-    { title: 'Treasury Yields Stabilize Near 4.25% Benchmark', source: 'Financial Times', time: '2h ago' },
-  ];
-
   return (
-    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] flex flex-col font-sans selection:bg-primary selection:text-white transition-colors duration-200">
+    <div className="min-h-screen bg-background text-[var(--text-main)] flex flex-col font-sans transition-colors duration-200">
       <Navbar />
 
-      {/* ==================== 1. HERO SECTION (TWO-COLUMN) ==================== */}
-      <section className="relative py-16 lg:py-24 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          {/* LEFT COLUMN: Headlines & CTAs */}
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }} 
-            animate={{ opacity: 1, x: 0 }} 
-            transition={{ duration: 0.8 }} 
-            className="lg:col-span-5 space-y-6 text-left"
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-[var(--bg-card)] border border-[var(--border-color)] text-[11px] font-mono text-primary font-medium">
-              <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
-              INSTITUTIONAL PORTFOLIO INTELLIGENCE
+      <section className="pt-[70px] pb-[90px] px-[22px]">
+        <div className="max-w-[1120px] mx-auto grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-[46px] items-center">
+          <div>
+            <div className="font-mono text-[12px] text-[var(--primary)] flex items-center gap-[8px] mb-[18px] font-bold tracking-wider">
+              <span className="w-[16px] h-[1px] bg-[var(--primary)] block"></span>
+              ADAPTIVE PORTFOLIO DECISION ENGINE
             </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-heading tracking-tight text-[var(--text-main)] leading-[1.1]">
-              Invest Smarter. <br />
-              <span className="text-primary">Manage Wealth</span> with Confidence.
+            <h1 className="text-[clamp(2.4rem,6vw,4.4rem)] leading-[0.98] font-bold tracking-[-0.03em] m-0 mb-[20px] font-heading">
+              Your portfolio,<br />
+              thinking <em className="not-italic text-[var(--primary)] font-heading drop-shadow-[0_0_15px_rgba(255,90,31,0.3)]">for itself.</em>
             </h1>
-
-            <p className="text-base text-[var(--text-muted)] leading-relaxed max-w-lg font-normal">
-              Professional wealth management platform providing real-time portfolio tracking, multi-asset risk analytics, and quantitative allocation optimization powered by adaptive intelligence.
+            <p className="text-[var(--text-muted)] text-[16px] leading-[1.6] max-w-[46ch] m-0 mb-[28px] font-mono">
+              OptiVest reallocates, hedges, and explains every move in real time &mdash; bounded by the risk limits you set, never the other way around.
             </p>
-
-            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="flex gap-[12px] flex-wrap">
               <Link to="/register">
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto px-6 py-3 bg-primary hover:bg-primary/90 text-white font-heading font-bold text-sm rounded-lg shadow-lg shadow-primary/30 transition-all border border-primary/30 flex items-center justify-center gap-2">
-                  <span>Open Investor Account</span>
-                  <ArrowRight className="w-4 h-4" />
-                </motion.button>
+                <button className="cursor-pointer px-[24px] py-[14px] rounded-[8px] font-bold text-[14px] transition-all bg-[var(--primary)] text-[#08090b] hover:bg-[#ff713b] hover:-translate-y-[1px] shadow-[0_0_15px_rgba(255,90,31,0.2)]">
+                  Open an account
+                </button>
               </Link>
               <Link to="/login">
-                <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full sm:w-auto px-6 py-3 bg-[var(--bg-card)] hover:bg-[var(--border-color)] text-[var(--text-main)] font-heading font-semibold text-sm rounded-lg border border-[var(--border-color)] transition-all flex items-center justify-center gap-2">
-                  <Eye className="w-4 h-4 text-[var(--text-muted)]" />
-                  <span>View Live Demo</span>
-                </motion.button>
+                <button className="cursor-pointer px-[24px] py-[14px] rounded-[8px] font-bold text-[14px] transition-all border border-[var(--border-color)] text-[var(--text-main)] hover:border-[var(--primary)] hover:text-[var(--primary)]">
+                  See it live
+                </button>
               </Link>
             </div>
+          </div>
 
-            {/* Trust Indicators */}
-            <div className="pt-6 border-t border-[var(--border-color)] grid grid-cols-3 gap-4 text-left">
+          <div className="inst-card p-[24px] relative overflow-hidden pulse-card shadow-[0_0_30px_rgba(255,90,31,0.05)] border-[rgba(255,90,31,0.2)]">
+            <div className="flex justify-between items-baseline mb-[4px]">
               <div>
-                <div className="text-xs font-mono font-bold text-[var(--text-main)] flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A]" /> 256-bit AES
-                </div>
-                <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Enterprise Security</div>
+                <div className="text-[12px] text-[var(--text-muted)] font-mono uppercase tracking-wider font-bold">AI Portfolio &bull; Live</div>
+                <div className="font-mono text-[34px] font-bold mt-1 text-[var(--text-main)] drop-shadow-[0_0_10px_rgba(255,90,31,0.15)]" id="pv">$1,248,950</div>
               </div>
-              <div>
-                <div className="text-xs font-mono font-bold text-[var(--text-main)] flex items-center gap-1">
-                  <Zap className="w-3.5 h-3.5 text-primary" /> &lt; 15ms
-                </div>
-                <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Execution Latency</div>
-              </div>
-              <div>
-                <div className="text-xs font-mono font-bold text-[var(--text-main)] flex items-center gap-1">
-                  <Layers className="w-3.5 h-3.5 text-indigo-400" /> 100% Audit
-                </div>
-                <div className="text-[11px] text-[var(--text-muted)] mt-0.5">Clean Architecture</div>
-              </div>
+              <div className="font-mono text-[14px] font-bold text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.5)]">&#9650; +1.15%</div>
             </div>
-          </motion.div>
-
-          {/* RIGHT COLUMN: Investor-Grade Dashboard Preview */}
-          <motion.div 
-            initial={{ opacity: 0, x: 50 }} 
-            animate={{ opacity: 1, x: 0 }} 
-            transition={{ duration: 0.8, delay: 0.2 }} 
-            className="lg:col-span-7"
-          >
-            <div className="inst-card rounded-xl p-5 border border-[var(--border-color)] shadow-2xl relative">
-              {/* Header Bar */}
-              <div className="flex items-center justify-between pb-4 mb-4 border-b border-[var(--border-color)]">
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 rounded-full bg-[#16A34A]"></div>
-                  <span className="font-heading text-xs font-bold text-[var(--text-main)] tracking-wider uppercase">
-                    PORTFOLIO OVERVIEW &bull; GLOBAL MACRO
-                  </span>
-                </div>
-                <div className="flex items-center gap-1 bg-[var(--bg-main)] p-1 rounded-md border border-[var(--border-color)] text-[10px] font-mono">
-                  {(['1D', '1W', '1M', '1Y', 'ALL'] as const).map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setSelectedTimeframe(t)}
-                      className={`px-2 py-0.5 rounded ${
-                        selectedTimeframe === t ? 'bg-primary text-white font-bold' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Main Metrics Bar */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-                <div className="bg-[var(--bg-main)] p-3.5 rounded-lg border border-[var(--border-color)]">
-                  <div className="text-[11px] font-mono text-[var(--text-muted)] uppercase">Total Asset Value</div>
-                  <div className="text-xl font-mono font-bold text-[var(--text-main)] mt-0.5">$1,248,950.40</div>
-                  <div className="text-[11px] font-mono text-[#16A34A] font-semibold flex items-center gap-1 mt-1">
-                    <TrendingUp className="w-3 h-3" /> +$14,230.80 (+1.15%) Today
-                  </div>
-                </div>
-
-                <div className="bg-[var(--bg-main)] p-3.5 rounded-lg border border-[var(--border-color)]">
-                  <div className="text-[11px] font-mono text-[var(--text-muted)] uppercase">Sharpe Ratio</div>
-                  <div className="text-xl font-mono font-bold text-[var(--text-main)] mt-0.5">2.48</div>
-                  <div className="text-[11px] font-mono text-primary font-semibold mt-1">
-                    Top 5% Risk-Adjusted Return
-                  </div>
-                </div>
-
-                <div className="bg-[var(--bg-main)] p-3.5 rounded-lg border border-[var(--border-color)]">
-                  <div className="text-[11px] font-mono text-[var(--text-muted)] uppercase">Reallocation Cap (C_realloc)</div>
-                  <div className="text-xl font-mono font-bold text-primary mt-0.5">15.0%</div>
-                  <div className="text-[11px] font-mono text-[var(--text-muted)] mt-1">
-                    Risk Penalty &lambda; = 3/5
-                  </div>
-                </div>
-              </div>
-
-              {/* Interactive Performance Curve with Google-style crosshair & percentage axis */}
-              <div className="mb-5">
-                <InteractiveChart
-                  data={[
-                    { date: 'Jul 1', price: 1054600 },
-                    { date: 'Jul 5', price: 1062000 },
-                    { date: 'Jul 10', price: 1089400 },
-                    { date: 'Jul 15', price: 1075200 },
-                    { date: 'Jul 20', price: 1112000 },
-                    { date: 'Jul 25', price: 1145000 },
-                    { date: 'Jul 30', price: 1130000 },
-                    { date: 'Aug 4', price: 1182000 },
-                    { date: 'Aug 8', price: 1198000 },
-                    { date: 'Aug 12', price: 1215000 },
-                    { date: 'Aug 17', price: 1248950 },
-                  ]}
-                  height={220}
-                />
-              </div>
-
-              {/* Asset Allocation & Watchlist Preview */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-[var(--bg-main)] p-3.5 rounded-lg border border-[var(--border-color)]">
-                  <div className="text-[11px] font-mono text-[var(--text-muted)] uppercase mb-2">Asset Allocation</div>
-                  <div className="space-y-2 text-xs">
-                    <div>
-                      <div className="flex justify-between font-mono mb-1 text-[11px]">
-                        <span>Equities</span>
-                        <span className="font-bold text-[var(--text-main)]">65%</span>
-                      </div>
-                      <div className="w-full h-1.5 bg-[var(--bg-card)] rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: '65%' }}></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between font-mono mb-1 text-[11px]">
-                        <span>Fixed Income</span>
-                        <span className="font-bold text-[var(--text-main)]">20%</span>
-                      </div>
-                      <div className="w-full h-1.5 bg-[var(--bg-card)] rounded-full overflow-hidden">
-                        <div className="h-full bg-primary rounded-full" style={{ width: '20%' }}></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="flex justify-between font-mono mb-1 text-[11px]">
-                        <span>Commodities &amp; Cash</span>
-                        <span className="font-bold text-[var(--text-main)]">15%</span>
-                      </div>
-                      <div className="w-full h-1.5 bg-[var(--bg-card)] rounded-full overflow-hidden">
-                        <div className="h-full bg-[#16A34A] rounded-full" style={{ width: '15%' }}></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-[var(--bg-main)] p-3.5 rounded-lg border border-[var(--border-color)]">
-                  <div className="text-[11px] font-mono text-[var(--text-muted)] uppercase mb-2">Target Recommendations</div>
-                  <div className="space-y-2 text-xs">
-                    <div className="flex items-center justify-between p-2 rounded bg-[var(--bg-card)] border border-[var(--border-color)]">
-                      <div className="font-mono">
-                        <span className="font-bold text-[var(--text-main)]">NVDA</span>
-                        <span className="text-[10px] text-[var(--text-muted)] ml-2">Overweight</span>
-                      </div>
-                      <span className="text-[10px] font-mono font-bold text-[#16A34A] bg-[#16A34A]/10 px-1.5 py-0.5 rounded border border-[#16A34A]/20">+3.5%</span>
-                    </div>
-                    <div className="flex items-center justify-between p-2 rounded bg-[var(--bg-card)] border border-[var(--border-color)]">
-                      <div className="font-mono">
-                        <span className="font-bold text-[var(--text-main)]">TSLA</span>
-                        <span className="text-[10px] text-[var(--text-muted)] ml-2">Underweight</span>
-                      </div>
-                      <span className="text-[10px] font-mono font-bold text-[#DC2626] bg-[#DC2626]/10 px-1.5 py-0.5 rounded border border-[#DC2626]/20">-2.0%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </motion.div>
-
+            
+            <svg className="w-full h-[120px] block mt-[14px]" viewBox="0 0 400 120" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="var(--primary)" stopOpacity=".25" />
+                  <stop offset="100%" stopColor="var(--primary)" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <polygon className="chart-fill transition-all duration-1000" points="0,110 0,80 40,86 80,60 120,68 160,42 200,50 240,28 280,36 320,18 360,24 400,8 400,120 0,120" fill="url(#g1)" />
+              <polyline className="chart-path transition-all duration-1000" stroke="var(--primary)" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" points="0,80 40,86 80,60 120,68 160,42 200,50 240,28 280,36 320,18 360,24 400,8" />
+            </svg>
+          </div>
         </div>
       </section>
 
-      {/* ==================== 2. MARKET OVERVIEW SECTION ==================== */}
-      <motion.section id="markets" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.7 }} className="py-16 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
-          <div>
-            <div className="text-xs font-mono text-primary font-bold uppercase tracking-wider mb-1">
-              REAL-TIME MARKET INTELLIGENCE
+      <section className="pt-0 pb-[64px] px-[22px]">
+        <div className="max-w-[1120px] mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-[1px] bg-[var(--border-color)] border border-[var(--border-color)] rounded-[12px] overflow-hidden mt-[72px]">
+            <div className="bg-background hover:bg-[var(--surface2)] transition-colors p-[30px_20px] text-center md:text-left">
+              <div className="font-mono text-[32px] font-extrabold text-[var(--primary)] drop-shadow-[0_0_8px_rgba(255,90,31,0.2)]">2.48</div>
+              <div className="text-[12px] font-mono text-[var(--text-muted)] mt-[6px] uppercase tracking-wider font-bold">Sharpe ratio, trailing 12mo</div>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-extrabold font-heading text-[var(--text-main)]">
-              Global Markets &amp; Asset Benchmark Performance
-            </h2>
+            <div className="bg-background hover:bg-[var(--surface2)] transition-colors p-[30px_20px] text-center md:text-left">
+              <div className="font-mono text-[32px] font-extrabold text-[var(--primary)] drop-shadow-[0_0_8px_rgba(255,90,31,0.2)]">15%</div>
+              <div className="text-[12px] font-mono text-[var(--text-muted)] mt-[6px] uppercase tracking-wider font-bold">Max reallocation cap (C_realloc)</div>
+            </div>
+            <div className="bg-background hover:bg-[var(--surface2)] transition-colors p-[30px_20px] text-center md:text-left">
+              <div className="font-mono text-[32px] font-extrabold text-[var(--primary)] drop-shadow-[0_0_8px_rgba(255,90,31,0.2)]">&lt;15ms</div>
+              <div className="text-[12px] font-mono text-[var(--text-muted)] mt-[6px] uppercase tracking-wider font-bold">Decision latency</div>
+            </div>
           </div>
-          <div className="text-xs text-[var(--text-muted)] font-mono">
-            Updated live from institutional market feeds
-          </div>
-        </div>
 
-        {/* Global Indices Ticker Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {indices.map((idx) => (
-            <div key={idx.symbol} className="inst-card p-4 rounded-xl inst-card-hover">
-              <div className="flex justify-between items-center text-xs font-mono text-[var(--text-muted)]">
-                <span>{idx.symbol}</span>
-                <span className="font-bold text-[var(--text-main)]">{idx.name}</span>
+          <div className="mt-[72px]">
+            <h2 className="text-[26px] tracking-[-0.02em] m-0 mb-[8px] font-heading font-bold text-[var(--text-main)]">Three governed steps, continuously</h2>
+            <p className="text-[var(--text-muted)] text-[14px] font-mono m-0 mb-[32px]">Nothing moves outside the bounds you set at onboarding.</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-[16px] mt-[20px]">
+              <div className="inst-card p-[24px] transition-transform duration-300 hover:-translate-y-[4px]">
+                <div className="w-[40px] h-[40px] rounded-[10px] bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center font-mono font-bold mb-5 border border-[var(--primary)]/20 shadow-[0_0_10px_rgba(255,90,31,0.1)]">01</div>
+                <h3 className="text-[16px] font-bold mb-[10px] font-heading text-[var(--text-main)]">Read the regime</h3>
+                <p className="text-[13px] text-[var(--text-muted)] leading-[1.6] m-0 font-mono">Volatility, momentum and macro signals are scored every session, across every held asset.</p>
               </div>
-              <div className="text-lg font-mono font-bold text-[var(--text-main)] mt-1">{idx.value}</div>
-              <div className={`text-xs font-mono font-semibold flex items-center gap-1 mt-1 ${idx.isUp ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
-                {idx.isUp ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-                <span>{idx.change} ({idx.pct})</span>
+              <div className="inst-card p-[24px] transition-transform duration-300 hover:-translate-y-[4px]">
+                <div className="w-[40px] h-[40px] rounded-[10px] bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center font-mono font-bold mb-5 border border-[var(--primary)]/20 shadow-[0_0_10px_rgba(255,90,31,0.1)]">02</div>
+                <h3 className="text-[16px] font-bold mb-[10px] font-heading text-[var(--text-main)]">Propose a shift</h3>
+                <p className="text-[13px] text-[var(--text-muted)] leading-[1.6] m-0 font-mono">A bounded reallocation is proposed &mdash; capped by your C_realloc and risk penalty &lambda;, never exceeding them.</p>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Gainers, Losers, and Market News Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Top Gainers Card */}
-          <div className="inst-card p-5 rounded-xl border border-[var(--border-color)]">
-            <h3 className="text-xs font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider mb-4 flex items-center justify-between">
-              <span>Top Gainers Today</span>
-              <span className="text-[#16A34A]">OVERWEIGHT SYMBOLS</span>
-            </h3>
-            <div className="space-y-3">
-              {topGainers.map((stk) => (
-                <div key={stk.ticker} className="flex items-center justify-between p-3 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)]">
-                  <div>
-                    <div className="font-mono font-bold text-sm text-[var(--text-main)]">{stk.ticker}</div>
-                    <div className="text-[11px] text-[var(--text-muted)]">{stk.name}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-mono font-bold text-xs text-[var(--text-main)]">{stk.price}</div>
-                    <div className="text-xs font-mono font-bold text-[#16A34A]">{stk.change}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Top Losers Card */}
-          <div className="inst-card p-5 rounded-xl border border-[var(--border-color)]">
-            <h3 className="text-xs font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider mb-4 flex items-center justify-between">
-              <span>Top Decliners</span>
-              <span className="text-[#DC2626]">UNDERWEIGHT SYMBOLS</span>
-            </h3>
-            <div className="space-y-3">
-              {topLosers.map((stk) => (
-                <div key={stk.ticker} className="flex items-center justify-between p-3 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)]">
-                  <div>
-                    <div className="font-mono font-bold text-sm text-[var(--text-main)]">{stk.ticker}</div>
-                    <div className="text-[11px] text-[var(--text-muted)]">{stk.name}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-mono font-bold text-xs text-[var(--text-main)]">{stk.price}</div>
-                    <div className="text-xs font-mono font-bold text-[#DC2626]">{stk.change}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Market News Feed */}
-          <div className="inst-card p-5 rounded-xl border border-[var(--border-color)]">
-            <h3 className="text-xs font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider mb-4">
-              Institutional Market Wire
-            </h3>
-            <div className="space-y-3">
-              {newsItems.map((item, i) => (
-                <div key={i} className="p-3 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] space-y-1">
-                  <h4 className="text-xs font-semibold text-[var(--text-main)] leading-snug line-clamp-2 hover:text-primary cursor-pointer transition-colors">
-                    {item.title}
-                  </h4>
-                  <div className="flex justify-between text-[10px] font-mono text-[var(--text-muted)]">
-                    <span>{item.source}</span>
-                    <span>{item.time}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* ==================== 3. PORTFOLIO FEATURES & INTELLIGENCE ==================== */}
-      <motion.section id="features" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.7 }} className="py-20 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <div className="text-xs font-mono text-primary font-bold uppercase tracking-wider">
-            ENTERPRISE CAPABILITIES
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold font-heading text-[var(--text-main)]">
-            Institutional-Grade Wealth Management Architecture
-          </h2>
-          <p className="text-sm text-[var(--text-muted)] leading-relaxed">
-            Built for institutional investors and family offices requiring rigorous risk controls, continuous rebalancing, and transparent quantitative decision rationales.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="inst-card p-6 rounded-xl inst-card-hover flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="w-10 h-10 rounded-lg bg-primary/15 border border-primary/30 text-primary flex items-center justify-center">
-                <BarChart2 className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold font-heading text-[var(--text-main)]">Multi-Horizon Risk Analytics</h3>
-              <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-                Compute VaR (Value at Risk), Sharpe ratio, and Maximum Drawdown metrics continuously across equity and fixed income holdings under various market stress scenarios.
-              </p>
-            </div>
-            <div className="mt-6 pt-4 border-t border-[var(--border-color)] flex items-center gap-2 text-xs font-mono text-primary">
-              <Check className="w-4 h-4 text-[#16A34A]" />
-              <span>Real-Time Factor Attribution</span>
-            </div>
-          </div>
-
-          <div className="inst-card p-6 rounded-xl inst-card-hover flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="w-10 h-10 rounded-lg bg-primary/15 border border-primary/30 text-primary flex items-center justify-center">
-                <Sliders className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold font-heading text-[var(--text-main)]">Adaptive Rebalancing Solver</h3>
-              <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-                Execute constrained multi-objective utility optimizations bounded strictly by your custom reallocation cap (C_realloc) and risk tolerance level (&lambda;).
-              </p>
-            </div>
-            <div className="mt-6 pt-4 border-t border-[var(--border-color)] flex items-center gap-2 text-xs font-mono text-primary">
-              <Check className="w-4 h-4 text-[#16A34A]" />
-              <span>Quadratic Program Utility</span>
-            </div>
-          </div>
-
-          <div className="inst-card p-6 rounded-xl inst-card-hover flex flex-col justify-between">
-            <div className="space-y-4">
-              <div className="w-10 h-10 rounded-lg bg-[#16A34A]/15 border border-[#16A34A]/30 text-[#16A34A] flex items-center justify-center">
-                <Cpu className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-bold font-heading text-[var(--text-main)]">Transparent Explainability</h3>
-              <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-                Every trade recommendation is coupled with explicit Shapley feature attributions detailing momentum, volatility, and macroeconomic drivers for complete transparency.
-              </p>
-            </div>
-            <div className="mt-6 pt-4 border-t border-[var(--border-color)] flex items-center gap-2 text-xs font-mono text-primary">
-              <Check className="w-4 h-4 text-[#16A34A]" />
-              <span>Audit-Ready SHAP Rationales</span>
-            </div>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* ==================== 4. HOW IT WORKS ==================== */}
-      <motion.section initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.7 }} className="py-20 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <div className="text-xs font-mono text-primary font-bold uppercase tracking-wider">
-            WORKFLOW &amp; EXECUTION
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold font-heading text-[var(--text-main)]">
-            Four Steps to Continuous Portfolio Governance
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="inst-card p-5 rounded-xl border border-[var(--border-color)] relative">
-            <div className="text-3xl font-mono font-black text-primary/40 mb-3">01</div>
-            <h3 className="text-sm font-bold font-heading text-[var(--text-main)] mb-2">Set Risk Governance</h3>
-            <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-              Define your maximum reallocation cap (C_realloc) and risk penalty coefficient (&lambda;).
-            </p>
-          </div>
-
-          <div className="inst-card p-5 rounded-xl border border-[var(--border-color)] relative">
-            <div className="text-3xl font-mono font-black text-primary/40 mb-3">02</div>
-            <h3 className="text-sm font-bold font-heading text-[var(--text-main)] mb-2">Continuous Factor Analysis</h3>
-            <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-              Ingest real-time pricing, macro indicators, and technical metrics across multi-asset universes.
-            </p>
-          </div>
-
-          <div className="inst-card p-5 rounded-xl border border-[var(--border-color)] relative">
-            <div className="text-3xl font-mono font-black text-indigo-500/40 mb-3">03</div>
-            <h3 className="text-sm font-bold font-heading text-[var(--text-main)] mb-2">APDE Optimization</h3>
-            <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-              Compute utility-maximizing target weights balancing return expectations and drawdown risk.
-            </p>
-          </div>
-
-          <div className="inst-card p-5 rounded-xl border border-[var(--border-color)] relative">
-            <div className="text-3xl font-mono font-black text-[#16A34A]/40 mb-3">04</div>
-            <h3 className="text-sm font-bold font-heading text-[var(--text-main)] mb-2">Paper Trading Audit</h3>
-            <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-              Validate rebalancing performance in simulated sandbox execution before deploying capital.
-            </p>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* ==================== 5. SECURITY & TRUST ==================== */}
-      <motion.section id="security" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.7 }} className="py-20 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-6">
-            <div className="text-xs font-mono text-[#16A34A] font-bold uppercase tracking-wider">
-              ENTERPRISE SECURITY &amp; COMPLIANCE
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold font-heading text-[var(--text-main)]">
-              Bank-Grade Infrastructure Designed for Institutional Trust
-            </h2>
-            <p className="text-sm text-[var(--text-muted)] leading-relaxed">
-              OptiVest AI enforces strict data isolation, zero-trust token authentication, and continuous vulnerability monitoring across all backend microservices.
-            </p>
-
-            <div className="space-y-4 pt-2">
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded bg-[#16A34A]/20 text-[#16A34A] flex items-center justify-center shrink-0 mt-0.5">
-                  <Check className="w-3.5 h-3.5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[var(--text-main)]">End-to-End Payload Encryption</h4>
-                  <p className="text-[11px] text-[var(--text-muted)]">256-bit AES encryption at rest and TLS 1.3 in transit.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded bg-[#16A34A]/20 text-[#16A34A] flex items-center justify-center shrink-0 mt-0.5">
-                  <Check className="w-3.5 h-3.5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[var(--text-main)]">Isolated Database Schema</h4>
-                  <p className="text-[11px] text-[var(--text-muted)]">Strict relational user foreign-key boundaries with cascading deletion isolation.</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded bg-[#16A34A]/20 text-[#16A34A] flex items-center justify-center shrink-0 mt-0.5">
-                  <Check className="w-3.5 h-3.5" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-bold text-[var(--text-main)]">Clean Architecture Separation</h4>
-                  <p className="text-[11px] text-[var(--text-muted)]">Strict Router &rarr; Service &rarr; Repository decoupling ensures reliable testability.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-6">
-            <div className="inst-card p-6 rounded-xl border border-[var(--border-color)] space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[var(--border-color)]">
-                <span className="text-xs font-mono font-bold text-[var(--text-main)]">SECURITY AUDIT LOG</span>
-                <span className="text-[10px] font-mono text-[#16A34A] bg-[#16A34A]/10 px-2 py-0.5 rounded border border-[#16A34A]/20">PASSED 100%</span>
-              </div>
-              <div className="space-y-2.5 font-mono text-[11px]">
-                <div className="p-2.5 rounded bg-[var(--bg-main)] border border-[var(--border-color)] flex justify-between">
-                  <span className="text-[var(--text-muted)]">Bcrypt Hash Salt (72-byte Limit)</span>
-                  <span className="text-[#16A34A]">VERIFIED</span>
-                </div>
-                <div className="p-2.5 rounded bg-[var(--bg-main)] border border-[var(--border-color)] flex justify-between">
-                  <span className="text-[var(--text-muted)]">JWT Bearer Token Signature</span>
-                  <span className="text-[#16A34A]">HS256 ACTIVE</span>
-                </div>
-                <div className="p-2.5 rounded bg-[var(--bg-main)] border border-[var(--border-color)] flex justify-between">
-                  <span className="text-[var(--text-muted)]">Pytest SQLite &amp; Postgres Dialect Check</span>
-                  <span className="text-[#16A34A]">0 ERRORS</span>
-                </div>
+              <div className="inst-card p-[24px] transition-transform duration-300 hover:-translate-y-[4px]">
+                <div className="w-[40px] h-[40px] rounded-[10px] bg-[var(--primary)]/10 text-[var(--primary)] flex items-center justify-center font-mono font-bold mb-5 border border-[var(--primary)]/20 shadow-[0_0_10px_rgba(255,90,31,0.1)]">03</div>
+                <h3 className="text-[16px] font-bold mb-[10px] font-heading text-[var(--text-main)]">Explain the why</h3>
+                <p className="text-[13px] text-[var(--text-muted)] leading-[1.6] m-0 font-mono">Every trade ships with a plain-language reason: why this asset, why now, why this size.</p>
               </div>
             </div>
           </div>
         </div>
-      </motion.section>
-
-      {/* ==================== 6. TECHNOLOGY STACK ==================== */}
-      <motion.section id="technology" initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.7 }} className="py-16 px-6 max-w-7xl mx-auto w-full border-b border-[var(--border-color)]">
-        <div className="text-center max-w-3xl mx-auto mb-12 space-y-2">
-          <div className="text-xs font-mono text-primary font-bold uppercase tracking-wider">
-            SYSTEM ENGINEERING
-          </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold font-heading text-[var(--text-main)]">
-            Powered by High-Performance FinTech Architecture
-          </h2>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div className="inst-card p-4 rounded-xl border border-[var(--border-color)]">
-            <div className="text-sm font-bold font-heading text-[var(--text-main)]">FastAPI</div>
-            <div className="text-[11px] font-mono text-[var(--text-muted)] mt-1">Python 3.11 Async Backend</div>
-          </div>
-          <div className="inst-card p-4 rounded-xl border border-[var(--border-color)]">
-            <div className="text-sm font-bold font-heading text-[var(--text-main)]">SQLAlchemy 2.0</div>
-            <div className="text-[11px] font-mono text-[var(--text-muted)] mt-1">ORM &amp; Relational Schema</div>
-          </div>
-          <div className="inst-card p-4 rounded-xl border border-[var(--border-color)]">
-            <div className="text-sm font-bold font-heading text-[var(--text-main)]">React 18 &amp; Vite</div>
-            <div className="text-[11px] font-mono text-[var(--text-muted)] mt-1">High-Speed Single Page App</div>
-          </div>
-          <div className="inst-card p-4 rounded-xl border border-[var(--border-color)]">
-            <div className="text-sm font-bold font-heading text-[var(--text-main)]">Docker &amp; Nginx</div>
-            <div className="text-[11px] font-mono text-[var(--text-muted)] mt-1">Containerized Deployment</div>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* ==================== 7. INSTITUTIONAL CALL TO ACTION ==================== */}
-      <motion.section initial={{ opacity: 0, scale: 0.95 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6 }} className="py-20 px-6 max-w-5xl mx-auto w-full text-center">
-        <div className="inst-card p-10 rounded-2xl border border-[var(--border-color)] shadow-2xl space-y-6">
-          <h2 className="text-3xl sm:text-4xl font-extrabold font-heading text-[var(--text-main)]">
-            Ready to Elevate Your Wealth Management?
-          </h2>
-          <p className="text-sm text-[var(--text-muted)] max-w-xl mx-auto leading-relaxed">
-            Join institutional investors utilizing OptiVest AI for real-time risk analytics, portfolio optimization, and continuous asset intelligence.
-          </p>
-          <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to="/register">
-              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-3.5 bg-primary hover:bg-primary/90 text-white font-heading font-bold text-sm rounded-lg shadow-lg shadow-primary/30 transition-all border border-primary/30 flex items-center gap-2">
-                <span>Create Investor Account</span>
-                <ArrowRight className="w-4 h-4" />
-              </motion.button>
-            </Link>
-            <Link to="/login">
-              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-3.5 bg-[var(--bg-main)] hover:bg-[var(--border-color)] text-[var(--text-main)] font-heading font-semibold text-sm rounded-lg border border-[var(--border-color)] transition-all">
-                Sign In to Platform
-              </motion.button>
-            </Link>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* ==================== 8. PROFESSIONAL INSTITUTIONAL FOOTER ==================== */}
-      <footer className="mt-auto border-t border-[var(--border-color)] py-12 px-6 bg-[var(--bg-surface)]">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8 text-xs text-[var(--text-muted)]">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 text-[var(--text-main)] font-bold font-heading text-sm">
-              <TrendingUp className="w-4 h-4 text-primary" />
-              <span>OptiVest Intelligence</span>
-            </div>
-            <p className="leading-relaxed">
-              Institutional wealth management platform providing real-time portfolio analytics and adaptive allocation governance.
-            </p>
-          </div>
-
-          <div>
-            <div className="font-mono font-bold text-[var(--text-main)] uppercase mb-3">Platform</div>
-            <ul className="space-y-2">
-              <li><a href="#markets" className="hover:text-[var(--text-main)]">Market Overview</a></li>
-              <li><a href="#intelligence" className="hover:text-[var(--text-main)]">Risk Analytics</a></li>
-              <li><a href="#features" className="hover:text-[var(--text-main)]">APDE Optimization</a></li>
-              <li><Link to="/login" className="hover:text-[var(--text-main)]">Paper Trading Sandbox</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <div className="font-mono font-bold text-[var(--text-main)] uppercase mb-3">Security &amp; Docs</div>
-            <ul className="space-y-2">
-              <li><a href="#security" className="hover:text-[var(--text-main)]">256-bit Encryption</a></li>
-              <li><a href="#technology" className="hover:text-[var(--text-main)]">Clean Architecture</a></li>
-              <li><Link to="/profile" className="hover:text-[var(--text-main)]">Governance Controls</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <div className="font-mono font-bold text-[var(--text-main)] uppercase mb-3">Compliance &amp; Status</div>
-            <div className="p-3 rounded bg-[var(--bg-main)] border border-[var(--border-color)] space-y-1">
-              <div className="text-[11px] font-mono text-[#16A34A] font-bold flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
-                <span>SYSTEM STATUS: NORMAL</span>
-              </div>
-              <p className="text-[10px] text-[var(--text-muted)]">All core APIs operating within target latencies (&lt; 15ms).</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-7xl mx-auto pt-6 border-t border-[var(--border-color)] flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] font-mono text-[var(--text-muted)]">
-          <p>&copy; 2026 OptiVest AI Platform. Institutional Foundation. All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <span className="hover:text-[var(--text-main)] cursor-pointer">Privacy Policy</span>
-            <span>&bull;</span>
-            <span className="hover:text-[var(--text-main)] cursor-pointer">Terms of Service</span>
-            <span>&bull;</span>
-            <span className="hover:text-[var(--text-main)] cursor-pointer">API Governance</span>
-          </div>
-        </div>
+      </section>
+      
+      <footer className="mt-auto border-t border-[var(--border-color)] p-[30px_22px] text-center text-[var(--text-muted)] text-[11px] font-mono font-bold tracking-wider uppercase">
+        OptiVest AI &mdash; Institutional Portfolio Intelligence
       </footer>
     </div>
   );
 };
+
+export default LandingPage;

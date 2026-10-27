@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from '../components/ui/Card';
 import { Wallet, DollarSign, TrendingUp, ShoppingBag, ArrowUpRight, Zap, RefreshCw } from 'lucide-react';
 
 const getH = (): HeadersInit => { const t = localStorage.getItem('access_token'); return t ? { Authorization: `Bearer ${t}` } : {}; };
@@ -54,232 +53,239 @@ export const PaperTradingDashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="max-w-[1120px] mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)] flex items-center gap-2">
-            <Wallet className="w-7 h-7 text-emerald-400" />
+          <div className="flex items-center gap-2 text-[12px] font-mono font-bold text-[var(--success)] uppercase tracking-wider mb-1">
+            <Wallet className="w-4 h-4" />
+            <span>Virtual Execution &bull; Trading Floor</span>
+          </div>
+          <h2 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)]">
             Enterprise Paper Trading Dashboard
-          </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
-            Virtual portfolio execution • Zero real money • APDE recommendation integration
+          </h2>
+          <p className="text-[14px] text-[var(--text-muted)] m-0 mt-1 font-mono">
+            Virtual portfolio execution &bull; Zero real money &bull; APDE recommendation integration
           </p>
         </div>
         <button
           onClick={fetchDashboard}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--bg-card)] border border-[var(--border-color)] hover:border-emerald-500 transition-all"
+          className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-[13px] font-bold bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--primary)] text-[var(--text-main)] transition-all cursor-pointer"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-          Refresh
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[var(--primary)]' : ''}`} />
+          <span>Refresh</span>
         </button>
       </div>
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4 bg-gradient-to-br from-emerald-950/20 to-[var(--bg-card)] border-emerald-900/30">
-          <div className="text-xs text-[var(--text-muted)]">Total Portfolio Value</div>
-          <div className="text-2xl font-mono font-bold text-emerald-400 mt-1">
+        <div className="inst-card p-[24px] bg-gradient-to-br from-[var(--success)]/10 to-transparent border-l-4 border-l-[var(--success)] shadow-[0_0_15px_rgba(23,217,140,0.05)] relative overflow-hidden group">
+          <div className="text-[10px] uppercase font-bold tracking-wider font-mono text-[var(--text-muted)] mb-1">Total Portfolio Value</div>
+          <div className="text-[32px] font-extrabold font-mono text-[var(--success)] leading-none mb-[8px] drop-shadow-[0_0_5px_rgba(23,217,140,0.4)]">
             ${data?.portfolio_value?.toLocaleString() || '100,000.00'}
           </div>
-          <div className="text-[10px] text-emerald-500 mt-1 flex items-center gap-1">
-            <ArrowUpRight className="w-3 h-3" /> +1.2% Today
+          <div className="text-[11px] font-mono font-bold text-[var(--success)] flex items-center gap-1">
+            <ArrowUpRight className="w-3.5 h-3.5" /> +1.2% Today
           </div>
-        </Card>
+        </div>
 
-        <Card className="p-4">
-          <div className="text-xs text-[var(--text-muted)]">Virtual Cash Balance</div>
-          <div className="text-2xl font-mono font-bold text-[var(--text-main)] mt-1">
+        <div className="inst-card p-[24px] relative overflow-hidden group hover:border-[var(--primary)]/40 transition-colors">
+          <div className="text-[10px] uppercase font-bold tracking-wider font-mono text-[var(--text-muted)] mb-1">Virtual Cash Balance</div>
+          <div className="text-[32px] font-extrabold font-mono text-[var(--text-main)] leading-none mb-[8px] drop-shadow-sm">
             ${data?.cash_balance?.toLocaleString() || '100,000.00'}
           </div>
-          <div className="text-[10px] text-[var(--text-muted)] mt-1">Buying Power: ${data?.buying_power?.toLocaleString()}</div>
-        </Card>
+          <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)]">Buying Power: ${data?.buying_power?.toLocaleString()}</div>
+        </div>
 
-        <Card className="p-4">
-          <div className="text-xs text-[var(--text-muted)]">Invested Capital</div>
-          <div className="text-2xl font-mono font-bold text-amber-400 mt-1">
+        <div className="inst-card p-[24px] relative overflow-hidden group hover:border-[#eab308]/40 transition-colors">
+          <div className="text-[10px] uppercase font-bold tracking-wider font-mono text-[var(--text-muted)] mb-1">Invested Capital</div>
+          <div className="text-[32px] font-extrabold font-mono text-[#eab308] leading-none mb-[8px] drop-shadow-[0_0_5px_rgba(234,179,8,0.2)]">
             ${data?.invested_capital?.toLocaleString() || '0.00'}
           </div>
-          <div className="text-[10px] text-[var(--text-muted)] mt-1">Active Positions: {data?.open_positions?.length || 0}</div>
-        </Card>
+          <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)]">Active Positions: {data?.open_positions?.length || 0}</div>
+        </div>
 
-        <Card className="p-4">
-          <div className="text-xs text-[var(--text-muted)]">Total Realized P/L</div>
-          <div className={`text-2xl font-mono font-bold mt-1 ${(data?.total_realized_pl || 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+        <div className="inst-card p-[24px] relative overflow-hidden group hover:border-[var(--secondary)]/40 transition-colors">
+          <div className="text-[10px] uppercase font-bold tracking-wider font-mono text-[var(--text-muted)] mb-1">Total Realized P/L</div>
+          <div className={`text-[32px] font-extrabold font-mono leading-none mb-[8px] ${(data?.total_realized_pl || 0) >= 0 ? 'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.2)]' : 'text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.2)]'}`}>
             ${data?.total_realized_pl?.toLocaleString() || '0.00'}
           </div>
-          <div className="text-[10px] text-[var(--text-muted)] mt-1">Unrealized: ${data?.total_unrealized_pl?.toLocaleString()}</div>
-        </Card>
+          <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)]">Unrealized: ${data?.total_unrealized_pl?.toLocaleString()}</div>
+        </div>
       </div>
 
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Open Positions & Recent Orders */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className="p-5">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-main)] mb-4 flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4 text-emerald-400" />
+          <div className="inst-card p-[24px]">
+            <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] mb-6 flex items-center gap-2 border-b border-[var(--border-color)] pb-4">
+              <ShoppingBag className="w-5 h-5 text-[var(--success)]" />
               Open Virtual Positions
-            </h2>
+            </h3>
             {data?.open_positions?.length ? (
               <div className="overflow-x-auto">
-                <table className="w-full text-xs text-left">
-                  <thead className="text-[10px] uppercase text-[var(--text-muted)] border-b border-[var(--border-color)]">
+                <table className="w-full text-left">
+                  <thead className="text-[10px] font-mono font-bold tracking-wider uppercase text-[var(--text-muted)] border-b border-[var(--border-color)]">
                     <tr>
-                      <th className="pb-2">Symbol</th>
-                      <th className="pb-2">Quantity</th>
-                      <th className="pb-2">Avg Entry</th>
-                      <th className="pb-2">Current Price</th>
-                      <th className="pb-2">Market Value</th>
+                      <th className="pb-3 px-2">Symbol</th>
+                      <th className="pb-3 px-2">Quantity</th>
+                      <th className="pb-3 px-2">Avg Entry</th>
+                      <th className="pb-3 px-2">Current Price</th>
+                      <th className="pb-3 px-2">Market Value</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[var(--border-color)] font-mono">
+                  <tbody className="divide-y divide-[var(--border-color)] font-mono text-[13px]">
                     {data.open_positions.map((p: any) => (
-                      <tr key={p.symbol} className="hover:bg-[var(--bg-main)]">
-                        <td className="py-2.5 font-bold text-emerald-400">{p.symbol}</td>
-                        <td className="py-2.5">{p.quantity}</td>
-                        <td className="py-2.5">${p.average_price}</td>
-                        <td className="py-2.5">${p.current_price}</td>
-                        <td className="py-2.5 font-bold">${p.market_value?.toLocaleString()}</td>
+                      <tr key={p.symbol} className="hover:bg-background transition-colors">
+                        <td className="py-4 px-2 font-bold text-[var(--success)] font-heading text-[15px]">{p.symbol}</td>
+                        <td className="py-4 px-2">{p.quantity}</td>
+                        <td className="py-4 px-2">${p.average_price}</td>
+                        <td className="py-4 px-2">${p.current_price}</td>
+                        <td className="py-4 px-2 font-bold text-[var(--text-main)]">${p.market_value?.toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
             ) : (
-              <div className="text-xs text-[var(--text-muted)] italic py-6 text-center">
+              <div className="text-[13px] font-mono text-[var(--text-muted)] py-8 text-center bg-background rounded-[8px] border border-[var(--border-color)]">
                 No active virtual positions. Place an order or accept an APDE recommendation to begin!
               </div>
             )}
-          </Card>
+          </div>
 
           {/* Recent Orders Log */}
-          <Card className="p-5">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-main)] mb-4 flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-sky-400" />
-              Recent Virtual Orders
-            </h2>
+          <div className="inst-card p-[24px]">
+            <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] mb-6 flex items-center gap-2 border-b border-[var(--border-color)] pb-4">
+              <TrendingUp className="w-5 h-5 text-[var(--secondary)]" />
+              Paper Sandbox History
+            </h3>
+            <p className="text-[12px] text-[var(--text-muted)] font-mono -mt-3 mb-4">A separate, audit-friendly ledger for virtual execution. These orders never affect the real portfolio or a brokerage account.</p>
             {data?.recent_orders?.length ? (
-              <div className="space-y-2 font-mono text-xs">
+              <div className="space-y-[12px] font-mono text-[13px]">
                 {data.recent_orders.map((o: any) => (
-                  <div key={o.id} className="p-2.5 rounded-lg bg-[var(--bg-main)] flex items-center justify-between border border-[var(--border-color)]">
-                    <div className="flex items-center gap-2">
-                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${o.side === 'BUY' ? 'bg-emerald-950 text-emerald-400' : 'bg-rose-950 text-rose-400'}`}>
+                  <div key={o.id} className="p-[14px] rounded-[6px] bg-background flex items-center justify-between border border-[var(--border-color)] hover:border-[var(--secondary)]/30 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <span className={`px-[8px] py-[4px] rounded-[4px] text-[10px] font-bold tracking-wider ${o.side === 'BUY' ? 'bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30' : 'bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30'}`}>
                         {o.side}
                       </span>
-                      <span className="font-bold text-[var(--text-main)]">{o.symbol}</span>
-                      <span className="text-[var(--text-muted)]">x{o.quantity}</span>
+                      <span className="font-extrabold text-[var(--text-main)] text-[14px]">{o.symbol}</span>
+                      <span className="text-[var(--text-muted)] font-bold">x{o.quantity}</span>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold">${o.total_cost?.toLocaleString()}</div>
-                      <div className="text-[10px] text-[var(--text-muted)]">@ ${o.executed_price}</div>
+                      <div className="font-bold text-[14px] text-[var(--text-main)]">${o.total_cost?.toLocaleString()}</div>
+                      <div className="text-[11px] text-[var(--text-muted)] mt-0.5">@ ${o.executed_price}</div>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-xs text-[var(--text-muted)] italic py-4 text-center">No recent virtual orders recorded.</div>
+              <div className="text-[13px] font-mono text-[var(--text-muted)] py-6 text-center bg-background rounded-[8px] border border-[var(--border-color)]">No recent virtual orders recorded.</div>
             )}
-          </Card>
+          </div>
         </div>
 
         {/* Trade Execution Sidebar */}
         <div className="space-y-6">
-          <Card className="p-5 bg-gradient-to-b from-[var(--bg-card)] to-[var(--bg-main)]">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-main)] mb-4 flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-amber-400" />
+          <div className="inst-card p-[24px]">
+            <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] mb-6 flex items-center gap-2 border-b border-[var(--border-color)] pb-4">
+              <DollarSign className="w-5 h-5 text-[var(--primary)]" />
               Manual Virtual Order Entry
-            </h2>
-            <form onSubmit={handlePlaceOrder} className="space-y-3 text-xs">
+            </h3>
+            <form onSubmit={handlePlaceOrder} className="space-y-[16px] text-[13px]">
               <div>
-                <label className="block text-[10px] font-semibold uppercase text-[var(--text-muted)] mb-1">Asset Symbol</label>
+                <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Asset Symbol</label>
                 <input
                   type="text"
                   value={symbol}
                   onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-                  className="w-full p-2 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] font-mono uppercase font-bold"
+                  className="w-full p-[12px] rounded-[8px] bg-background border border-[var(--border-color)] font-mono text-[var(--text-main)] uppercase font-bold focus:outline-none focus:border-[var(--primary)] transition-colors"
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-[12px]">
                 <div>
-                  <label className="block text-[10px] font-semibold uppercase text-[var(--text-muted)] mb-1">Order Side</label>
+                  <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Order Side</label>
                   <select
                     value={side}
                     onChange={(e) => setSide(e.target.value)}
-                    className="w-full p-2 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] font-bold"
+                    className="w-full p-[12px] rounded-[8px] bg-background border border-[var(--border-color)] font-mono font-bold text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors cursor-pointer appearance-none"
                   >
                     <option value="BUY">BUY</option>
                     <option value="SELL">SELL</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-semibold uppercase text-[var(--text-muted)] mb-1">Quantity</label>
+                  <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Quantity</label>
                   <input
                     type="number"
                     value={qty}
                     onChange={(e) => setQty(e.target.value)}
-                    className="w-full p-2 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] font-mono"
+                    className="w-full p-[12px] rounded-[8px] bg-background border border-[var(--border-color)] font-mono text-[var(--text-main)] font-bold focus:outline-none focus:border-[var(--primary)] transition-colors"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-semibold uppercase text-[var(--text-muted)] mb-1">Execution Price ($)</label>
+                <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Execution Price ($)</label>
                 <input
                   type="number"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  className="w-full p-2 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] font-mono"
+                  className="w-full p-[12px] rounded-[8px] bg-background border border-[var(--border-color)] font-mono text-[var(--text-main)] font-bold focus:outline-none focus:border-[var(--primary)] transition-colors"
                   required
                 />
               </div>
 
               <button
                 type="submit"
-                className={`w-full py-2.5 rounded-lg font-bold transition-all shadow-md mt-2 ${
+                className={`w-full py-[14px] rounded-[8px] font-bold font-mono text-[13px] transition-all cursor-pointer mt-4 flex items-center justify-center gap-2 ${
                   side === 'BUY'
-                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-950/40'
-                    : 'bg-rose-600 hover:bg-rose-500 text-white shadow-rose-950/40'
+                    ? 'bg-[var(--success)] hover:bg-[#34d399] text-[#050608] shadow-[0_0_15px_rgba(23,217,140,0.3)]'
+                    : 'bg-[var(--danger)] hover:bg-[#fb7185] text-[#050608] shadow-[0_0_15px_rgba(255,74,99,0.3)]'
                 }`}
               >
+                <DollarSign className="w-4 h-4" />
                 Submit Virtual {side} Order
               </button>
 
               {orderMsg && (
-                <div className="p-2 rounded bg-[var(--bg-main)] text-[11px] font-mono border border-[var(--border-color)] text-center">
+                <div className={`p-[12px] rounded-[6px] text-[11px] font-mono font-bold tracking-wider text-center border ${orderMsg.includes('✓') ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30' : 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30'}`}>
                   {orderMsg}
                 </div>
               )}
             </form>
-          </Card>
+          </div>
 
           {/* Recent APDE Decisions Executed */}
-          <Card className="p-5">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-[var(--text-main)] mb-3 flex items-center gap-2">
-              <Zap className="w-4 h-4 text-amber-400" />
+          <div className="inst-card p-[24px]">
+            <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] mb-5 flex items-center gap-2 border-b border-[var(--border-color)] pb-4">
+              <Zap className="w-5 h-5 text-[#eab308]" />
               APDE AI Executions
-            </h2>
+            </h3>
             {data?.recent_decisions?.length ? (
-              <div className="space-y-2">
+              <div className="space-y-[12px]">
                 {data.recent_decisions.map((d: any) => (
-                  <div key={d.id} className="p-2.5 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] text-xs">
-                    <div className="font-bold text-[var(--text-main)]">{d.title}</div>
-                    <div className="flex justify-between items-center mt-1 text-[10px] text-[var(--text-muted)]">
-                      <span className="text-emerald-400 font-bold">Action: {d.action}</span>
-                      <span>Return: +{(d.return_pct * 100).toFixed(1)}%</span>
+                  <div key={d.id} className="p-[14px] rounded-[6px] bg-background border border-[var(--border-color)] text-[13px]">
+                    <div className="font-bold text-[var(--text-main)] font-heading">{d.title}</div>
+                    <div className="flex justify-between items-center mt-2 text-[10px] font-mono font-bold tracking-wider uppercase">
+                      <span className="text-[var(--secondary)]">Action: {d.action}</span>
+                      <span className="text-[var(--success)]">Return: +{(d.return_pct * 100).toFixed(1)}%</span>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-xs text-[var(--text-muted)] italic text-center py-3">No APDE decisions executed yet.</div>
+              <div className="text-[12px] font-mono text-[var(--text-muted)] text-center py-4 bg-background rounded-[8px] border border-[var(--border-color)]">No APDE decisions executed yet.</div>
             )}
-          </Card>
+          </div>
         </div>
       </div>
     </div>
   );
 };
+
+export default PaperTradingDashboardPage;

@@ -1,0 +1,48 @@
+{
+    "experiment_configuration": {
+        "description": "CDE bypass ablation study",
+        "date_range": {
+            "start": "2022-12-31",
+            "end": "2023-12-31"
+        }
+    },
+    "universe_definition": {
+        "total_size": 10,
+        "tickers": [
+            "AAPL",
+            "AMD",
+            "AMZN",
+            "GOOGL",
+            "JPM",
+            "META",
+            "MSFT",
+            "NVDA",
+            "PLTR",
+            "TSLA"
+        ]
+    },
+    "cde_configuration": {
+        "base_score": 0.5,
+        "threshold": 0.0,
+        "top_k": 5
+    },
+    "no_cde_metrics": {
+        "candidate_count": 10,
+        "portfolio_return": 0.8864248111368349,
+        "volatility": 0.28965950991895384,
+        "sharpe": 3.060230307594095,
+        "turnover": 0.15000000028493574
+    },
+    "cde_apde_metrics": {
+        "candidate_count": 5,
+        "portfolio_return": 0.6451684847697527,
+        "volatility": 0.23887827797602043,
+        "sharpe": 2.7008252497303977,
+        "turnover": 3.3177906921810774e-08
+    },
+    "candidate_counts": {
+        "initial": 10,
+        "selected_by_cde": 5
+    },
+    "timestamp": "2026-10-26T00:51:06.906611"
+}

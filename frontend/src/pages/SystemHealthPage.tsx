@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from '../components/ui/Card';
 import { Server, Database, AlertCircle, CheckCircle2, Cpu, HardDrive, MemoryStick, RefreshCw, Zap, ShieldCheck } from 'lucide-react';
 
 const getH = (): HeadersInit => {
@@ -19,24 +18,19 @@ interface HealthData {
 }
 
 const GaugeBar: React.FC<{ label: string; value: number; icon: React.ReactNode }> = ({ label, value, icon }) => (
-  <div className="space-y-1.5">
-    <div className="flex items-center justify-between text-xs">
-      <span className="flex items-center gap-1.5 text-[var(--text-muted)]">{icon} {label}</span>
-      <span className={`font-bold font-mono ${value > 90 ? 'text-red-400' : value > 75 ? 'text-amber-400' : 'text-emerald-400'}`}>
+  <div className="space-y-[12px] bg-background border border-[var(--border-color)] rounded-[8px] p-[16px] transition-colors hover:border-[var(--primary)]/30 group">
+    <div className="flex items-center justify-between text-[13px]">
+      <span className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors">
+        {icon} {label}
+      </span>
+      <span className={`text-[20px] font-extrabold font-mono leading-none ${value > 90 ? 'text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.3)]' : value > 75 ? 'text-[#eab308] drop-shadow-[0_0_5px_rgba(234,179,8,0.3)]' : 'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.3)]'}`}>
         {value.toFixed(1)}%
       </span>
     </div>
-    <div className="w-full h-2 bg-[var(--bg-main)] rounded-full overflow-hidden border border-[var(--border-color)]">
+    <div className="w-full h-1.5 bg-surface rounded-full overflow-hidden border border-[var(--border-color)]">
       <div
-        className="h-full rounded-full transition-all duration-700"
-        style={{
-          width: `${Math.min(value, 100)}%`,
-          background: value > 90
-            ? 'linear-gradient(90deg, #DC2626, #EF4444)'
-            : value > 75
-            ? 'linear-gradient(90deg, #D97706, #F59E0B)'
-            : 'linear-gradient(90deg, #059669, #10B981)',
-        }}
+        className={`h-full rounded-full transition-all duration-700 shadow-sm ${value > 90 ? 'bg-[var(--danger)]' : value > 75 ? 'bg-[#eab308]' : 'bg-[var(--success)]'}`}
+        style={{ width: `${Math.min(value, 100)}%` }}
       />
     </div>
   </div>
@@ -66,9 +60,9 @@ export const SystemHealthPage: React.FC = () => {
 
   if (loading && !healthData) {
     return (
-      <div className="p-8 text-center flex flex-col items-center gap-3 text-[var(--text-muted)]">
-        <RefreshCw className="w-6 h-6 animate-spin text-[#2563EB]" />
-        <span className="text-xs">Fetching system telemetry...</span>
+      <div className="p-[60px] text-center flex flex-col items-center gap-[16px]">
+        <RefreshCw className="w-8 h-8 animate-spin text-[var(--secondary)]" />
+        <span className="text-[13px] font-mono font-bold tracking-wider uppercase text-[var(--text-muted)]">Fetching system telemetry...</span>
       </div>
     );
   }
@@ -76,40 +70,40 @@ export const SystemHealthPage: React.FC = () => {
   const isHealthy = healthData?.overall_status === 'HEALTHY';
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="max-w-[1120px] mx-auto space-y-6">
       {/* ── Header ── */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-blue-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[12px] font-mono font-bold text-[var(--secondary)] uppercase tracking-wider mb-1">
             <Server className="w-4 h-4" />
             <span>Infrastructure &bull; System Telemetry</span>
           </div>
-          <h1 className="text-2xl font-extrabold font-heading tracking-tight text-[var(--text-main)]">
+          <h2 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)]">
             System Health Dashboard
-          </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
+          </h2>
+          <p className="text-[14px] text-[var(--text-muted)] m-0 mt-1 font-mono flex items-center gap-2">
             Real-time monitoring of all Autonomous Intelligence Platform components.
             {lastUpdated && (
-              <span className="ml-2 font-mono text-[10px]">
-                Last updated: {lastUpdated.toLocaleTimeString()}
+              <span className="text-[10px] px-2 py-0.5 bg-[var(--surface2)] rounded border border-[var(--border-color)]">
+                {lastUpdated.toLocaleTimeString()}
               </span>
             )}
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className={`px-3 py-1.5 rounded-lg text-xs font-bold border flex items-center gap-1.5 ${
+        <div className="flex flex-wrap items-center gap-[12px]">
+          <span className={`px-[16px] py-[10px] rounded-[6px] text-[11px] font-mono font-bold uppercase tracking-wider border flex items-center gap-2 ${
             isHealthy
-              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-              : 'bg-red-500/10 text-red-400 border-red-500/30'
+              ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30 shadow-[0_0_15px_rgba(23,217,140,0.1)]'
+              : 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30 shadow-[0_0_15px_rgba(255,74,99,0.1)]'
           }`}>
             {isHealthy
-              ? <CheckCircle2 className="w-3.5 h-3.5" />
-              : <AlertCircle className="w-3.5 h-3.5" />}
+              ? <CheckCircle2 className="w-4 h-4 text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.5)]" />
+              : <AlertCircle className="w-4 h-4 text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.5)]" />}
             {healthData?.overall_status ?? 'UNKNOWN'}
           </span>
           <button
             onClick={fetchHealth}
-            className="px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-color)] hover:bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-main)] rounded-lg flex items-center gap-2 transition-all"
+            className="px-[16px] py-[10px] bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--text-muted)] text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-main)] rounded-[6px] flex items-center gap-2 transition-all cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Refresh</span>
@@ -118,113 +112,122 @@ export const SystemHealthPage: React.FC = () => {
       </div>
 
       {/* ── Resource Gauges ── */}
-      <Card className="p-5">
-        <h3 className="text-sm font-bold text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-3 mb-4">
-          <Zap className="w-4 h-4 text-blue-400" />
+      <div className="inst-card p-[32px] border-l-4 border-l-[var(--secondary)] relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-[radial-gradient(ellipse_at_top_right,rgba(76,139,255,0.1)_0%,rgba(0,0,0,0)_60%)] pointer-events-none" />
+        <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-[16px] mb-[24px] relative z-10">
+          <Zap className="w-5 h-5 text-[var(--secondary)]" />
           <span>Server Resource Utilization</span>
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <GaugeBar label="CPU" value={healthData?.cpu_pct ?? 0} icon={<Cpu className="w-3.5 h-3.5" />} />
-          <GaugeBar label="Memory (RAM)" value={healthData?.ram_pct ?? 0} icon={<MemoryStick className="w-3.5 h-3.5" />} />
-          <GaugeBar label="Disk" value={healthData?.disk_pct ?? 0} icon={<HardDrive className="w-3.5 h-3.5" />} />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-[16px] relative z-10">
+          <GaugeBar label="CPU" value={healthData?.cpu_pct ?? 0} icon={<Cpu className="w-4 h-4 text-[var(--secondary)]" />} />
+          <GaugeBar label="Memory (RAM)" value={healthData?.ram_pct ?? 0} icon={<MemoryStick className="w-4 h-4 text-[var(--secondary)]" />} />
+          <GaugeBar label="Disk" value={healthData?.disk_pct ?? 0} icon={<HardDrive className="w-4 h-4 text-[var(--secondary)]" />} />
         </div>
-      </Card>
+      </div>
 
       {/* ── Component Grid ── */}
-      <div>
-        <div className="text-xs font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider mb-3">
-          Infrastructure Components
+      <div className="inst-card p-[32px]">
+        <div className="flex items-center gap-2 border-b border-[var(--border-color)] pb-[16px] mb-[24px]">
+          <Server className="w-5 h-5 text-[var(--text-main)]" />
+          <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] m-0">
+            Infrastructure Components
+          </h3>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-[16px]">
           {(healthData?.components ?? []).map((comp: any, idx: number) => (
-            <Card key={idx} className={`p-4 border ${comp.status === 'HEALTHY' ? 'border-emerald-700/20' : 'border-red-700/20'}`}>
-              <div className="flex items-start justify-between gap-2">
+            <div key={idx} className={`p-[16px] bg-background rounded-[8px] border transition-colors hover:border-[var(--primary)]/30 group ${comp.status === 'HEALTHY' ? 'border-[var(--success)]/20' : 'border-[var(--danger)]/20'}`}>
+              <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-mono text-[var(--text-muted)] truncate">{comp.component}</p>
-                  <h3 className={`text-sm font-bold mt-0.5 ${comp.status === 'HEALTHY' ? 'text-emerald-400' : comp.status === 'DEGRADED' ? 'text-amber-400' : 'text-red-400'}`}>
+                  <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] group-hover:text-[var(--text-main)] transition-colors truncate mb-2">{comp.component}</p>
+                  <h3 className={`text-[15px] font-bold font-heading uppercase tracking-widest leading-none ${comp.status === 'HEALTHY' ? 'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.2)]' : comp.status === 'DEGRADED' ? 'text-[#eab308] drop-shadow-[0_0_5px_rgba(234,179,8,0.2)]' : 'text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.2)]'}`}>
                     {comp.status}
                   </h3>
-                  {comp.value && <p className="text-[10px] text-[var(--text-muted)] mt-0.5 font-mono">{comp.value}</p>}
+                  {comp.value && <p className="text-[11px] text-[var(--text-muted)] mt-2 font-mono truncate bg-surface px-2 py-1 rounded border border-[var(--border-color)]">{comp.value}</p>}
                 </div>
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${comp.status === 'HEALTHY' ? 'bg-emerald-500/10' : 'bg-red-500/10'}`}>
+                <div className={`w-[40px] h-[40px] rounded-[8px] flex items-center justify-center shrink-0 border ${comp.status === 'HEALTHY' ? 'bg-[var(--success)]/5 border-[var(--success)]/20 shadow-[0_0_10px_rgba(23,217,140,0.1)]' : 'bg-[var(--danger)]/5 border-[var(--danger)]/20 shadow-[0_0_10px_rgba(255,74,99,0.1)]'}`}>
                   {comp.status === 'HEALTHY'
-                    ? <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    : <AlertCircle className="w-4 h-4 text-red-400" />}
+                    ? <CheckCircle2 className="w-5 h-5 text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.4)]" />
+                    : <AlertCircle className="w-5 h-5 text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.4)]" />}
                 </div>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       </div>
 
       {/* ── Workers & Scheduler ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-[24px]">
         {/* Background Workers */}
-        <Card className="p-5 space-y-3">
-          <h3 className="text-sm font-bold text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
-            <Server className="w-4 h-4 text-blue-400" />
+        <div className="inst-card p-[32px]">
+          <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-[16px] mb-[24px]">
+            <Cpu className="w-5 h-5 text-[var(--secondary)]" />
             <span>Background Workers</span>
           </h3>
-          <div className="space-y-2">
+          <div className="space-y-[12px]">
             {(healthData?.workers ?? []).length === 0 ? (
-              <p className="text-xs text-[var(--text-muted)] italic">No active workers found.</p>
+              <div className="text-[12px] font-mono text-[var(--text-muted)] p-[24px] bg-background border border-[var(--border-color)] rounded-[6px] text-center">No active workers found.</div>
             ) : (
               (healthData?.workers ?? []).map((w: any, idx: number) => (
-                <div key={idx} className="flex items-center justify-between py-2 border-b border-[var(--border-color)] last:border-0">
+                <div key={idx} className="flex items-center justify-between p-[16px] bg-background rounded-[6px] border border-[var(--border-color)] hover:border-[var(--primary)]/30 transition-colors">
                   <div>
-                    <p className="text-xs font-bold text-[var(--text-main)] font-mono">{w.worker_id}</p>
-                    <p className="text-[10px] text-[var(--text-muted)]">Job: {w.current_job ?? 'Idle'}</p>
+                    <p className="text-[13px] font-bold text-[var(--text-main)] font-mono uppercase tracking-wider">{w.worker_id}</p>
+                    <p className="text-[11px] font-mono text-[var(--text-muted)] mt-1">Job: <span className="text-[var(--text-main)]">{w.current_job ?? 'Idle'}</span></p>
                   </div>
-                  <span className={`flex items-center gap-1.5 text-[10px] font-bold uppercase px-2 py-1 rounded-lg border ${
+                  <span className={`flex items-center gap-2 text-[10px] font-bold font-mono uppercase tracking-widest px-[10px] py-[6px] rounded-[4px] border ${
                     w.status === 'IDLE'
-                      ? 'bg-[var(--bg-main)] text-[var(--text-muted)] border-[var(--border-color)]'
+                      ? 'bg-background text-[var(--text-muted)] border-[var(--border-color)]'
                       : w.status === 'BUSY'
-                      ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                      : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                      ? 'bg-[var(--secondary)]/10 text-[var(--secondary)] border-[var(--secondary)]/30 shadow-[0_0_10px_rgba(76,139,255,0.1)]'
+                      : 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30 shadow-[0_0_10px_rgba(23,217,140,0.1)]'
                   }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${w.status === 'IDLE' ? 'bg-[var(--text-muted)]' : 'bg-blue-400 animate-pulse'}`} />
+                    <span className={`w-2 h-2 rounded-full ${w.status === 'IDLE' ? 'bg-[var(--text-muted)]' : 'bg-[var(--secondary)] animate-pulse shadow-[0_0_5px_var(--secondary)]'}`} />
                     {w.status}
                   </span>
                 </div>
               ))
             )}
           </div>
-        </Card>
+        </div>
 
         {/* Scheduler & AI Readiness */}
-        <Card className="p-5 space-y-3">
-          <h3 className="text-sm font-bold text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
-            <Database className="w-4 h-4 text-indigo-400" />
+        <div className="inst-card p-[32px]">
+          <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-[16px] mb-[24px]">
+            <Database className="w-5 h-5 text-[#a855f7]" />
             <span>Scheduler &amp; AI Registry</span>
           </h3>
-          <div className="space-y-3">
+          
+          <div className="space-y-[16px]">
             {[
               { label: 'Total Scheduled Jobs', value: healthData?.jobs?.total ?? 0, color: 'text-[var(--text-main)]' },
-              { label: 'Active Jobs',           value: healthData?.jobs?.active ?? 0, color: 'text-emerald-400' },
-              { label: 'Failed Jobs',           value: healthData?.jobs?.failed ?? 0, color: 'text-red-400' },
+              { label: 'Active Jobs',           value: healthData?.jobs?.active ?? 0, color: 'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.2)]' },
+              { label: 'Failed Jobs',           value: healthData?.jobs?.failed ?? 0, color: 'text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.2)]' },
             ].map((item) => (
-              <div key={item.label} className="flex justify-between items-center">
-                <span className="text-xs text-[var(--text-muted)]">{item.label}</span>
-                <span className={`font-bold font-mono text-sm ${item.color}`}>{item.value}</span>
+              <div key={item.label} className="flex justify-between items-center p-[16px] bg-background border border-[var(--border-color)] rounded-[6px]">
+                <span className="text-[12px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)]">{item.label}</span>
+                <span className={`font-extrabold font-mono text-[18px] leading-none ${item.color}`}>{item.value}</span>
               </div>
             ))}
 
-            <div className="border-t border-[var(--border-color)] pt-3 mt-1">
-              <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">
-                <ShieldCheck className="w-3 h-3" />AI Registry
+            <div className="border-t border-[var(--border-color)] pt-[24px] mt-[8px]">
+              <div className="flex items-center gap-2 text-[10px] font-mono font-bold text-[#a855f7] uppercase tracking-wider mb-[16px]">
+                <ShieldCheck className="w-4 h-4" /> AI Registry State
               </div>
-              {[
-                { label: 'Registered Models',    value: healthData?.ai_readiness?.registered_models ?? 0 },
-                { label: 'Tracked Experiments',  value: healthData?.ai_readiness?.tracked_experiments ?? 0 },
-              ].map((item) => (
-                <div key={item.label} className="flex justify-between items-center py-1">
-                  <span className="text-xs text-[var(--text-muted)]">{item.label}</span>
-                  <span className="font-bold font-mono text-sm text-[var(--text-main)]">{item.value}</span>
-                </div>
-              ))}
+              
+              <div className="grid grid-cols-2 gap-[16px]">
+                {[
+                  { label: 'Registered Models',    value: healthData?.ai_readiness?.registered_models ?? 0 },
+                  { label: 'Tracked Experiments',  value: healthData?.ai_readiness?.tracked_experiments ?? 0 },
+                ].map((item) => (
+                  <div key={item.label} className="bg-background border border-[var(--border-color)] rounded-[6px] p-[16px] text-center">
+                    <div className="text-[20px] font-extrabold font-mono text-[var(--text-main)] leading-none mb-2">{item.value}</div>
+                    <div className="text-[9px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)]">{item.label}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );

@@ -75,14 +75,22 @@ export const Sidebar: React.FC = () => {
   const currentNav = (isAdminPath && isAdmin) ? adminNav : investorNav;
 
   return (
-    <aside className="w-64 border-r border-[var(--border-color)] bg-[var(--bg-surface)] flex flex-col p-4 shrink-0 hidden md:flex transition-colors duration-200 overflow-y-auto h-full max-h-full">
+    <aside className="w-64 border-r border-[var(--border-color)] bg-surface flex flex-col p-4 shrink-0 hidden md:flex transition-colors duration-200 overflow-y-auto h-full max-h-full">
+      {/* Brand Logo */}
+      <div className="px-3 pt-1 pb-4 mb-2 border-b border-[var(--border-color)]">
+        <NavLink to="/" className="flex items-center gap-2.5 group focus-ring" aria-label="OptiVest home">
+          <img src="/optivest_emblem.png" alt="" aria-hidden="true" className="h-8 w-8 object-contain drop-shadow-[0_0_12px_rgba(76,139,255,0.35)] group-hover:scale-105 transition-transform duration-200" />
+          <span className="text-xl font-bold tracking-[-0.06em] bg-gradient-to-r from-[#1677ff] via-[#2b9bff] to-[#ff5a1f] bg-clip-text text-transparent">OptiVest</span>
+        </NavLink>
+      </div>
+
       {/* Mode Header */}
       <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3 px-3 flex items-center justify-between">
         <span>{(isAdminPath && isAdmin) ? 'Founder Admin Console' : 'Investor Workspace'}</span>
         <span className={`w-2 h-2 rounded-full ${(isAdminPath && isAdmin) ? 'bg-amber-500 animate-pulse' : 'bg-[#16A34A] animate-pulse'}`}></span>
       </div>
 
-      <nav className="flex flex-col gap-1 mb-6">
+      <nav className="flex flex-col gap-1 mb-6" aria-label="Primary navigation">
         {currentNav.map((item) => {
           const Icon = item.icon;
           return (

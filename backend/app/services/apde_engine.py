@@ -24,6 +24,7 @@ from app.models.apde import (
 )
 from app.services.prediction_engine import PredictionEngine
 from app.services.market_regime_detector import market_regime_detector
+from app.core.config import settings
 
 logger = logging.getLogger("optivest.apde")
 
@@ -56,6 +57,22 @@ class APDEEngine:
         pivot = df.pivot(index='timestamp', columns='symbol', values='close').sort_index()
         pivot = pivot.ffill().bfill()
         return pivot.pct_change().dropna()
+
+    def _get_latest_prices(self, symbols: List[str]) -> Dict[str, float]:
+        """Return the latest observed close for each symbol.
+
+        Price based rules must use prices, never the last observation from a
+        returns series.  Missing symbols are intentionally omitted so callers
+        can distinguish unavailable data from a flat price.
+        """
+        rows = self.db.query(MarketPrice.symbol, MarketPrice.timestamp, MarketPrice.close).filter(
+            MarketPrice.symbol.in_(symbols)
+        ).order_by(MarketPrice.timestamp.desc()).all()
+        latest: Dict[str, float] = {}
+        for symbol, _timestamp, close in rows:
+            if symbol not in latest and close is not None:
+                latest[symbol] = float(close)
+        return latest
 
     def _get_covariance_matrix(self, symbols: List[str], lookback_days: int = 252) -> pd.DataFrame:
         """Fetch historical prices and compute actual covariance matrix."""
@@ -154,8 +171,17 @@ class APDEEngine:
         # Real Sortino and Max Drawdown calculation
         hist_returns = self._get_historical_returns(symbols + ["SPY"])
         if not hist_returns.empty:
-            w_series = pd.Series(weights)
-            port_hist_returns = hist_returns[[s for s in symbols if s in hist_returns.columns]].dot(w_series)
+            available_symbols = [s for s in symbols if s in hist_returns.columns]
+            # Align the weight vector explicitly with the return columns. A
+            # portfolio can contain assets with different market-data history;
+            # pandas.DataFrame.dot otherwise raises a 500 on label/order
+            # mismatch instead of calculating the available portfolio return.
+            if available_symbols:
+                return_frame = hist_returns[available_symbols]
+                w_series = pd.Series({s: weights[s] for s in available_symbols}).reindex(return_frame.columns)
+                port_hist_returns = return_frame.dot(w_series)
+            else:
+                port_hist_returns = pd.Series(dtype=float)
             
             # Sortino
             negative_returns = port_hist_returns[port_hist_returns < 0]
@@ -241,18 +267,18 @@ class APDEEngine:
         try:
             ph = PortfolioHealth(
                 id=str(uuid.uuid4()), portfolio_id=portfolio_id,
-                health_score=result["health_score"],
-                diversification_score=result["diversification_score"],
-                risk_score=result["risk_score"],
+                health_score=float(result["health_score"]),
+                diversification_score=float(result["diversification_score"]),
+                risk_score=float(result["risk_score"]),
                 overall_health_rating=result["overall_health_rating"],
-                sector_concentration=result["sector_concentration"],
-                asset_concentration=result["asset_concentration"],
-                expected_return_annual=result["expected_return_annual"],
-                portfolio_volatility=result["portfolio_volatility"],
-                sharpe_ratio=result["sharpe_ratio"],
-                sortino_ratio=result["sortino_ratio"],
-                max_drawdown_pct=result["max_drawdown_pct"],
-                beta=result["beta"], alpha=result["alpha"],
+                sector_concentration=float(result["sector_concentration"]),
+                asset_concentration=float(result["asset_concentration"]),
+                expected_return_annual=float(result["expected_return_annual"]),
+                portfolio_volatility=float(result["portfolio_volatility"]),
+                sharpe_ratio=float(result["sharpe_ratio"]),
+                sortino_ratio=float(result["sortino_ratio"]),
+                max_drawdown_pct=float(result["max_drawdown_pct"]),
+                beta=float(result["beta"]), alpha=float(result["alpha"]),
                 correlation_matrix=json.dumps(result["correlation_matrix"]),
                 sector_breakdown=json.dumps(result["sector_breakdown"]),
                 asset_allocations=json.dumps(result["asset_allocations"]),
@@ -268,23 +294,32 @@ class APDEEngine:
     # ════════════════════════════════════════════════════════════════════════
     # ENGINE 2 & 3 & 4 — ADAPTIVE DECISION & REBALANCING & SCENARIO SIMULATOR
     # ════════════════════════════════════════════════════════════════════════
-    def generate_recommendations(self, portfolio_id: str, horizon: str = "5D") -> List[Dict[str, Any]]:
+    def generate_recommendations(self, portfolio_id: str, horizon: str = "5D", candidate_symbols: Optional[List[str]] = None) -> List[Dict[str, Any]]:
         """Generates decision cards using mathematical mean-variance optimization."""
         health = self.calculate_portfolio_health(portfolio_id)
         allocations = health["asset_allocations"]
 
         symbols = list(allocations.keys())
         
-        # --- Phase 18: Candidate Discovery Integration ---
-        # Dynamically discover eligible candidates to expand the optimization universe
-        from app.services.candidate_discovery_service import CandidateDiscoveryService
-        cde = CandidateDiscoveryService(self.db)
-        candidates = cde.discover_candidates(portfolio_id, candidate_type="NEW_ALLOCATION", top_n=2)
-        candidate_symbols = [c["ticker"] for c in candidates]
-        for cs in candidate_symbols:
-            if cs not in symbols:
-                symbols.append(cs)
-                allocations[cs] = 0.0
+        # CDE candidates are now part of the normal recommendation path.  The
+        # endpoint can still inject an explicit shortlist for deterministic
+        # what-if runs, but callers no longer need to know this implementation
+        # detail.
+        if candidate_symbols is None:
+            try:
+                from app.services.candidate_discovery_service import CandidateDiscoveryService
+                candidate_rows = CandidateDiscoveryService(self.db).discover_candidates(
+                    portfolio_id, candidate_type="REPLACEMENT", top_n=10
+                )
+                candidate_symbols = [row["ticker"] for row in candidate_rows]
+            except Exception as exc:
+                logger.warning("Candidate discovery unavailable; using current holdings only: %s", exc)
+                candidate_symbols = []
+        if candidate_symbols:
+            for cs in candidate_symbols:
+                if cs not in symbols:
+                    symbols.append(cs)
+                    allocations[cs] = 0.0
 
         n_assets = len(symbols)
         
@@ -293,6 +328,15 @@ class APDEEngine:
 
         # Real inputs
         cov_matrix = self._get_covariance_matrix(symbols).values
+        
+        # --- Phase 21: Sentiment Analysis NLP Injection ---
+        from app.services.sentiment_engine import sentiment_engine
+        sentiment_data = sentiment_engine.analyze_market_sentiment(symbols)
+        
+        # Dynamically penalize covariance during market shocks (inflate variance)
+        if sentiment_data["is_shock_regime"]:
+            cov_matrix = cov_matrix * sentiment_data["global_risk_multiplier"]
+            
         exp_rets = self._get_expected_returns(symbols, horizon)
         
         # Get User Preferences and Portfolio UUID
@@ -303,6 +347,7 @@ class APDEEngine:
             
         # --- 14-Day Momentum & Stop-Loss Penalties ---
         hist_14 = self._get_historical_returns(symbols, 14)
+        latest_prices = self._get_latest_prices(symbols)
         cum_ret_14 = {}
         if not hist_14.empty:
             for sym in symbols:
@@ -329,11 +374,28 @@ class APDEEngine:
             if sym in buy_prices:
                 buy_px = buy_prices[sym]
                 # Get current price
-                curr_px = hist_14[sym].iloc[-1] if not hist_14.empty and sym in hist_14.columns else buy_px
-                loss = (curr_px - buy_px) / buy_px
-                if loss < -0.05: # Stop loss at 5% drop from buy price
+                curr_px = latest_prices.get(sym)
+                loss = (curr_px - buy_px) / buy_px if curr_px is not None and buy_px else None
+                if loss is not None and loss < -0.05: # Stop loss at 5% drop from buy price
                     exp_rets[sym] -= 0.20 # Extreme penalty forcing exit
                     penalty_reasons[sym] = f"Stop-Loss triggered (Down {abs(loss)*100:.1f}% from average buy price)"
+
+        # --- Phase 22: Tax-Loss Harvesting ---
+        # Penalize selling assets that have unrealized short-term capital gains
+        # Deployment/account policy input; this is an assumption unless the
+        # user supplies account-specific tax-lot information.
+        tax_rate = float(settings.APDE_TAX_RATE)
+        tax_penalty = np.zeros(n_assets)
+        
+        for i, sym in enumerate(symbols):
+            if sym in buy_prices:
+                buy_px = buy_prices[sym]
+                curr_px = latest_prices.get(sym)
+                gain_pct = (curr_px - buy_px) / buy_px if curr_px is not None and buy_px else 0.0
+                if gain_pct > 0:
+                    # If sold, we lose tax_rate * gain_pct of the sale value
+                    # We will apply this as a penalty to the (w0 - w) term later
+                    tax_penalty[i] = tax_rate * gain_pct
 
         mu_array = np.array([exp_rets[sym] for sym in symbols])
         current_w = np.array([allocations[sym] for sym in symbols])
@@ -343,66 +405,83 @@ class APDEEngine:
         user_id = port.user_id if port else None
         pref = self.db.query(UserPreference).filter(UserPreference.user_id == user_id).first() if user_id else None
         
+        import cvxpy as cp
+
         # Define Optimization Parameters
-        # risk_tolerance_level is an int (e.g. 1-5). 1=conservative, 5=aggressive
         risk_level = pref.risk_tolerance_level if pref else 3
-        risk_lambda = {1: 5.0, 2: 3.5, 3: 2.0, 4: 1.0, 5: 0.5}.get(risk_level, 2.0)
+        tau = {1: 5.0, 2: 3.5, 3: 2.0, 4: 1.0, 5: 0.5}.get(risk_level, 2.0)
+        gamma = 0.0010
+
+        # Use canonical constraint parameters from the research paper
+        max_asset_weight = float(settings.APDE_MAX_ASSET_WEIGHT)
+        max_turnover = float(settings.APDE_MAX_TURNOVER)
+
+        # CVXPY Variables
+        w = cp.Variable(n_assets)
         
-        c_realloc = float(pref.max_reallocation_pct) / 100.0 if pref else 0.20 # Maximum total turnover
-        gamma_tc = 0.01  # Transaction cost penalty (1%)
+        # Expected Returns, Covariance, Initial Weights
+        r_hat = mu_array
+        Sigma_h = cov_matrix
+        w0 = current_w
 
-        def objective(w):
-            # Maximize: expected_return - lambda * risk - gamma * turnover
-            # Which is Minimize: -(expected_return - lambda * risk - gamma * turnover)
-            port_ret = np.dot(w, mu_array)
-            port_var = np.dot(w.T, np.dot(cov_matrix, w))
-            turnover = np.sum(np.abs(w - current_w)) / 2.0
-            
-            return -(port_ret - (risk_lambda / 2.0) * port_var - gamma_tc * turnover)
-
-        # Constraints
-        # 1. Weights sum to 1
-        cons = [{'type': 'eq', 'fun': lambda w: np.sum(w) - 1.0}]
-        # 2. Maximum turnover constraint
-        cons.append({'type': 'ineq', 'fun': lambda w: c_realloc - (np.sum(np.abs(w - current_w)) / 2.0)})
+        # Objective Function: Maximize w^T r_hat - tau * w^T Sigma_h w - gamma * ||w - w0||_1
+        # In CVXPY, maximizing f(x) is minimizing -f(x)
+        expected_return = r_hat @ w
+        risk = cp.quad_form(w, Sigma_h)
+        turnover = cp.norm(w - w0, 1)
         
-        # Advanced Governance Filters: Blacklists & Sector Caps
-        blacklisted_assets = ["META", "BTC"]  # Dynamic Asset Blacklist
-        sector_limits = {"Technology": 0.85, "Energy": 0.15, "Healthcare": 0.25}
+        # Tax penalty only applies when w < w0 (we are selling)
+        # cp.pos(w0 - w) represents the amount sold.
+        tax_loss_term = tax_penalty @ cp.pos(w0 - w)
 
-        # Define Optimization Bounds (Blacklisted assets forced to 0.0 weight)
-        bounds = []
-        for sym in symbols:
+        objective = cp.Maximize(expected_return - tau * risk - gamma * turnover - tax_loss_term)
+
+        # Canonical Constraints
+        constraints = [
+            cp.sum(w) == 1,
+            w >= 0,
+            w <= max_asset_weight,
+            turnover <= max_turnover
+        ]
+
+        # Blacklisted assets forced to 0.0 weight
+        blacklisted_assets = ["META", "BTC"]
+        for i, sym in enumerate(symbols):
             if sym in blacklisted_assets:
-                bounds.append((0.0, 0.0))
-            else:
-                bounds.append((0.0, 1.0))
-        bounds = tuple(bounds)
+                constraints.append(w[i] == 0.0)
 
         # Sector Concentration Constraints
+        sector_limits = {"Technology": 0.85, "Energy": 0.15, "Healthcare": 0.25}
         for sec, max_cap in sector_limits.items():
             sec_indices = [i for i, sym in enumerate(symbols) if ASSET_SECTOR_MAP.get(sym, "Technology") == sec]
             if sec_indices:
-                cons.append({'type': 'ineq', 'fun': lambda w, idxs=sec_indices, cap=max_cap: cap - np.sum(w[idxs])})
+                constraints.append(cp.sum(w[sec_indices]) <= max_cap)
 
-        res = minimize(objective, current_w, method='SLSQP', bounds=bounds, constraints=cons, options={'disp': False})
+        prob = cp.Problem(objective, constraints)
         
         try:
-            target_w = np.array(res.x, dtype=float)
-            if target_w.shape != current_w.shape or np.isnan(target_w).any():
+            # Using canonical SCS solver
+            prob.solve(solver=cp.SCS)
+            
+            if prob.status in ["optimal", "optimal_inaccurate"] and w.value is not None:
+                target_w = np.array(w.value, dtype=float)
+            else:
+                logger.warning(f"CVXPY solver failed with status {prob.status}")
                 target_w = current_w.copy()
-                if len(target_w) >= 2:
-                    target_w[0] -= 0.05
-                    target_w[1] += 0.05
-        except Exception:
+        except Exception as e:
+            logger.error(f"CVXPY error: {e}")
             target_w = current_w.copy()
-            if len(target_w) >= 2:
-                target_w[0] -= 0.05
-                target_w[1] += 0.05
+
+        # Clean up small negative weights due to solver precision
+        target_w = np.clip(target_w, 0.0, 1.0)
+        if np.sum(target_w) > 0:
+            target_w = target_w / np.sum(target_w)
+        else:
+            target_w = current_w.copy()
         
         # Check if difference is meaningful
-        turnover = np.sum(np.abs(target_w - current_w)) / 2.0
-        if turnover < 0.005:
+        turnover_val = np.sum(np.abs(target_w - current_w)) / 2.0
+        if turnover_val < 0.005:
             return [] # No action needed
 
         regime_info = market_regime_detector.detect_regime("SPY")
@@ -473,6 +552,18 @@ class APDEEngine:
             
         explanation_str += hindsight_str
 
+        # Mathematical Decision Score Calculation for target_asset (buy_sym)
+        target_idx = symbols.index(buy_sym)
+        ds_components = APDEEngine.calculate_decision_score(
+            r_hat_i=mu_array[target_idx],
+            Sigma_h=cov_matrix.values if hasattr(cov_matrix, 'values') else cov_matrix,
+            w=target_w,
+            w0=current_w,
+            tau=tau,
+            gamma=gamma,
+            target_index=target_idx
+        )
+
         card = self._build_decision_card(
             portfolio_id=portfolio_id,
             rec_type="MULTI_ASSET_REBALANCE",
@@ -481,8 +572,10 @@ class APDEEngine:
             reallocation_pct=dyn_alloc["recommended_move_percentage"],
             curr_w=float(current_w[symbols.index(sell_sym)]),
             prop_w=float(target_w[symbols.index(sell_sym)]),
-            ret_imp=ret_imp,
-            risk_red=risk_red,
+            forecast_term=ds_components["forecast_term"],
+            risk_term=ds_components["risk_term"],
+            cost_term=ds_components["cost_term"],
+            decision_score=ds_components["decision_score"],
             confidence=0.85 + fb_metrics["empirical_confidence_adjustment"],
             market_regime=regime,
             explanation=explanation_str,
@@ -549,34 +642,41 @@ class APDEEngine:
             logger.warning(f"SHAP calculation failed for {symbol}: {e}")
             return {}
 
-    # ════════════════════════════════════════════════════════════════════════
-    # ENGINE 5 & 6 & 13 — EXPLAINABILITY, DECISION CARDS & SCORING
-    # ════════════════════════════════════════════════════════════════════════
+    @staticmethod
+    def calculate_decision_score(r_hat_i: float, Sigma_h: np.ndarray, w: np.ndarray, w0: np.ndarray, tau: float, gamma: float, target_index: int) -> dict:
+        """
+        Mathematical Decision Score:
+        DS_i = r_hat_i - 2*tau*(Sigma_h*w)_i - gamma*sgn(w_i-w0_i)
+        """
+        forecast_term = float(r_hat_i)
+        marginal_risk = float(np.dot(Sigma_h, w)[target_index])
+        risk_term = float(-2.0 * tau * marginal_risk)
+        
+        w_change = float(w[target_index] - w0[target_index])
+        sgn = 1.0 if w_change > 1e-6 else (-1.0 if w_change < -1e-6 else 0.0)
+        cost_term = float(-gamma * sgn)
+        
+        ds_i = forecast_term + risk_term + cost_term
+        
+        return {
+            "forecast_term": forecast_term,
+            "risk_term": risk_term,
+            "cost_term": cost_term,
+            "decision_score": ds_i
+        }
+
     def _build_decision_card(
         self, portfolio_id: str, rec_type: str = "REBALANCE", title: str = "",
         source_asset: str = "TSLA", target_asset: str = "NVDA", reallocation_pct: float = 0.10,
         curr_w: float = 0.20, prop_w: float = 0.10, curr_alloc: float = 0.20, proposed_alloc: float = 0.10,
-        ret_imp: float = 0.05, expected_ret_imp: float = 0.05,
-        risk_red: float = 0.02, risk_red_pct: float = 0.02,
-        confidence: float = 0.85, market_regime: str = "BULL", regime: str = "BULL", model_used: str = "SLSQP_OPTIMIZER",
+        forecast_term: float = 0.05, risk_term: float = -0.01, cost_term: float = -0.01, decision_score: float = 0.03,
+        confidence: float = 0.85, market_regime: str = "BULL", regime: str = "BULL", model_used: str = "CVXPY_SCS",
         explanation: str = "Multi-Asset Risk/Return Optimization",
-        why_this: str = "Optimized mean-variance return", why_not: str = "Holding current weight is suboptimal",
-        why_now: str = "Favorable market regime and predictions", why_pct: str = "Constrained by governance limits"
+        why_this: str = "Optimized mathematical Decision Score", why_not: str = "Holding current weight is suboptimal",
+        why_now: str = "Favorable market regime and predictions", why_pct: str = "Constrained by canonical limits"
     ) -> Dict[str, Any]:
-        """Constructs and persists a confidence-scored Decision Card with full explainability."""
-        expected_ret_imp = expected_ret_imp if expected_ret_imp != 0.05 else ret_imp
-        risk_red_pct = risk_red_pct if risk_red_pct != 0.02 else risk_red
-        proposed_alloc = proposed_alloc if proposed_alloc != 0.10 else prop_w
-        curr_alloc = curr_alloc if curr_alloc != 0.20 else curr_w
+        """Constructs and persists a Decision Card with mathematical explainability."""
         title = title or f"Optimize Portfolio Risk/Return: {source_asset} -> {target_asset}"
-        # Engine 13 Scoring algorithm (0–100) based on REAL metrics
-        ret_score = min(max(expected_ret_imp * 1000.0, 0), 40.0) # Up to 40 pts for return
-        risk_score = min(max(risk_red_pct * 1000.0, 0), 30.0)    # Up to 30 pts for risk reduction
-        div_score = min(max(risk_red_pct * 500.0, 5.0), 15.0)
-        conf_score = confidence * 15.0
-        reg_score = 5.0
-        
-        total_score = round(ret_score + risk_score + div_score + conf_score + reg_score, 1)
 
         card_id = str(uuid.uuid4())
         capital_amount = round(reallocation_pct * 100000.0, 2) # Assume 100k portfolio for UI purposes if actual unavailable
@@ -590,12 +690,12 @@ class APDEEngine:
             "target_asset": target_asset,
             "reallocation_pct": reallocation_pct,
             "capital_amount": capital_amount,
-            "current_allocation_pct": curr_alloc,
-            "proposed_allocation_pct": proposed_alloc,
-            "expected_return_improvement": expected_ret_imp,
-            "risk_reduction_pct": risk_red_pct,
+            "current_allocation_pct": curr_w,
+            "proposed_allocation_pct": prop_w,
+            "expected_return_improvement": forecast_term,
+            "risk_reduction_pct": risk_term,
             "confidence_score": confidence,
-            "decision_score": total_score,
+            "decision_score": decision_score,
             "why_this_stock": why_this,
             "why_not_another": why_not,
             "why_now": why_now,
@@ -604,12 +704,11 @@ class APDEEngine:
             "market_regime": regime,
             "status": "PENDING",
             "score_breakdown": {
-                "total_score": total_score,
-                "expected_return": round(ret_score, 1),
-                "risk_reduction": round(risk_score, 1),
-                "diversification": round(div_score, 1),
-                "confidence": round(conf_score, 1),
-                "regime_alignment": round(reg_score, 1),
+                "total_score": decision_score,
+                "forecast_term": forecast_term,
+                "risk_term": risk_term,
+                "cost_term": cost_term,
+                "confidence": confidence,
             }
         }
 
@@ -618,11 +717,12 @@ class APDEEngine:
                 id=card_id, portfolio_id=portfolio_id, title=title,
                 recommendation_type=rec_type, source_asset=source_asset,
                 target_asset=target_asset, reallocation_pct=reallocation_pct,
-                capital_amount=capital_amount, current_allocation_pct=curr_alloc,
-                proposed_allocation_pct=proposed_alloc,
-                expected_return_improvement=expected_ret_imp,
-                risk_reduction_pct=risk_red_pct, confidence_score=confidence,
-                decision_score=total_score, why_this_stock=why_this,
+                capital_amount=capital_amount, current_allocation_pct=curr_w,
+                proposed_allocation_pct=prop_w,
+                expected_return_improvement=forecast_term, # remapped
+                risk_reduction_pct=risk_term, # remapped
+                confidence_score=confidence,
+                decision_score=decision_score, why_this_stock=why_this,
                 why_not_another=why_not, why_now=why_now,
                 why_this_percentage=why_pct, model_used=model_used,
                 market_regime=regime, status="PENDING"
@@ -630,9 +730,12 @@ class APDEEngine:
             self.db.add(row)
             score_row = DecisionScore(
                 id=str(uuid.uuid4()), card_id=card_id,
-                total_score=total_score, expected_return_subscore=ret_score,
-                risk_reduction_subscore=risk_score, diversification_subscore=div_score,
-                confidence_subscore=conf_score, regime_alignment_subscore=reg_score
+                total_score=decision_score, 
+                expected_return_subscore=forecast_term,
+                risk_reduction_subscore=risk_term, 
+                diversification_subscore=cost_term,
+                confidence_subscore=confidence, 
+                regime_alignment_subscore=0.0
             )
             self.db.add(score_row)
             self.db.commit()

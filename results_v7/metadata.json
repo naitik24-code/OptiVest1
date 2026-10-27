@@ -1,0 +1,8 @@
+{
+    "cvxpy": "1.9.2",
+    "scikit_learn": "1.9.0",
+    "shap": "0.52.0",
+    "scs": "Unknown (Cvxpy integrated)",
+    "git_commit_hash": "9bc17d7bdde2e27386c6159b7ee3b6379514ee0b",
+    "canonical_script": "run_research_backtest_v7.py"
+}

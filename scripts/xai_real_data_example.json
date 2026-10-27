@@ -1,0 +1,22 @@
+{
+    "asset": "AAPL",
+    "date": "2023-11-29",
+    "model": "XGBRegressor",
+    "prediction": 0.008890673518180847,
+    "base_value": 0.00997221376746893,
+    "shap_contributions": {
+        "mom_1m": 0.013200702145695686,
+        "vol_1m": -0.01908755674958229,
+        "returns_1d": 0.004805312026292086
+    },
+    "reconstructed_prediction": 0.00889067118987441,
+    "reconstruction_error": 2.3283064365386963e-09,
+    "old_weight": 0.1,
+    "new_weight": 0.15,
+    "weight_change": 0.04999999999999999,
+    "forecast_term": 0.008890673518180847,
+    "risk_term": -0.029,
+    "cost_term": -0.001,
+    "decision_score": -0.021109326481819155,
+    "narrative": "We recommend to INCREASE_POSITION AAPL with a weight change of 499 bps. The decision is primarily driven by a negative contribution from vol_1m and mom_1m."
+}

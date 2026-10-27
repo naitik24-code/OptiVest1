@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
-import { TrendingUp, ShieldCheck, Sun, Moon } from 'lucide-react';
+import { ShieldCheck, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 export const AuthLayout: React.FC = () => {
@@ -29,19 +29,16 @@ export const AuthLayout: React.FC = () => {
         </button>
       </div>
 
-      <div className="mb-8 text-center relative z-10">
-        <Link to="/" className="inline-flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-[#2563EB] flex items-center justify-center text-white text-xl shadow-lg shadow-blue-900/30">
-            <TrendingUp className="w-5 h-5 text-white" />
-          </div>
-          <div className="flex flex-col text-left">
-            <span className="font-heading font-extrabold text-2xl text-[var(--text-main)] tracking-tight">
-              OptiVest <span className="text-[#0EA5E9]">Intelligence</span>
-            </span>
-            <span className="text-[11px] text-[var(--text-muted)] font-mono tracking-wider uppercase">
-              INSTITUTIONAL PORTFOLIO MANAGEMENT
-            </span>
-          </div>
+      <div className="mb-8 text-center relative z-10 flex flex-col items-center">
+        <Link to="/" className="inline-flex flex-col items-center gap-2 group">
+          <img 
+            src="/optivest_logo_transparent.png" 
+            alt="OptiVest Logo" 
+            className="h-16 w-auto object-contain filter drop-shadow-[0_0_25px_rgba(255,90,31,0.35)] group-hover:scale-105 transition-transform duration-200"
+          />
+          <span className="text-[11px] text-[var(--text-muted)] font-mono tracking-wider uppercase mt-1">
+            INSTITUTIONAL PORTFOLIO MANAGEMENT
+          </span>
         </Link>
       </div>
 

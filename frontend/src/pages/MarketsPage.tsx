@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useCurrency } from '../context/CurrencyContext';
 import {
   marketService,
-
   AssetSearchResult,
   MarketQuote,
   HistoricalPricePoint,
@@ -10,8 +9,6 @@ import {
   TechnicalIndicators,
   MarketOverview
 } from '../services/marketService';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
 import { InteractiveChart, ChartDataPoint } from '../components/ui/InteractiveChart';
 import {
   Search,
@@ -47,13 +44,11 @@ export const MarketsPage: React.FC = () => {
 
   const isInitialLoaded = useRef(false);
 
-  // Initial load
   useEffect(() => {
     loadSearchResults('', true);
     loadMarketOverview();
   }, []);
 
-  // Debounced search effect
   useEffect(() => {
     if (isInitialLoaded.current) {
       const timer = setTimeout(() => {
@@ -138,7 +133,6 @@ export const MarketsPage: React.FC = () => {
     }
   };
 
-  // Sidebar list selector based on active sub-tab
   const getSidebarList = (): AssetSearchResult[] => {
     if (!marketOverview) return searchResults;
     if (sidebarTab === 'gainers') return marketOverview.top_gainers;
@@ -147,7 +141,6 @@ export const MarketsPage: React.FC = () => {
     return searchResults;
   };
 
-  // Build chart data points from history
   const buildChartPoints = (): ChartDataPoint[] => {
     if (!historyData || historyData.length === 0) return [];
     return historyData.map((d, i) => ({
@@ -159,136 +152,182 @@ export const MarketsPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-12">
-      {/* Module 10: Top Market Indices & Sector Overview Bar */}
+    <div className="max-w-[1120px] mx-auto space-y-6">
+      {/* Top Indices Overview */}
       {marketOverview && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {marketOverview.indices.map((idx) => (
-            <Card key={idx.symbol} className="p-3 inst-card border border-[var(--border-color)]">
-              <div className="flex justify-between items-center text-xs">
-                <span className="font-bold text-[var(--text-muted)] truncate">{idx.name}</span>
-                <span className="font-mono text-[10px] text-[var(--text-muted)]">{idx.symbol}</span>
+            <div key={idx.symbol} className="inst-card p-[16px] group transition-all">
+              <div className="flex justify-between items-center">
+                <span className="font-bold text-[11px] uppercase tracking-wider text-[var(--text-muted)] font-mono truncate">{idx.name}</span>
+                <span className="font-mono text-[10px] text-[var(--text-muted)] group-hover:text-[var(--primary)] transition-colors">{idx.symbol}</span>
               </div>
-              <div className="flex items-baseline justify-between mt-1">
-                <span className="text-lg font-bold font-mono text-[var(--text-main)]">
+              <div className="flex items-baseline justify-between mt-[10px]">
+                <span className="text-[18px] font-extrabold font-mono text-[var(--text-main)]">
                   {idx.value.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                 </span>
-                <span className={`text-xs font-mono font-bold flex items-center gap-0.5 ${idx.change_percent >= 0 ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
-                  {idx.change_percent >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                <span className={`text-[12px] font-mono font-bold flex items-center gap-1 tracking-wider ${idx.change_percent >= 0 ? 'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.3)]' : 'text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.3)]'}`}>
+                  {idx.change_percent >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
                   {idx.change_percent >= 0 ? '+' : ''}{idx.change_percent.toFixed(2)}%
                 </span>
               </div>
-            </Card>
+            </div>
           ))}
         </div>
       )}
 
       {/* Header & Controls */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 pt-[10px]">
         <div>
-          <h1 className="text-2xl font-extrabold font-heading tracking-tight text-[var(--text-main)]">
-            Market Intelligence &amp; Global Data Engine
+          <div className="flex items-center gap-2 text-[12px] font-mono font-bold text-[var(--secondary)] uppercase tracking-wider mb-1">
+            <Globe className="w-4 h-4" />
+            <span>Global Market Data</span>
+          </div>
+          <h1 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)]">
+            Market Intelligence Engine
           </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
+          <p className="text-[14px] text-[var(--text-muted)] m-0 mt-1 font-mono">
             Real-time market quotes, OHLCV history, technical indicators, and sector breakdown.
           </p>
         </div>
 
-        <Button
+        <button
           onClick={handleTriggerSync}
           disabled={isSyncing}
-          variant="secondary"
-          className="text-xs px-3 py-2 flex items-center gap-1.5 font-mono"
+          className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-[13px] font-bold bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--primary)] text-[var(--text-main)] transition-all cursor-pointer disabled:opacity-50"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
-          <span>{isSyncing ? 'Syncing Market...' : 'Sync Live Prices'}</span>
-        </Button>
+          <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin text-[var(--primary)]' : ''}`} />
+          <span>{isSyncing ? 'Syncing...' : 'Sync Live Prices'}</span>
+        </button>
       </div>
 
       {syncStatusMsg && (
-        <div className="p-3 bg-primary/10 border border-primary/30 rounded-lg text-xs font-mono text-primary">
+        <div className="p-[14px] bg-[var(--primary)]/10 border border-[var(--primary)]/30 rounded-[8px] text-[13px] font-mono text-[var(--primary)]">
           {syncStatusMsg}
         </div>
       )}
 
       {/* Main Grid: Sidebar Tickers + Right Detail View */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-2">
         {/* Left Column: Asset Search & Selection */}
-        <div className="space-y-4 lg:col-span-1">
-          <Card className="p-4 space-y-4">
-            <div className="relative">
-              <Search className="w-4 h-4 absolute left-3 top-3 text-[var(--text-muted)]" />
+        <div className="lg:col-span-1 space-y-4">
+          <div className="inst-card p-[20px] flex flex-col h-[calc(100vh-280px)] min-h-[500px]">
+            <div className="relative mb-4">
+              <Search className="w-4 h-4 absolute left-[14px] top-[14px] text-[var(--text-muted)]" />
               <input
                 type="text"
-                placeholder="Search symbol, company, exchange..."
+                placeholder="Search symbol, company..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 text-xs bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-[var(--text-main)] focus:outline-none focus:border-primary"
+                className="w-full pl-[38px] pr-[14px] py-[12px] text-[13px] font-mono bg-background border border-[var(--border-color)] rounded-[8px] text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors placeholder:text-[var(--text-muted)]/50"
               />
             </div>
 
-            {/* Sub-tabs: All | Top Gainers | Top Losers | Most Active */}
-            <div className="flex border-b border-[var(--border-color)] text-xs font-medium text-[var(--text-muted)]">
+            {/* Sub-tabs */}
+            <div className="flex border-b border-[var(--border-color)] text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-4 shrink-0 overflow-x-auto no-scrollbar">
               {(['all', 'gainers', 'losers', 'active'] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setSidebarTab(tab)}
-                  className={`pb-2 px-2 capitalize transition-colors ${
+                  className={`pb-[10px] px-3 whitespace-nowrap transition-colors cursor-pointer relative ${
                     sidebarTab === tab
-                      ? 'border-b-2 border-primary text-primary font-bold'
+                      ? 'text-[var(--primary)]'
                       : 'hover:text-[var(--text-main)]'
                   }`}
                 >
                   {tab === 'all' ? 'All Assets' : tab}
+                  {sidebarTab === tab && (
+                    <div className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-[var(--primary)] shadow-[0_0_8px_rgba(255,90,31,0.5)]" />
+                  )}
                 </button>
               ))}
             </div>
 
             {/* Asset List */}
-            <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
+            <div className="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
               {getSidebarList().map((a) => {
                 const isSelected = selectedAsset?.symbol === a.symbol;
                 return (
                   <div
                     key={a.symbol}
                     onClick={() => handleSelectAsset(a)}
-                    className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                    className={`p-[14px] rounded-[8px] border cursor-pointer transition-all ${
                       isSelected
-                        ? 'bg-primary/10 border-primary'
-                        : 'bg-[var(--bg-main)] border-[var(--border-color)] hover:border-primary/50'
+                        ? 'bg-[var(--primary)]/10 border-[var(--primary)] shadow-[0_0_15px_rgba(255,90,31,0.1)]'
+                        : 'bg-background border-[var(--border-color)] hover:border-[var(--primary)]/50'
                     }`}
                   >
-                    <div className="flex justify-between items-center">
-                      <span className="font-mono font-bold text-xs text-primary">{a.symbol}</span>
-                      <div className="flex items-center gap-1.5">
-                        <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 ${
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="font-mono font-bold text-[14px] text-[var(--primary)] drop-shadow-sm">{a.symbol}</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded-[4px] border flex items-center tracking-wider ${
                           a.change_percent >= 0
-                            ? 'bg-[#16A34A]/15 text-[#16A34A]'
-                            : 'bg-[#DC2626]/15 text-[#DC2626]'
+                            ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/20'
+                            : 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/20'
                         }`}>
                           {a.change_percent >= 0 ? '+' : ''}{a.change_percent.toFixed(2)}%
                         </span>
-                        <span className="font-mono font-bold text-xs text-[var(--text-main)]">
+                        <span className="font-mono font-bold text-[13px] text-[var(--text-main)]">
                           {formatAmount(a.price)}
                         </span>
                       </div>
                     </div>
-                    <div className="text-[11px] text-[var(--text-main)] truncate mt-0.5">{a.company_name}</div>
-                    <div className="flex justify-between items-center text-[10px] text-[var(--text-muted)] font-mono mt-1 pt-1 border-t border-[var(--border-color)]/50">
-                      <span>{a.exchange} • {a.sector}</span>
+                    <div className="text-[12px] font-heading font-bold text-[var(--text-main)] truncate mt-[6px]">{a.company_name}</div>
+                    <div className="flex justify-between items-center text-[10px] text-[var(--text-muted)] font-mono uppercase tracking-wider mt-[10px] pt-[8px] border-t border-[var(--border-color)]">
+                      <span>{a.exchange} &bull; {a.sector}</span>
                     </div>
                   </div>
                 );
               })}
             </div>
-          </Card>
+          </div>
         </div>
 
-        {/* Right 2 Columns: Google Finance–style Chart */}
-        <div className="space-y-5 lg:col-span-2">
+        {/* Right 2 Columns: Details */}
+        <div className="lg:col-span-2 space-y-6">
           {selectedAsset && activeQuote && (
             <>
-              {/* ── Google Finance–style all-in-one chart card ── */}
+              {/* Page-level tabs (Chart / Profile / Indicators) */}
+              <div className="flex border-b border-[var(--border-color)] space-x-2 text-[12px] font-mono font-bold uppercase tracking-wider overflow-x-auto no-scrollbar">
+                <button
+                  onClick={() => setActiveTab('chart')}
+                  className={`pb-[12px] px-4 flex items-center gap-2 transition-colors cursor-pointer relative ${
+                    activeTab === 'chart' ? 'text-[var(--primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                  }`}
+                >
+                  <BarChart2 className="w-4 h-4" />
+                  <span>Chart</span>
+                  {activeTab === 'chart' && (
+                    <div className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-[var(--primary)] shadow-[0_0_8px_rgba(255,90,31,0.5)]" />
+                  )}
+                </button>
+                <button
+                  onClick={() => setActiveTab('profile')}
+                  className={`pb-[12px] px-4 flex items-center gap-2 transition-colors cursor-pointer relative ${
+                    activeTab === 'profile' ? 'text-[var(--primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                  }`}
+                >
+                  <Building className="w-4 h-4" />
+                  <span>Company Profile</span>
+                  {activeTab === 'profile' && (
+                    <div className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-[var(--primary)] shadow-[0_0_8px_rgba(255,90,31,0.5)]" />
+                  )}
+                </button>
+                <button
+                  onClick={() => setActiveTab('indicators')}
+                  className={`pb-[12px] px-4 flex items-center gap-2 transition-colors cursor-pointer relative ${
+                    activeTab === 'indicators' ? 'text-[var(--primary)]' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                  }`}
+                >
+                  <Activity className="w-4 h-4" />
+                  <span>Technical Indicators</span>
+                  {activeTab === 'indicators' && (
+                    <div className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-[var(--primary)] shadow-[0_0_8px_rgba(255,90,31,0.5)]" />
+                  )}
+                </button>
+              </div>
+
+              {/* Tab 1: Chart */}
               {activeTab === 'chart' && (
                 <InteractiveChart
                   companyName={selectedAsset.company_name}
@@ -297,7 +336,7 @@ export const MarketsPage: React.FC = () => {
                   timeframes={['1M', '3M', '6M', '1Y', '5Y', 'MAX']}
                   activeTimeframe={activeTimeframe}
                   onTimeframeChange={handleTimeframeChange}
-                  height={220}
+                  height={320}
                   showPercentageAxis={true}
                   stats={{
                     open:      activeQuote.open_price,
@@ -317,128 +356,95 @@ export const MarketsPage: React.FC = () => {
                 />
               )}
 
-              {/* ── Page-level tabs (Chart / Profile / Indicators) ── */}
-              <div className="flex border-b border-[var(--border-color)] space-x-6 text-sm font-semibold">
-                <button
-                  onClick={() => setActiveTab('chart')}
-                  className={`pb-3 flex items-center gap-2 transition-colors ${
-                    activeTab === 'chart' ? 'border-b-2 border-primary text-primary' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
-                  }`}
-                >
-                  <BarChart2 className="w-4 h-4" />
-                  <span>Chart</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab('profile')}
-                  className={`pb-3 flex items-center gap-2 transition-colors ${
-                    activeTab === 'profile' ? 'border-b-2 border-primary text-primary' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
-                  }`}
-                >
-                  <Building className="w-4 h-4" />
-                  <span>Company Profile</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab('indicators')}
-                  className={`pb-3 flex items-center gap-2 transition-colors ${
-                    activeTab === 'indicators' ? 'border-b-2 border-primary text-primary' : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
-                  }`}
-                >
-                  <Activity className="w-4 h-4" />
-                  <span>Technical Indicators</span>
-                </button>
-              </div>
-
-
-
-              {/* Tab 2: Module 9 Company Profile */}
+              {/* Tab 2: Profile */}
               {activeTab === 'profile' && companyProfile && (
-                <Card className="space-y-6">
-                  <div>
-                    <h3 className="text-sm font-bold text-[var(--text-main)] mb-2 flex items-center gap-2">
-                      <Info className="w-4 h-4 text-primary" />
+                <div className="inst-card p-[24px]">
+                  <div className="mb-6">
+                    <h3 className="text-[16px] font-bold font-heading text-[var(--text-main)] mb-3 flex items-center gap-2">
+                      <Info className="w-5 h-5 text-[var(--primary)]" />
                       <span>About {companyProfile.company_name}</span>
                     </h3>
-                    <p className="text-xs text-[var(--text-muted)] leading-relaxed">{companyProfile.description}</p>
+                    <p className="text-[13px] font-mono text-[var(--text-muted)] leading-relaxed bg-background p-[16px] rounded-[8px] border border-[var(--border-color)]">{companyProfile.description}</p>
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs font-mono pt-4 border-t border-[var(--border-color)]">
-                    <div>
-                      <span className="text-[var(--text-muted)] block text-[10px] uppercase">CEO</span>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-[16px] text-[13px] font-mono pt-[24px] border-t border-[var(--border-color)]">
+                    <div className="bg-background border border-[var(--border-color)] p-[12px] rounded-[8px]">
+                      <span className="text-[var(--text-muted)] block text-[10px] uppercase font-bold tracking-wider mb-1">CEO</span>
                       <span className="font-bold text-[var(--text-main)]">{companyProfile.ceo}</span>
                     </div>
-                    <div>
-                      <span className="text-[var(--text-muted)] block text-[10px] uppercase">Website</span>
-                      <a href={companyProfile.website} target="_blank" rel="noopener noreferrer" className="font-bold text-primary hover:underline flex items-center gap-1">
-                        <Globe className="w-3 h-3" />
+                    <div className="bg-background border border-[var(--border-color)] p-[12px] rounded-[8px]">
+                      <span className="text-[var(--text-muted)] block text-[10px] uppercase font-bold tracking-wider mb-1">Website</span>
+                      <a href={companyProfile.website} target="_blank" rel="noopener noreferrer" className="font-bold text-[var(--primary)] hover:underline flex items-center gap-1">
+                        <Globe className="w-3.5 h-3.5" />
                         <span>Visit Site</span>
                       </a>
                     </div>
-                    <div>
-                      <span className="text-[var(--text-muted)] block text-[10px] uppercase">Employees</span>
+                    <div className="bg-background border border-[var(--border-color)] p-[12px] rounded-[8px]">
+                      <span className="text-[var(--text-muted)] block text-[10px] uppercase font-bold tracking-wider mb-1">Employees</span>
                       <span className="font-bold text-[var(--text-main)]">{companyProfile.employees?.toLocaleString()}</span>
                     </div>
-                    <div>
-                      <span className="text-[var(--text-muted)] block text-[10px] uppercase">P/E Ratio</span>
+                    <div className="bg-background border border-[var(--border-color)] p-[12px] rounded-[8px]">
+                      <span className="text-[var(--text-muted)] block text-[10px] uppercase font-bold tracking-wider mb-1">P/E Ratio</span>
                       <span className="font-bold text-[var(--text-main)]">{companyProfile.pe_ratio}</span>
                     </div>
-                    <div>
-                      <span className="text-[var(--text-muted)] block text-[10px] uppercase">Dividend Yield</span>
+                    <div className="bg-background border border-[var(--border-color)] p-[12px] rounded-[8px]">
+                      <span className="text-[var(--text-muted)] block text-[10px] uppercase font-bold tracking-wider mb-1">Dividend Yield</span>
                       <span className="font-bold text-[var(--text-main)]">{companyProfile.dividend_yield}%</span>
                     </div>
-                    <div>
-                      <span className="text-[var(--text-muted)] block text-[10px] uppercase">Country</span>
+                    <div className="bg-background border border-[var(--border-color)] p-[12px] rounded-[8px]">
+                      <span className="text-[var(--text-muted)] block text-[10px] uppercase font-bold tracking-wider mb-1">Country</span>
                       <span className="font-bold text-[var(--text-main)]">{companyProfile.country}</span>
                     </div>
                   </div>
-                </Card>
+                </div>
               )}
 
-              {/* Tab 3: Module 8 Technical Indicators */}
+              {/* Tab 3: Indicators */}
               {activeTab === 'indicators' && indicators && (
-                <Card className="space-y-6">
+                <div className="inst-card p-[24px]">
                   {/* Indicator Overview Banner */}
-                  <div className="flex items-center justify-between p-3 bg-[var(--bg-main)] rounded-lg border border-[var(--border-color)] text-xs font-mono">
-                    <div className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-[#F59E0B]" />
-                      <span>Trend Signal: <strong className={indicators.short_term_trend === 'BULLISH' ? 'text-[#16A34A]' : 'text-[#DC2626]'}>{indicators.short_term_trend}</strong></span>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between p-[16px] bg-background rounded-[8px] border border-[var(--border-color)] text-[13px] font-mono mb-[24px] gap-4">
+                    <div className="flex items-center gap-2 text-[14px]">
+                      <Zap className="w-5 h-5 text-[#eab308]" />
+                      <span>Trend Signal: <strong className={indicators.short_term_trend === 'BULLISH' ? 'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.4)]' : 'text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.4)]'}>{indicators.short_term_trend}</strong></span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span>Golden Cross: </span>
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${indicators.golden_cross_signal ? 'bg-[#16A34A]/20 text-[#16A34A]' : 'bg-[var(--border-color)] text-[var(--text-muted)]'}`}>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[var(--text-muted)]">Golden Cross: </span>
+                      <span className={`px-3 py-1 rounded-[6px] text-[11px] font-bold tracking-wider uppercase border ${indicators.golden_cross_signal ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30' : 'bg-[var(--border-color)] text-[var(--text-muted)] border-[var(--border-color)]'}`}>
                         {indicators.golden_cross_signal ? 'BULLISH (SMA 50 > 200)' : 'NEUTRAL / NONE'}
                       </span>
                     </div>
                   </div>
 
                   {/* Indicator Details Grid */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
-                    <div className="p-3 bg-[var(--bg-main)] rounded-lg border border-[var(--border-color)]">
-                      <span className="text-[var(--text-muted)] text-[10px] block uppercase">RSI (14)</span>
-                      <span className="text-base font-bold text-[var(--text-main)]">{indicators.rsi_14}</span>
-                      <span className={`text-[10px] block mt-0.5 ${indicators.rsi_14 > 70 ? 'text-[#DC2626]' : indicators.rsi_14 < 30 ? 'text-[#16A34A]' : 'text-[var(--text-muted)]'}`}>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-[16px] text-[13px] font-mono">
+                    <div className="p-[16px] bg-background rounded-[8px] border border-[var(--border-color)] transition-colors hover:border-[var(--primary)]/30">
+                      <span className="text-[var(--text-muted)] text-[10px] font-bold block uppercase tracking-wider mb-2">RSI (14)</span>
+                      <span className="text-[20px] font-bold text-[var(--text-main)]">{indicators.rsi_14}</span>
+                      <span className={`text-[11px] font-bold block mt-1 ${indicators.rsi_14 > 70 ? 'text-[var(--danger)]' : indicators.rsi_14 < 30 ? 'text-[var(--success)]' : 'text-[var(--text-muted)]'}`}>
                         {indicators.rsi_14 > 70 ? 'Overbought (>70)' : indicators.rsi_14 < 30 ? 'Oversold (<30)' : 'Neutral (30-70)'}
                       </span>
                     </div>
 
-                    <div className="p-3 bg-[var(--bg-main)] rounded-lg border border-[var(--border-color)]">
-                      <span className="text-[var(--text-muted)] text-[10px] block uppercase">MACD Line</span>
-                      <span className="text-base font-bold text-[var(--text-main)]">{indicators.macd}</span>
-                      <span className="text-[10px] text-[var(--text-muted)] block mt-0.5">Signal: {indicators.macd_signal}</span>
+                    <div className="p-[16px] bg-background rounded-[8px] border border-[var(--border-color)] transition-colors hover:border-[var(--primary)]/30">
+                      <span className="text-[var(--text-muted)] text-[10px] font-bold block uppercase tracking-wider mb-2">MACD Line</span>
+                      <span className="text-[20px] font-bold text-[var(--text-main)]">{indicators.macd}</span>
+                      <span className="text-[11px] font-bold text-[var(--text-muted)] block mt-1">Signal: {indicators.macd_signal}</span>
                     </div>
 
-                    <div className="p-3 bg-[var(--bg-main)] rounded-lg border border-[var(--border-color)]">
-                      <span className="text-[var(--text-muted)] text-[10px] block uppercase">SMA 20 / 50 / 200</span>
-                      <span className="text-xs font-bold text-[var(--text-main)] block">${indicators.sma_20} / ${indicators.sma_50}</span>
-                      <span className="text-[10px] text-[var(--text-muted)] block">SMA 200: ${indicators.sma_200}</span>
+                    <div className="p-[16px] bg-background rounded-[8px] border border-[var(--border-color)] transition-colors hover:border-[var(--primary)]/30">
+                      <span className="text-[var(--text-muted)] text-[10px] font-bold block uppercase tracking-wider mb-2">SMA 20 / 50 / 200</span>
+                      <span className="text-[15px] font-bold text-[var(--text-main)] block">${indicators.sma_20} / ${indicators.sma_50}</span>
+                      <span className="text-[11px] font-bold text-[var(--text-muted)] block mt-1">SMA 200: ${indicators.sma_200}</span>
                     </div>
 
-                    <div className="p-3 bg-[var(--bg-main)] rounded-lg border border-[var(--border-color)]">
-                      <span className="text-[var(--text-muted)] text-[10px] block uppercase">Bollinger Bands</span>
-                      <span className="text-xs font-bold text-[var(--text-main)] block">${indicators.bollinger_lower} - ${indicators.bollinger_upper}</span>
-                      <span className="text-[10px] text-[var(--text-muted)] block">Mid: ${indicators.bollinger_middle}</span>
+                    <div className="p-[16px] bg-background rounded-[8px] border border-[var(--border-color)] transition-colors hover:border-[var(--primary)]/30">
+                      <span className="text-[var(--text-muted)] text-[10px] font-bold block uppercase tracking-wider mb-2">Bollinger Bands</span>
+                      <span className="text-[15px] font-bold text-[var(--text-main)] block">${indicators.bollinger_lower} - ${indicators.bollinger_upper}</span>
+                      <span className="text-[11px] font-bold text-[var(--text-muted)] block mt-1">Mid: ${indicators.bollinger_middle}</span>
                     </div>
                   </div>
-                </Card>
+                </div>
               )}
             </>
           )}

@@ -18,19 +18,19 @@ export const Card: React.FC<CardProps> = ({
   return (
     <div
       className={cn(
-        'inst-card rounded-xl p-5 border border-[var(--border-color)] transition-colors duration-200',
+        'bg-surface border border-[var(--border-color)] rounded-[14px] p-[20px] transition-colors duration-200',
         className
       )}
       {...props}
     >
       {(title || subtitle || action) && (
-        <div className="flex items-center justify-between mb-4 border-b border-[var(--border-color)] pb-3">
+        <h4 className="m-0 mb-[14px] text-[13px] text-[var(--text-muted)] font-semibold flex items-center justify-between normal-case border-b-0">
           <div>
-            {title && <h3 className="text-base font-bold font-heading text-[var(--text-main)]">{title}</h3>}
-            {subtitle && <p className="text-xs text-[var(--text-muted)] mt-0.5">{subtitle}</p>}
+            <span className="block text-[var(--text-main)] font-heading text-base font-bold mb-1">{title}</span>
+            {subtitle && <span className="block text-[11px] font-mono mt-1 opacity-80">{subtitle}</span>}
           </div>
           {action && <div>{action}</div>}
-        </div>
+        </h4>
       )}
       {children}
     </div>

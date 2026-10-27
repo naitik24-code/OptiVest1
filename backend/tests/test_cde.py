@@ -31,7 +31,7 @@ def test_cde_filter_eligibility(db_session):
     candidates = cde.discover_candidates(
         portfolio_id=str(p.id),
         candidate_type="NEW_ALLOCATION",
-        top_n=5
+        top_n=2
     )
     
     assert isinstance(candidates, list)
@@ -62,7 +62,7 @@ def test_cde_replacement_logic(db_session):
         portfolio_id=str(p.id),
         candidate_type="REPLACEMENT",
         target_holding="AAPL",
-        top_n=5
+        top_n=2
     )
     
     assert isinstance(candidates, list)

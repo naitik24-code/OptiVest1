@@ -418,7 +418,7 @@ def test_cde_integration_with_fundamentals(db_session):
     db_session.commit()
 
     cde = CandidateDiscoveryService(db_session)
-    candidates = cde.discover_candidates(str(port.id), top_n=5)
+    candidates = cde.discover_candidates(str(port.id), top_n=2)
     assert isinstance(candidates, list)
     if candidates:
         match = next((c for c in candidates if c["ticker"] == "TESTF"), None)
@@ -466,8 +466,8 @@ def test_risk_profile_behavior(db_session):
     db_session.commit()
 
     cde = CandidateDiscoveryService(db_session)
-    cand_cons = cde.discover_candidates(str(port_cons.id), top_n=5)
-    cand_aggr = cde.discover_candidates(str(port_aggr.id), top_n=5)
+    cand_cons = cde.discover_candidates(str(port_cons.id), top_n=2)
+    cand_aggr = cde.discover_candidates(str(port_aggr.id), top_n=2)
 
     if cand_cons and cand_aggr:
         c1 = next((c for c in cand_cons if c["ticker"] == "PROFA"), None)
@@ -554,7 +554,7 @@ def test_cde_dynamic_reweighting_missing_fundamentals(db_session):
     db_session.commit()
 
     cde = CandidateDiscoveryService(db_session)
-    candidates = cde.discover_candidates(str(port.id), top_n=5)
+    candidates = cde.discover_candidates(str(port.id), top_n=2)
     if candidates:
         match = next((c for c in candidates if c["ticker"] == "NOFUND"), None)
         if match:

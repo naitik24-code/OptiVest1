@@ -72,3 +72,17 @@ class PortfolioRepository:
     def delete(self, portfolio: Portfolio) -> None:
         self.db.delete(portfolio)
         self.db.commit()
+
+    def list_all(self, skip: int = 0, limit: int = 200) -> List[Portfolio]:
+        """Fetch all portfolios across all users for administrative monitoring."""
+        return (
+            self.db.query(Portfolio)
+            .options(
+                joinedload(Portfolio.holdings).joinedload(Holding.asset),
+                joinedload(Portfolio.user)
+            )
+            .order_by(Portfolio.created_at.desc())
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )

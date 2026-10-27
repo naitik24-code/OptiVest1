@@ -1,0 +1,17 @@
+{
+    "asset": "NVDA",
+    "old_weight": 0.2,
+    "new_weight": 0.35,
+    "weight_change": 0.14999999999999997,
+    "forecast": 0.12,
+    "base_shap_value": 0.07,
+    "shap_contributions": {
+        "momentum_14d": 0.06,
+        "volatility_30d": -0.02,
+        "volume_trend": 0.01
+    },
+    "risk_term": -0.07819086967730898,
+    "cost_term": -0.01,
+    "decision_score": 0.03180913032269101,
+    "action": "INCREASE_POSITION"
+}

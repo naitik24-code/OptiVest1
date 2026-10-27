@@ -1,0 +1,27 @@
+{
+  "experiment": "OptiVest V7 primary APDE benchmark",
+  "forecast_model": {
+    "algorithm": "XGBoost regression",
+    "n_estimators": 50,
+    "max_depth": 3,
+    "learning_rate": 0.1,
+    "shuffle": false,
+    "forecast_horizon_trading_days": 21
+  },
+  "validation": {
+    "rebalance_count": 78,
+    "training_window_years": 4,
+    "purge_trading_days": 21,
+    "universe_size": 50,
+    "evaluation_period": "2017-06 through 2023-11"
+  },
+  "apde": {
+    "risk_aversion": 3.0,
+    "position_cap": 0.2,
+    "turnover_cap_l1": 0.15,
+    "solver": "CVXPY/SCS",
+    "paper_trading_only": true
+  },
+  "evidence": "results_v7/Table_Master_10Arm.csv",
+  "status": "reproduced_primary_aggregate_metrics"
+}

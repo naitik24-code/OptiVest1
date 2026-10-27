@@ -2,10 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { portfolioService } from '../services/portfolioService';
 import { useCurrency } from '../context/CurrencyContext';
 import { Portfolio, Asset, Transaction } from '../types/portfolio';
-import { Card } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Search, Plus, Trash2, ArrowUpRight, FolderPlus, X, Edit3, Receipt } from 'lucide-react';
-
+import { Search, Plus, Trash2, ArrowUpRight, FolderPlus, X, Edit3, Receipt, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export const PortfolioPage: React.FC = () => {
   const { formatAmount } = useCurrency();
@@ -179,6 +176,9 @@ export const PortfolioPage: React.FC = () => {
 
   const metrics = activePortfolio?.metrics;
   const holdings = activePortfolio?.holdings || [];
+  const reallocationTransactions = transactions.filter((tx) =>
+    Boolean(tx.notes?.toLowerCase().includes('reallocation'))
+  );
 
   const filteredHoldings = holdings.filter((h) => {
     const sym = h.asset?.symbol || '';
@@ -187,33 +187,37 @@ export const PortfolioPage: React.FC = () => {
   });
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto">
+    <div className="max-w-[1120px] mx-auto space-y-6">
       {/* Portfolio Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-extrabold font-heading tracking-tight text-[var(--text-main)] flex items-center gap-2">
+          <div className="flex items-center gap-2 text-[12px] font-mono font-bold text-[var(--primary)] uppercase tracking-wider mb-1">
+            <FolderPlus className="w-4 h-4" />
+            <span>Management &bull; Assets</span>
+          </div>
+          <h2 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)] flex items-center gap-3">
             <span>Portfolio Holdings &amp; Ledger</span>
             {activePortfolio && (
               <button
                 onClick={() => setIsEditPortfolioOpen(true)}
-                className="text-[var(--text-muted)] hover:text-[#2563EB] transition-colors"
+                className="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors p-1"
                 title="Edit Portfolio Info"
               >
                 <Edit3 className="w-4 h-4" />
               </button>
             )}
-          </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
+          </h2>
+          <p className="text-[14px] text-[var(--text-muted)] m-0 mt-1 font-mono">
             Real-time holdings tracking, position cost-basis, and transaction log.
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+        <div className="flex flex-wrap items-center gap-[12px]">
           {/* Portfolio Selector */}
           <select
             value={activePortfolio?.id || ''}
             onChange={(e) => handleSelectPortfolio(e.target.value)}
-            className="px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-color)] rounded-lg text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+            className="px-[16px] py-[10px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono font-bold text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors cursor-pointer"
           >
             {portfolios.map((p) => (
               <option key={p.id} value={p.id}>
@@ -222,144 +226,185 @@ export const PortfolioPage: React.FC = () => {
             ))}
           </select>
 
-          <Button onClick={() => { setPortfolioName(''); setPortfolioDesc(''); setIsCreatePortfolioOpen(true); }} variant="secondary" className="text-xs px-3 py-2 flex items-center gap-1">
+          <button onClick={() => { setPortfolioName(''); setPortfolioDesc(''); setIsCreatePortfolioOpen(true); }} className="px-[16px] py-[10px] rounded-[8px] text-[13px] font-bold bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--primary)] text-[var(--text-main)] transition-all flex items-center gap-2 cursor-pointer">
             <FolderPlus className="w-3.5 h-3.5" />
             <span>New Portfolio</span>
-          </Button>
+          </button>
 
-          <Button onClick={() => setIsRecordTxOpen(true)} variant="secondary" className="text-xs px-3 py-2 flex items-center gap-1">
+          <button onClick={() => setIsRecordTxOpen(true)} className="px-[16px] py-[10px] rounded-[8px] text-[13px] font-bold bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--primary)] text-[var(--text-main)] transition-all flex items-center gap-2 cursor-pointer">
             <Receipt className="w-3.5 h-3.5" />
             <span>Record Trade</span>
-          </Button>
+          </button>
 
-          <Button onClick={() => setIsAddHoldingOpen(true)} className="text-xs px-3.5 py-2 flex items-center gap-1.5">
+          <button onClick={() => setIsAddHoldingOpen(true)} className="px-[16px] py-[10px] rounded-[8px] text-[13px] font-bold bg-[var(--primary)] hover:bg-[#ff7a45] text-[#050608] shadow-[0_0_15px_rgba(255,90,31,0.3)] transition-all flex items-center gap-2 cursor-pointer">
             <Plus className="w-3.5 h-3.5" />
             <span>Add Position</span>
-          </Button>
+          </button>
         </div>
       </div>
 
       {errorMsg && (
-        <div className="p-3 rounded-lg bg-[#DC2626]/10 border border-[#DC2626]/30 text-xs font-mono text-[#F87171] flex justify-between items-center">
+        <div className="p-[16px] rounded-[8px] bg-[var(--danger)]/10 border border-[var(--danger)]/30 text-[13px] font-mono font-bold tracking-wider text-[var(--danger)] flex justify-between items-center shadow-[0_0_15px_rgba(255,74,99,0.1)]">
           <span>{errorMsg}</span>
-          <button onClick={() => setErrorMsg('')}><X className="w-4 h-4" /></button>
+          <button onClick={() => setErrorMsg('')} className="hover:text-white transition-colors cursor-pointer"><X className="w-4 h-4" /></button>
         </div>
       )}
 
       {/* Valuation & Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card title="Portfolio Value" subtitle="Total Market Value">
-          <div className="space-y-1 font-mono">
-            <div className="text-2xl font-bold text-[var(--text-main)]">
-              {formatAmount(metrics?.portfolio_value || 0)}
-            </div>
-            <div className={`text-xs font-bold flex items-center gap-1 ${(metrics?.profit_loss || 0) >= 0 ? 'text-[#16A34A]' : 'text-[#F87171]'}`}>
-              <ArrowUpRight className="w-3.5 h-3.5" />
-              {(metrics?.profit_loss || 0) >= 0 ? '+' : ''}{formatAmount(metrics?.profit_loss || 0)} ({metrics?.profit_loss_pct || 0}%) Total Return
-            </div>
+        <div className="inst-card p-[24px] relative overflow-hidden group">
+          <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1">Portfolio Value</div>
+          <div className="text-[32px] font-extrabold font-mono text-[var(--text-main)] leading-none mb-[8px] drop-shadow-sm">
+            {formatAmount(metrics?.portfolio_value || 0)}
           </div>
-        </Card>
-
-        <Card title="Total Capital Invested" subtitle="Book Cost Basis">
-          <div className="space-y-1 font-mono">
-            <div className="text-2xl font-bold text-[var(--text-main)]">
-              {formatAmount(metrics?.total_invested || 0)}
-            </div>
-            <div className="text-xs text-[var(--text-muted)]">
-              Across {metrics?.holdings_count || 0} position(s)
-            </div>
+          <div className={`text-[11px] font-mono font-bold uppercase tracking-wider flex items-center gap-1 ${(metrics?.profit_loss || 0) >= 0 ? 'text-[var(--success)]' : 'text-[var(--danger)]'}`}>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+            {(metrics?.profit_loss || 0) >= 0 ? '+' : ''}{formatAmount(metrics?.profit_loss || 0)} ({metrics?.profit_loss_pct || 0}%) Total Return
           </div>
-        </Card>
+        </div>
 
-
-        <Card title="Position Count" subtitle="Asset Allocation">
-          <div className="space-y-1 font-mono">
-            <div className="text-2xl font-bold text-[#2563EB]">
-              {metrics?.holdings_count || 0} Active Positions
-            </div>
-            <div className="text-xs text-[var(--text-muted)]">
-              {metrics?.assets_count || 0} Unique Asset Tickers
-            </div>
+        <div className="inst-card p-[24px] relative overflow-hidden group">
+          <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1">Total Capital Invested</div>
+          <div className="text-[32px] font-extrabold font-mono text-[var(--text-main)] leading-none mb-[8px] drop-shadow-sm">
+            {formatAmount(metrics?.total_invested || 0)}
           </div>
-        </Card>
+          <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)]">
+            Across {metrics?.holdings_count || 0} position(s)
+          </div>
+        </div>
+
+        <div className="inst-card p-[24px] relative overflow-hidden group">
+          <div className="text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-1">Position Count</div>
+          <div className="text-[32px] font-extrabold font-mono text-[var(--secondary)] leading-none mb-[8px] drop-shadow-[0_0_5px_rgba(76,139,255,0.3)]">
+            {metrics?.holdings_count || 0}
+          </div>
+          <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)]">
+            {metrics?.assets_count || 0} Unique Asset Tickers
+          </div>
+        </div>
       </div>
 
       {/* Navigation Tabs (Holdings vs Transactions) */}
-      <div className="flex border-b border-[var(--border-color)] font-mono text-xs">
+      <div className="flex border-b border-[var(--border-color)] font-mono text-[13px] gap-[24px]">
         <button
           onClick={() => setActiveTab('holdings')}
-          className={`px-4 py-2.5 font-bold border-b-2 transition-colors ${
+          className={`py-[12px] font-bold uppercase tracking-wider border-b-[2px] transition-all cursor-pointer ${
             activeTab === 'holdings'
-              ? 'border-[#2563EB] text-[#2563EB]'
-              : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]'
+              ? 'border-[var(--primary)] text-[var(--primary)] drop-shadow-[0_0_5px_rgba(255,90,31,0.5)]'
+              : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-[var(--border-color)]'
           }`}
         >
           Active Holdings ({holdings.length})
         </button>
         <button
           onClick={() => setActiveTab('transactions')}
-          className={`px-4 py-2.5 font-bold border-b-2 transition-colors ${
+          className={`py-[12px] font-bold uppercase tracking-wider border-b-[2px] transition-all cursor-pointer ${
             activeTab === 'transactions'
-              ? 'border-[#2563EB] text-[#2563EB]'
-              : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)]'
+              ? 'border-[var(--primary)] text-[var(--primary)] drop-shadow-[0_0_5px_rgba(255,90,31,0.5)]'
+              : 'border-transparent text-[var(--text-muted)] hover:text-[var(--text-main)] hover:border-[var(--border-color)]'
           }`}
         >
           Transaction History ({transactions.length})
         </button>
       </div>
 
+      {/* Reallocation Audit: derived from persisted transaction notes so the rationale remains visible. */}
+      {(
+        <section className="inst-card p-[24px] border-[var(--primary)]/30 bg-[var(--primary)]/[0.03]">
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <div className="flex items-center gap-2 text-[var(--primary)] font-mono text-[10px] font-bold uppercase tracking-widest">
+                <ShieldCheck className="w-4 h-4" /> Reallocation Audit Trail
+              </div>
+              <h3 className="text-[18px] font-bold font-heading text-[var(--text-main)] mt-1">Why this portfolio changed</h3>
+              <p className="text-[12px] text-[var(--text-muted)] mt-1">Persisted execution records explaining the source, destination, size and rationale.</p>
+            </div>
+            <span className="px-2 py-1 rounded border border-[var(--success)]/30 bg-[var(--success)]/10 text-[var(--success)] text-[10px] font-mono font-bold uppercase">Recorded</span>
+          </div>
+          <div className="space-y-3">
+            {reallocationTransactions.length === 0 && (
+              <div className="rounded-lg border border-dashed border-[var(--border-color)] p-4 text-[12px] text-[var(--text-muted)] font-mono">
+                No executed reallocation is recorded for this selected portfolio yet. The APDE evaluates drift, concentration, volatility, correlation, expected return, transaction cost and turnover limits before it can approve a move. A HOLD or CASH result is intentional when the evidence threshold is not met.
+              </div>
+            )}
+            {reallocationTransactions.map((tx) => {
+              const destination = tx.notes?.match(/to ([A-Z]+)$/i)?.[1] || (tx.transaction_type === 'BUY' ? tx.asset?.symbol : undefined);
+              const source = tx.notes?.match(/reduce ([A-Z]+)/i)?.[1] || (tx.transaction_type === 'SELL' ? tx.asset?.symbol : undefined);
+              return (
+                <div key={tx.id} className="rounded-lg border border-[var(--border-color)] bg-[var(--surface2)] p-4">
+                  <div className="flex flex-wrap items-center gap-3 text-[13px] font-mono font-bold text-[var(--text-main)]">
+                    <span>{source || tx.asset?.symbol || 'Source'}</span><ArrowRight className="w-4 h-4 text-[var(--primary)]" /><span>{destination || tx.asset?.symbol || 'Destination'}</span>
+                    <span className="ml-auto text-[11px] text-[var(--text-muted)] font-normal">{new Date(tx.timestamp).toLocaleString()}</span>
+                  </div>
+                  <p className="text-[12px] text-[var(--text-muted)] mt-2">{tx.notes}</p>
+                  <p className="text-[12px] text-[var(--text-main)] mt-2"><b>Decision explanation:</b> the recorded move reduced the source position and redirected the same notional value to the destination. It is visible here as a paired SELL and BUY so the rationale and audit trail are not hidden inside raw order history.</p>
+                  <div className="flex flex-wrap gap-4 mt-3 text-[11px] font-mono uppercase tracking-wider text-[var(--text-muted)]">
+                    <span>Action: <b className={tx.transaction_type === 'SELL' ? 'text-[var(--danger)]' : 'text-[var(--success)]'}>{tx.transaction_type}</b></span>
+                    <span>Quantity: <b className="text-[var(--text-main)]">{tx.quantity}</b></span>
+                    <span>Value: <b className="text-[var(--text-main)]">{formatAmount(tx.total_amount)}</b></span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       {/* Holdings View */}
       {activeTab === 'holdings' && (
-        <Card title={`Holdings in ${activePortfolio?.name || 'Portfolio'}`} subtitle="Position Accounting">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-4 pt-2">
-            <div className="relative w-full sm:w-72">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+        <div className="inst-card p-[24px]">
+          <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] mb-6 flex items-center justify-between border-b border-[var(--border-color)] pb-4">
+            <span className="flex items-center gap-2">Holdings in {activePortfolio?.name || 'Portfolio'}</span>
+          </h3>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-[24px]">
+            <div className="relative w-full sm:w-[320px]">
+              <Search className="w-4 h-4 absolute left-[14px] top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
               <input
                 type="text"
                 placeholder="Search holding symbol or name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#2563EB]"
+                className="w-full pl-[40px] pr-[16px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--primary)] transition-colors"
               />
             </div>
           </div>
 
           {isLoading ? (
-            <div className="p-8 text-center text-xs font-mono text-[var(--text-muted)]">
+            <div className="p-[32px] text-center text-[13px] font-mono text-[var(--text-muted)] tracking-wider">
               Loading holdings...
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs font-mono">
-                <thead className="bg-[var(--bg-main)] text-[var(--text-muted)] border-b border-[var(--border-color)]">
+              <table className="w-full text-left text-[13px] font-mono">
+                <thead className="text-[10px] font-mono font-bold tracking-wider uppercase text-[var(--text-muted)] border-b border-[var(--border-color)]">
                   <tr>
-                    <th className="p-3">SYMBOL</th>
-                    <th className="p-3">COMPANY</th>
-                    <th className="p-3 text-right">SHARES</th>
-                    <th className="p-3 text-right">AVG COST</th>
-                    <th className="p-3 text-right">CURRENT PRICE</th>
-                    <th className="p-3 text-right">MARKET VALUE</th>
-                    <th className="p-3 text-right">UNREALIZED P&amp;L</th>
-                    <th className="p-3 text-center">ACTION</th>
+                    <th className="pb-3 px-2">SYMBOL</th>
+                    <th className="pb-3 px-2">COMPANY</th>
+                    <th className="pb-3 px-2 text-right">SHARES</th>
+                    <th className="pb-3 px-2 text-right">AVG COST</th>
+                    <th className="pb-3 px-2 text-right">CURRENT PRICE</th>
+                    <th className="pb-3 px-2 text-right">MARKET VALUE</th>
+                    <th className="pb-3 px-2 text-right">UNREALIZED P&amp;L</th>
+                    <th className="pb-3 px-2 text-center">ACTION</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-color)]">
                   {filteredHoldings.length > 0 ? (
                     filteredHoldings.map((h) => (
-                      <tr key={h.id} className="hover:bg-[var(--bg-main)]/50 transition-colors">
-                        <td className="p-3 font-bold text-[#2563EB]">{h.asset?.symbol}</td>
-                        <td className="p-3 text-[var(--text-main)] font-sans">{h.asset?.company_name}</td>
-                        <td className="p-3 text-right text-[var(--text-main)]">{h.quantity.toLocaleString()}</td>
-                        <td className="p-3 text-right text-[var(--text-muted)]">{formatAmount(h.average_buy_price)}</td>
-                        <td className="p-3 text-right font-bold text-[var(--text-main)]">{formatAmount(h.asset?.price || h.average_buy_price)}</td>
-                        <td className="p-3 text-right font-bold text-[var(--text-main)]">{formatAmount(h.market_value)}</td>
-                        <td className={`p-3 text-right font-bold ${h.unrealized_pnl >= 0 ? 'text-[#16A34A]' : 'text-[#DC2626]'}`}>
+                      <tr key={h.id} className="hover:bg-background transition-colors">
+                        <td className="py-4 px-2 font-bold font-heading text-[15px] text-[var(--secondary)]">{h.asset?.symbol}</td>
+                        <td className="py-4 px-2 text-[var(--text-main)] font-sans">{h.asset?.company_name}</td>
+                        <td className="py-4 px-2 text-right text-[var(--text-main)] font-bold">{h.quantity.toLocaleString()}</td>
+                        <td className="py-4 px-2 text-right text-[var(--text-muted)]">{formatAmount(h.average_buy_price)}</td>
+                        <td className="py-4 px-2 text-right font-bold text-[var(--text-main)]">{formatAmount(h.asset?.price || h.average_buy_price)}</td>
+                        <td className="py-4 px-2 text-right font-bold text-[var(--text-main)]">{formatAmount(h.market_value)}</td>
+                        <td className={`py-4 px-2 text-right font-bold ${h.unrealized_pnl >= 0 ? 'text-[var(--success)] drop-shadow-[0_0_5px_rgba(23,217,140,0.3)]' : 'text-[var(--danger)] drop-shadow-[0_0_5px_rgba(255,74,99,0.3)]'}`}>
                           {h.unrealized_pnl >= 0 ? '+' : ''}{formatAmount(h.unrealized_pnl)} ({h.unrealized_pnl_pct}%)
                         </td>
-                        <td className="p-3 text-center">
+                        <td className="py-4 px-2 text-center">
                           <button
                             onClick={() => handleDeleteHolding(h.id)}
-                            className="p-1 text-[var(--text-muted)] hover:text-[#DC2626] transition-colors"
+                            className="p-2 text-[var(--text-muted)] hover:text-[var(--danger)] transition-colors cursor-pointer rounded-[4px] hover:bg-[var(--danger)]/10"
                             title="Delete holding"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -369,8 +414,8 @@ export const PortfolioPage: React.FC = () => {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={8} className="p-6 text-center text-[var(--text-muted)] font-sans">
-                        No holdings in this portfolio yet. Click <strong>Add Position</strong> above to record your first holding.
+                      <td colSpan={8} className="p-[32px] text-center text-[var(--text-muted)] font-mono text-[13px] bg-background rounded-[8px] border border-[var(--border-color)] mt-4">
+                        No holdings in this portfolio yet. Click <strong className="text-[var(--text-main)]">Add Position</strong> above to record your first holding.
                       </td>
                     </tr>
                   )}
@@ -378,58 +423,60 @@ export const PortfolioPage: React.FC = () => {
               </table>
             </div>
           )}
-        </Card>
+        </div>
       )}
 
       {/* Transactions View */}
       {activeTab === 'transactions' && (
-        <Card title={`Transaction History for ${activePortfolio?.name || 'Portfolio'}`} subtitle="Ledger Audit Trail">
+        <div className="inst-card p-[24px]">
+          <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] mb-6 flex items-center justify-between border-b border-[var(--border-color)] pb-4">
+            <span className="flex items-center gap-2">Transaction History for {activePortfolio?.name || 'Portfolio'}</span>
+          </h3>
           {isLoading ? (
-            <div className="p-8 text-center text-xs font-mono text-[var(--text-muted)]">
+            <div className="p-[32px] text-center text-[13px] font-mono text-[var(--text-muted)] tracking-wider">
               Loading transactions...
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs font-mono">
-                <thead className="bg-[var(--bg-main)] text-[var(--text-muted)] border-b border-[var(--border-color)]">
+              <table className="w-full text-left text-[13px] font-mono">
+                <thead className="text-[10px] font-mono font-bold tracking-wider uppercase text-[var(--text-muted)] border-b border-[var(--border-color)]">
                   <tr>
-                    <th className="p-3">DATE / TIMESTAMP</th>
-                    <th className="p-3">TYPE</th>
-                    <th className="p-3">SYMBOL</th>
-                    <th className="p-3 text-right">QUANTITY</th>
-                    <th className="p-3 text-right">PRICE</th>
-                    <th className="p-3 text-right">FEES</th>
-                    <th className="p-3 text-right">TOTAL AMOUNT</th>
-                    <th className="p-3">NOTES</th>
+                    <th className="pb-3 px-2">DATE / TIMESTAMP</th>
+                    <th className="pb-3 px-2">TYPE</th>
+                    <th className="pb-3 px-2">SYMBOL</th>
+                    <th className="pb-3 px-2 text-right">QUANTITY</th>
+                    <th className="pb-3 px-2 text-right">PRICE</th>
+                    <th className="pb-3 px-2 text-right">FEES</th>
+                    <th className="pb-3 px-2 text-right">TOTAL AMOUNT</th>
+                    <th className="pb-3 px-2">NOTES</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[var(--border-color)]">
                   {transactions.length > 0 ? (
                     transactions.map((tx) => (
-                      <tr key={tx.id} className="hover:bg-[var(--bg-main)]/50 transition-colors">
-                        <td className="p-3 text-[var(--text-muted)]">{new Date(tx.timestamp).toLocaleString()}</td>
-                        <td className="p-3 font-bold">
-                          <span className={`px-2 py-0.5 rounded border ${
-                            tx.transaction_type === 'BUY' ? 'bg-[#16A34A]/15 text-[#16A34A] border-[#16A34A]/30' :
-                            tx.transaction_type === 'SELL' ? 'bg-[#DC2626]/15 text-[#DC2626] border-[#DC2626]/30' :
-                            'bg-[#2563EB]/15 text-[#2563EB] border-[#2563EB]/30'
+                      <tr key={tx.id} className="hover:bg-background transition-colors">
+                        <td className="py-4 px-2 text-[var(--text-muted)] text-[12px]">{new Date(tx.timestamp).toLocaleString()}</td>
+                        <td className="py-4 px-2 font-bold">
+                          <span className={`px-[8px] py-[4px] rounded-[4px] border text-[10px] uppercase tracking-wider ${
+                            tx.transaction_type === 'BUY' ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30' :
+                            tx.transaction_type === 'SELL' ? 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30' :
+                            'bg-[var(--secondary)]/10 text-[var(--secondary)] border-[var(--secondary)]/30'
                           }`}>
                             {tx.transaction_type}
                           </span>
                         </td>
-                        <td className="p-3 font-bold text-[#2563EB]">{tx.asset?.symbol}</td>
-                        <td className="p-3 text-right text-[var(--text-main)]">{tx.quantity}</td>
-                        <td className="p-3 text-right text-[var(--text-main)]">{formatAmount(tx.price)}</td>
-                        <td className="p-3 text-right text-[var(--text-muted)]">{formatAmount(tx.fees)}</td>
-                        <td className="p-3 text-right font-bold text-[var(--text-main)]">{formatAmount(tx.total_amount)}</td>
-                        <td className="p-3 text-[var(--text-muted)] font-sans">{tx.notes || '-'}</td>
+                        <td className="py-4 px-2 font-bold font-heading text-[15px] text-[var(--secondary)]">{tx.asset?.symbol}</td>
+                        <td className="py-4 px-2 text-right text-[var(--text-main)]">{tx.quantity}</td>
+                        <td className="py-4 px-2 text-right text-[var(--text-main)]">{formatAmount(tx.price)}</td>
+                        <td className="py-4 px-2 text-right text-[var(--text-muted)]">{formatAmount(tx.fees)}</td>
+                        <td className="py-4 px-2 text-right font-bold text-[var(--text-main)]">{formatAmount(tx.total_amount)}</td>
+                        <td className="py-4 px-2 text-[var(--text-muted)] text-[12px] truncate max-w-[200px]">{tx.notes || '-'}</td>
                       </tr>
-
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={8} className="p-6 text-center text-[var(--text-muted)] font-sans">
-                        No transactions recorded for this portfolio. Click <strong>Record Trade</strong> to log your first order.
+                      <td colSpan={8} className="p-[32px] text-center text-[var(--text-muted)] font-mono text-[13px] bg-background rounded-[8px] border border-[var(--border-color)] mt-4">
+                        No transactions recorded for this portfolio. Click <strong className="text-[var(--text-main)]">Record Trade</strong> to log your first order.
                       </td>
                     </tr>
                   )}
@@ -437,27 +484,27 @@ export const PortfolioPage: React.FC = () => {
               </table>
             </div>
           )}
-        </Card>
+        </div>
       )}
 
       {/* Record Transaction Modal */}
       {isRecordTxOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl w-full max-w-md p-6 space-y-4">
-            <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-3">
-              <h3 className="text-base font-bold font-heading text-[var(--text-main)]">Record Portfolio Transaction</h3>
-              <button onClick={() => setIsRecordTxOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)]">
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="inst-card w-full max-w-md p-[24px] shadow-[0_0_30px_rgba(0,0,0,0.8)] border-[var(--border-color)]">
+            <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-[16px] mb-[24px]">
+              <h3 className="text-[18px] font-bold font-heading text-[var(--text-main)]">Record Portfolio Transaction</h3>
+              <button onClick={() => setIsRecordTxOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleRecordTransaction} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+            <form onSubmit={handleRecordTransaction} className="space-y-[16px]">
+              <div className="grid grid-cols-2 gap-[16px]">
                 <div>
-                  <label className="text-xs font-mono text-[var(--text-muted)]">Type</label>
+                  <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Type</label>
                   <select
                     value={txType}
                     onChange={(e: any) => setTxType(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs font-mono font-bold text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                    className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono font-bold text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors cursor-pointer"
                   >
                     <option value="BUY">BUY</option>
                     <option value="SELL">SELL</option>
@@ -467,7 +514,7 @@ export const PortfolioPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="text-xs font-mono text-[var(--text-muted)]">Asset Symbol</label>
+                  <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Asset Symbol</label>
                   <select
                     value={txAssetId}
                     onChange={(e) => {
@@ -475,7 +522,7 @@ export const PortfolioPage: React.FC = () => {
                       const found = assets.find(a => a.id === e.target.value);
                       if (found) setTxPrice(found.price.toString());
                     }}
-                    className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                    className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors cursor-pointer"
                   >
                     {assets.map((a) => (
                       <option key={a.id} value={a.id}>
@@ -486,9 +533,9 @@ export const PortfolioPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-[16px]">
                 <div>
-                  <label className="text-xs font-mono text-[var(--text-muted)]">Quantity (Shares)</label>
+                  <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Quantity (Shares)</label>
                   <input
                     type="number"
                     step="any"
@@ -496,12 +543,12 @@ export const PortfolioPage: React.FC = () => {
                     placeholder="e.g. 50"
                     value={txQty}
                     onChange={(e) => setTxQty(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                    className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-mono text-[var(--text-muted)]">Execution Price ($)</label>
+                  <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Execution Price ($)</label>
                   <input
                     type="number"
                     step="any"
@@ -509,40 +556,40 @@ export const PortfolioPage: React.FC = () => {
                     placeholder="e.g. 175.50"
                     value={txPrice}
                     onChange={(e) => setTxPrice(e.target.value)}
-                    className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                    className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="text-xs font-mono text-[var(--text-muted)]">Broker Fees ($)</label>
+                <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Broker Fees ($)</label>
                 <input
                   type="number"
                   step="any"
                   value={txFees}
                   onChange={(e) => setTxFees(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-mono text-[var(--text-muted)]">Transaction Notes</label>
+                <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Transaction Notes</label>
                 <input
                   type="text"
                   placeholder="e.g. Monthly DCA rebalance order"
                   value={txNotes}
                   onChange={(e) => setTxNotes(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="secondary" onClick={() => setIsRecordTxOpen(false)}>
+              <div className="flex justify-end gap-[12px] pt-[16px] border-t border-[var(--border-color)]">
+                <button type="button" onClick={() => setIsRecordTxOpen(false)} className="px-[16px] py-[10px] rounded-[8px] text-[13px] font-bold font-mono uppercase tracking-wider bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--text-muted)] text-[var(--text-main)] transition-colors cursor-pointer">
                   Cancel
-                </Button>
-                <Button type="submit">
+                </button>
+                <button type="submit" className="px-[16px] py-[10px] rounded-[8px] text-[13px] font-bold font-mono uppercase tracking-wider bg-[var(--primary)] hover:bg-[#ff7a45] text-[#050608] shadow-[0_0_15px_rgba(255,90,31,0.3)] transition-colors cursor-pointer">
                   Record Trade
-                </Button>
+                </button>
               </div>
             </form>
           </div>
@@ -551,43 +598,43 @@ export const PortfolioPage: React.FC = () => {
 
       {/* Edit Portfolio Modal */}
       {isEditPortfolioOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl w-full max-w-md p-6 space-y-4">
-            <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-3">
-              <h3 className="text-base font-bold font-heading text-[var(--text-main)]">Edit Portfolio Details</h3>
-              <button onClick={() => setIsEditPortfolioOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)]">
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="inst-card w-full max-w-md p-[24px] shadow-[0_0_30px_rgba(0,0,0,0.8)] border-[var(--border-color)]">
+            <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-[16px] mb-[24px]">
+              <h3 className="text-[18px] font-bold font-heading text-[var(--text-main)]">Edit Portfolio Details</h3>
+              <button onClick={() => setIsEditPortfolioOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleEditPortfolio} className="space-y-4">
+            <form onSubmit={handleEditPortfolio} className="space-y-[16px]">
               <div>
-                <label className="text-xs font-mono text-[var(--text-muted)]">Portfolio Name</label>
+                <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Portfolio Name</label>
                 <input
                   type="text"
                   required
                   value={portfolioName}
                   onChange={(e) => setPortfolioName(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-mono text-[var(--text-muted)]">Description</label>
+                <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Description</label>
                 <input
                   type="text"
                   value={portfolioDesc}
                   onChange={(e) => setPortfolioDesc(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="secondary" onClick={() => setIsEditPortfolioOpen(false)}>
+              <div className="flex justify-end gap-[12px] pt-[16px] border-t border-[var(--border-color)]">
+                <button type="button" onClick={() => setIsEditPortfolioOpen(false)} className="px-[16px] py-[10px] rounded-[8px] text-[13px] font-bold font-mono uppercase tracking-wider bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--text-muted)] text-[var(--text-main)] transition-colors cursor-pointer">
                   Cancel
-                </Button>
-                <Button type="submit">
+                </button>
+                <button type="submit" className="px-[16px] py-[10px] rounded-[8px] text-[13px] font-bold font-mono uppercase tracking-wider bg-[var(--primary)] hover:bg-[#ff7a45] text-[#050608] shadow-[0_0_15px_rgba(255,90,31,0.3)] transition-colors cursor-pointer">
                   Save Changes
-                </Button>
+                </button>
               </div>
             </form>
           </div>
@@ -596,17 +643,17 @@ export const PortfolioPage: React.FC = () => {
 
       {/* Add Holding Modal */}
       {isAddHoldingOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl w-full max-w-md p-6 space-y-4">
-            <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-3">
-              <h3 className="text-base font-bold font-heading text-[var(--text-main)]">Add Asset Position</h3>
-              <button onClick={() => setIsAddHoldingOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)]">
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="inst-card w-full max-w-md p-[24px] shadow-[0_0_30px_rgba(0,0,0,0.8)] border-[var(--border-color)]">
+            <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-[16px] mb-[24px]">
+              <h3 className="text-[18px] font-bold font-heading text-[var(--text-main)]">Add Asset Position</h3>
+              <button onClick={() => setIsAddHoldingOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleAddHolding} className="space-y-4">
+            <form onSubmit={handleAddHolding} className="space-y-[16px]">
               <div>
-                <label className="text-xs font-mono text-[var(--text-muted)]">Select Asset</label>
+                <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Select Asset</label>
                 <select
                   value={selectedAssetId}
                   onChange={(e) => {
@@ -614,7 +661,7 @@ export const PortfolioPage: React.FC = () => {
                     const found = assets.find(a => a.id === e.target.value);
                     if (found) setBuyPrice(found.price.toString());
                   }}
-                  className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors cursor-pointer"
                 >
                   {assets.map((a) => (
                     <option key={a.id} value={a.id}>
@@ -625,7 +672,7 @@ export const PortfolioPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="text-xs font-mono text-[var(--text-muted)]">Quantity (Shares)</label>
+                <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Quantity (Shares)</label>
                 <input
                   type="number"
                   step="any"
@@ -633,12 +680,12 @@ export const PortfolioPage: React.FC = () => {
                   placeholder="e.g. 10"
                   value={shares}
                   onChange={(e) => setShares(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-mono text-[var(--text-muted)]">Average Buy Price ($)</label>
+                <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Average Buy Price ($)</label>
                 <input
                   type="number"
                   step="any"
@@ -646,17 +693,17 @@ export const PortfolioPage: React.FC = () => {
                   placeholder="e.g. 150.00"
                   value={buyPrice}
                   onChange={(e) => setBuyPrice(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="secondary" onClick={() => setIsAddHoldingOpen(false)}>
+              <div className="flex justify-end gap-[12px] pt-[16px] border-t border-[var(--border-color)]">
+                <button type="button" onClick={() => setIsAddHoldingOpen(false)} className="px-[16px] py-[10px] rounded-[8px] text-[13px] font-bold font-mono uppercase tracking-wider bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--text-muted)] text-[var(--text-main)] transition-colors cursor-pointer">
                   Cancel
-                </Button>
-                <Button type="submit">
+                </button>
+                <button type="submit" className="px-[16px] py-[10px] rounded-[8px] text-[13px] font-bold font-mono uppercase tracking-wider bg-[var(--primary)] hover:bg-[#ff7a45] text-[#050608] shadow-[0_0_15px_rgba(255,90,31,0.3)] transition-colors cursor-pointer">
                   Save Position
-                </Button>
+                </button>
               </div>
             </form>
           </div>
@@ -665,45 +712,45 @@ export const PortfolioPage: React.FC = () => {
 
       {/* Create Portfolio Modal */}
       {isCreatePortfolioOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[var(--bg-card)] border border-[var(--border-color)] rounded-2xl w-full max-w-md p-6 space-y-4">
-            <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-3">
-              <h3 className="text-base font-bold font-heading text-[var(--text-main)]">Create New Portfolio</h3>
-              <button onClick={() => setIsCreatePortfolioOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--text-main)]">
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="inst-card w-full max-w-md p-[24px] shadow-[0_0_30px_rgba(0,0,0,0.8)] border-[var(--border-color)]">
+            <div className="flex justify-between items-center border-b border-[var(--border-color)] pb-[16px] mb-[24px]">
+              <h3 className="text-[18px] font-bold font-heading text-[var(--text-main)]">Create New Portfolio</h3>
+              <button onClick={() => setIsCreatePortfolioOpen(false)} className="text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors cursor-pointer">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <form onSubmit={handleCreatePortfolio} className="space-y-4">
+            <form onSubmit={handleCreatePortfolio} className="space-y-[16px]">
               <div>
-                <label className="text-xs font-mono text-[var(--text-muted)]">Portfolio Name</label>
+                <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Portfolio Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Retirement Core"
                   value={portfolioName}
                   onChange={(e) => setPortfolioName(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs font-mono text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-mono text-[var(--text-muted)]">Description (Optional)</label>
+                <label className="block text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-2">Description (Optional)</label>
                 <input
                   type="text"
                   placeholder="e.g. Long term equity growth"
                   value={portfolioDesc}
                   onChange={(e) => setPortfolioDesc(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg text-xs text-[var(--text-main)] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full px-[14px] py-[12px] bg-background border border-[var(--border-color)] rounded-[8px] text-[13px] font-mono text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-2">
-                <Button type="button" variant="secondary" onClick={() => setIsCreatePortfolioOpen(false)}>
+              <div className="flex justify-end gap-[12px] pt-[16px] border-t border-[var(--border-color)]">
+                <button type="button" onClick={() => setIsCreatePortfolioOpen(false)} className="px-[16px] py-[10px] rounded-[8px] text-[13px] font-bold font-mono uppercase tracking-wider bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--text-muted)] text-[var(--text-main)] transition-colors cursor-pointer">
                   Cancel
-                </Button>
-                <Button type="submit">
+                </button>
+                <button type="submit" className="px-[16px] py-[10px] rounded-[8px] text-[13px] font-bold font-mono uppercase tracking-wider bg-[var(--primary)] hover:bg-[#ff7a45] text-[#050608] shadow-[0_0_15px_rgba(255,90,31,0.3)] transition-colors cursor-pointer">
                   Create Portfolio
-                </Button>
+                </button>
               </div>
             </form>
           </div>
@@ -713,3 +760,4 @@ export const PortfolioPage: React.FC = () => {
   );
 };
 
+export default PortfolioPage;

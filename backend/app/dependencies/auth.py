@@ -9,6 +9,21 @@ from app.db.session import get_db
 from app.models.user import User
 from app.repositories.user_repository import UserRepository
 
+
+def create_access_token(data=None, subject=None, roles=None, **kwargs):
+    """Backward-compatible test/helper wrapper around the canonical security token creator.
+
+    Older integration scripts imported this helper from ``dependencies.auth`` and
+    passed ``data={"sub": ...}``; production code uses ``app.core.security``.
+    Keeping the adapter here prevents legacy tests from failing at collection.
+    """
+    payload = data if isinstance(data, dict) else {}
+    token_subject = subject or payload.get("sub") or payload.get("email")
+    token_roles = roles or ([payload.get("role")] if payload.get("role") else None)
+    if not token_subject:
+        raise ValueError("create_access_token requires subject or data['sub']")
+    return security.create_access_token(token_subject, roles=token_roles)
+
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/auth/login"
 )

@@ -139,7 +139,7 @@ export const InteractiveChart: React.FC<InteractiveChartProps> = ({
   // ── Empty ─────────────────────────────────────────────────────────────────
   if (!hasData) {
     return (
-      <div className="w-full rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] p-10 text-center">
+      <div className="w-full rounded-2xl bg-surface border border-[var(--border-color)] p-10 text-center">
         <p className="text-sm text-[var(--text-muted)] font-sans">No chart data available for this period.</p>
       </div>
     );
@@ -147,7 +147,7 @@ export const InteractiveChart: React.FC<InteractiveChartProps> = ({
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="w-full rounded-2xl bg-[var(--bg-surface)] border border-[var(--border-color)] overflow-hidden select-none">
+    <div className="w-full rounded-2xl bg-surface border border-[var(--border-color)] overflow-hidden select-none">
 
       {/* ══ HEADER ══════════════════════════════════════════════════════════ */}
       <div className="px-6 pt-5 pb-1">

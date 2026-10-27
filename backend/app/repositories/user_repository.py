@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import Optional, Union
+from typing import Optional, Union, List
 from sqlalchemy.orm import Session, joinedload
 from app.models.user import User
 from app.models.user_preference import UserPreference
@@ -59,3 +59,14 @@ class UserRepository:
         self.db.commit()
         self.db.refresh(user)
         return user
+
+    def list_all(self, skip: int = 0, limit: int = 200) -> List[User]:
+        """Fetch all user records for administrative oversight."""
+        return (
+            self.db.query(User)
+            .options(joinedload(User.preference))
+            .order_by(User.created_at.desc())
+            .offset(skip)
+            .limit(limit)
+            .all()
+        )

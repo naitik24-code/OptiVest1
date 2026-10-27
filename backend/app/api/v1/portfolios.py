@@ -15,10 +15,15 @@ router = APIRouter(prefix="/portfolios", tags=["Portfolios"])
 
 @router.get("", response_model=ResponseEnvelope[List[PortfolioResponse]])
 def list_portfolios(
+    all_portfolios: bool = False,
     portfolio_service: PortfolioService = Depends(get_portfolio_service),
     current_user: User = Depends(get_current_user)
 ):
-    portfolios = portfolio_service.list_portfolios_by_user(current_user.id)
+    # If admin requests all portfolios or calls from Admin Console, return all portfolios across the platform
+    if current_user.role.upper() == "ADMIN" and (all_portfolios or True):
+        portfolios = portfolio_service.list_all_portfolios()
+    else:
+        portfolios = portfolio_service.list_portfolios_by_user(current_user.id)
     return ResponseEnvelope.success_response(portfolios)
 
 
@@ -98,7 +103,7 @@ def get_portfolio_candidates(
     portfolio_id: UUID,
     candidate_type: str = "NEW_ALLOCATION",
     target_holding: str = None,
-    limit: int = 5,
+    limit: int = 2,
     portfolio_service: PortfolioService = Depends(get_portfolio_service),
     current_user: User = Depends(get_current_user)
 ):
@@ -108,7 +113,7 @@ def get_portfolio_candidates(
     portfolio = portfolio_service.get_portfolio_by_id(portfolio_id, current_user.id)
     
     # Run CDE
-    cde = CandidateDiscoveryService(portfolio_service.repo.db)
+    cde = CandidateDiscoveryService(portfolio_service.portfolio_repo.db)
     candidates = cde.discover_candidates(
         portfolio_id=str(portfolio.id),
         candidate_type=candidate_type,

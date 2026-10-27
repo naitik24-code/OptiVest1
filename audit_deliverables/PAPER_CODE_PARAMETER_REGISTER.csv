@@ -1,0 +1,27 @@
+Parameter/Claim,Paper Ref,Implemented Code Location,Configured Value,Runtime Value,Verification Method,Status
+Historical period,Section III-A,scripts/run_research_backtest_v7.py:22-31,2013-2023,2013-12-31 to 2023-12-31,Code inspection + market_data_cache.pkl,Verified
+Evaluation window,Section III-A / IV-B,scripts/run_research_backtest_v7.py:131-134,2017-06-05 to 2023-11-06 (78 dates),78 rebalance dates spaced 21 trading days,WalkForward_Predictions.csv date inspection,Verified
+Asset universe size,Section III-A,scripts/run_research_backtest_v7.py:23-29,50 large-cap US equities,50 tickers,Hardcoded list inspection,Verified (Hindsight bias noted)
+Rolling train window,Section III-A / IV-B,scripts/run_research_backtest_v7.py:141,4 years (365*4 days),4 years,Code inspection,Verified
+Purge window,Section III-A / IV-B,scripts/run_research_backtest_v7.py:140,21 trading days,21 days,Code inspection,Verified
+Forecast horizon h,Section III-B,scripts/run_research_backtest_v7.py:53,21 trading days,21 trading days (.shift(-21)),Code inspection,Verified
+XGBoost estimators,Section III-A,scripts/run_research_backtest_v7.py:135,50,50,Code inspection,Verified
+XGBoost max_depth,Section III-A,scripts/run_research_backtest_v7.py:135,3,3,Code inspection,Verified
+XGBoost learning_rate,Section III-A,scripts/run_research_backtest_v7.py:135,0.1,0.1,Code inspection,Verified
+Target winsorization,Section III-A,scripts/run_research_backtest_v7.py:150-151,1st and 99th percentiles,[1% 99%],Code inspection,Verified
+Feature set,Section III-A,scripts/run_research_backtest_v7.py:46-70,"mom_1m, mom_2m, mom_3m, vol_1m, vix",5 technical/macro features,Code inspection,Verified
+CDE ranking in primary backtest,Section III-C / IV-A,scripts/run_research_backtest_v7.py:184-256,Bypassed (all 50 assets),Bypassed,Code inspection,Verified
+APDE objective formulation,Equation (4),scripts/run_research_backtest_v7.py:91-98,mu@w - tau*w.T@cov@w - gamma*norm1(w-w0),Implemented via cvxpy Maximize,Code inspection,Verified
+APDE risk aversion tau,Section IV-A,scripts/run_research_backtest_v7.py:216,3.0,3.0,Code inspection,Verified
+APDE turnover penalty gamma,Section III-D-1,scripts/run_research_backtest_v7.py:92,0.0010 (10 bps),0.0010,Code inspection,Verified
+APDE single asset cap,Equation (7),scripts/run_research_backtest_v7.py:95,w_i <= 0.20,0.20,Code inspection,Verified
+APDE hard turnover limit,Equation (8),scripts/run_research_backtest_v7.py:96,norm1(w-w0) <= 0.15,0.15,Code inspection,Verified
+Transaction cost charged,Section IV-B,scripts/run_research_backtest_v7.py:204 219,10 bps per unit l1 turnover,10 bps,Code inspection,Verified
+Solver,Section III-D-3,scripts/run_research_backtest_v7.py:106,cvxpy SCS (eps=1e-7),SCS,Code inspection,Verified
+Covariance matrix,Section III-D-3,scripts/run_research_backtest_v7.py:191,Trailing 252 days * 21,Trailing 252 daily pct_change().cov()*21,Code inspection,Verified
+Decision Score formula,Equation (10),backend/app/services/explain_service.py:18-35 / scripts/generate_xai_real_data.py,r_hat - 2*tau*(cov@w)_i - gamma*sgn(w_i-w0_i),Exact match,Unit tests pass,Verified
+Real-data TreeSHAP status,Section III-E-3 / Section V-G,scripts/generate_xai_real_data.py,Claimed blocked on Windows in text,Executes successfully in current env (shap 0.52.0 / scikit-learn 1.9.0),Live script execution,Environment resolved (Discrepancy with paper text)
+Table VII vs Section V-E risk sweep,Table VII & Section V-E,scripts/run_remaining_evidence.py:9-28,Table VII matches Risk_Aversion_Sweep.csv,Prose (21.1% to 13.6%) contradicts Table VII (16.01% to 14.75%),Artifact comparison,Confirmed contradiction in manuscript
+Out-of-sample R2 definition,Section IV-C / Page 6,scripts/run_research_backtest_v7.py:321,1 - sum((y-y_hat)^2)/sum(y^2),-2.1006%,Code calculation against WalkForward_Predictions.csv,Verified (Zero-benchmark definition)
+Table VI CDE ablation (82 rebalances),Table VI,research_backtest_50asset_comparison.json,Return: 11.85% vs 10.49%; Vol: 15.71% vs 13.90%; Sharpe: 0.754 vs 0.755; TO: 15.00% vs 13.43%,Matches research_backtest_50asset_comparison.json,Artifact inspection,Verified (Artifact present in root)
+Table VIII Solver latency,Table VIII,results_v7/Solver_Timing_Scalability.csv,N=50: 9.07ms; N=100: 12.93ms; N=250: 58.01ms; N=500: 309.95ms,Exact match with median_wall_ms,Artifact inspection,Verified (Wall time was recorded under SCS solve column)

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Card } from '../components/ui/Card';
 import { Users, ShieldCheck, ShieldAlert, RefreshCw, Search, UserCheck, UserX } from 'lucide-react';
 
 const getH = (): HeadersInit => {
@@ -53,73 +52,65 @@ export const AdminUsersPage: React.FC = () => {
   const activeCount = users.filter((u) => u.is_active !== false).length;
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="max-w-[1120px] mx-auto space-y-6">
       {/* ── Header ── */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-1">
-            <Users className="w-4 h-4" />
-            <span>Founder Console &bull; RBAC &amp; User Registry</span>
-          </div>
-          <h1 className="text-2xl font-extrabold font-heading tracking-tight text-[var(--text-main)]">
-            User Control Panel
-          </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
-            Platform-wide user registry — roles, access levels, and registration telemetry.
-          </p>
+          <h2 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)]">User Control Panel</h2>
+          <p className="text-[14px] text-[var(--text-muted)] m-0 mt-1 font-mono">Platform-wide user registry — roles, access levels, and registration telemetry</p>
         </div>
         <button
           onClick={fetchUsers}
-          className="px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-color)] hover:bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-main)] rounded-lg flex items-center gap-2 transition-all"
+          className="px-4 py-2 bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--primary)] text-[13px] font-bold text-[var(--text-main)] rounded-[8px] flex items-center gap-2 transition-all cursor-pointer"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-          <span>Refresh</span>
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[var(--primary)]' : ''}`} />
+          <span>Refresh Registry</span>
         </button>
       </div>
 
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Total Users',   value: users.length,  color: 'text-[var(--text-main)]', icon: Users },
-          { label: 'Active',        value: activeCount,   color: 'text-emerald-400',         icon: UserCheck },
-          { label: 'Administrators',value: adminCount,    color: 'text-amber-400',           icon: ShieldCheck },
-          { label: 'Restricted',    value: users.length - activeCount, color: 'text-red-400', icon: UserX },
+          { label: 'Total Users',   value: users.length,  color: 'text-[var(--text-main)]', bg: 'bg-[var(--surface2)]', icon: Users },
+          { label: 'Active',        value: activeCount,   color: 'text-[var(--success)]', bg: 'bg-[var(--success)]/10', icon: UserCheck },
+          { label: 'Administrators',value: adminCount,    color: 'text-[var(--primary)]', bg: 'bg-[var(--primary)]/10', icon: ShieldCheck },
+          { label: 'Restricted',    value: users.length - activeCount, color: 'text-[var(--danger)]', bg: 'bg-[var(--danger)]/10', icon: UserX },
         ].map((item) => {
           const Icon = item.icon;
           return (
-            <Card key={item.label} className="p-4 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] flex items-center justify-center shrink-0">
-                <Icon className={`w-4.5 h-4.5 ${item.color}`} />
+            <div key={item.label} className="inst-card p-[20px] flex items-center gap-4">
+              <div className={`w-[44px] h-[44px] rounded-[10px] ${item.bg} border border-[var(--border-color)] flex items-center justify-center shrink-0`}>
+                <Icon className={`w-5 h-5 ${item.color}`} />
               </div>
               <div>
-                <div className={`text-xl font-extrabold font-mono ${item.color}`}>{item.value}</div>
-                <div className="text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">{item.label}</div>
+                <div className={`text-[24px] font-bold font-mono ${item.color}`}>{item.value}</div>
+                <div className="text-[11px] uppercase font-bold text-[var(--text-muted)] tracking-wider mt-[4px]">{item.label}</div>
               </div>
-            </Card>
+            </div>
           );
         })}
       </div>
 
       {/* ── Filter / Search Bar ── */}
-      <Card className="p-4 flex flex-col sm:flex-row gap-3">
+      <div className="inst-card p-[16px] flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-muted)]" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
           <input
             type="text"
             placeholder="Search by email or name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg pl-9 pr-3 py-2 text-xs text-[var(--text-main)] focus:outline-none focus:border-amber-500 transition-colors"
+            className="w-full bg-background border border-[var(--border-color)] rounded-[8px] pl-10 pr-4 py-2.5 text-[14px] text-[var(--text-main)] focus:outline-none focus:border-[var(--primary)] transition-colors"
           />
         </div>
-        <div className="flex items-center gap-1 bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg p-1">
+        <div className="flex items-center gap-1 bg-background border border-[var(--border-color)] rounded-[8px] p-1">
           {(['ALL', 'USER', 'ADMIN'] as const).map((r) => (
             <button
               key={r}
               onClick={() => setRoleFilter(r)}
-              className={`px-3 py-1 text-[11px] font-bold rounded-md transition-all ${
+              className={`px-4 py-1.5 text-[12px] font-bold rounded-[6px] transition-all cursor-pointer ${
                 roleFilter === r
-                  ? 'bg-amber-500 text-white shadow'
+                  ? 'bg-[var(--primary)] text-[#08090b]'
                   : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
               }`}
             >
@@ -127,67 +118,67 @@ export const AdminUsersPage: React.FC = () => {
             </button>
           ))}
         </div>
-      </Card>
+      </div>
 
       {/* ── User Table ── */}
-      <Card className="p-5">
-        <h3 className="text-sm font-bold text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-3 mb-3">
-          <ShieldCheck className="w-4 h-4 text-amber-400" />
+      <div className="inst-card p-[24px]">
+        <h3 className="text-[14px] font-bold text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-3 mb-4">
+          <ShieldCheck className="w-4 h-4 text-[var(--primary)]" />
           <span>Registered Users ({filtered.length})</span>
         </h3>
 
         {loading ? (
           <div className="py-12 text-center flex flex-col items-center gap-3 text-[var(--text-muted)]">
-            <RefreshCw className="w-5 h-5 animate-spin text-amber-400" />
-            <span className="text-xs">Loading user registry...</span>
+            <RefreshCw className="w-5 h-5 animate-spin text-[var(--primary)]" />
+            <span className="text-[13px]">Loading user registry...</span>
           </div>
         ) : filtered.length === 0 ? (
           <div className="py-12 text-center">
             <Users className="w-10 h-10 text-[var(--text-muted)] mx-auto mb-3 opacity-40" />
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-[14px] text-[var(--text-muted)]">
               {users.length === 0 ? 'No users found in registry.' : 'No results match your search.'}
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left text-[13px]">
               <thead>
-                <tr className="border-b border-[var(--border-color)] text-[var(--text-muted)] uppercase text-[10px] font-mono">
-                  <th className="py-2.5 px-3">User</th>
-                  <th className="py-2.5 px-3">Email</th>
-                  <th className="py-2.5 px-3">Role</th>
-                  <th className="py-2.5 px-3">Status</th>
-                  <th className="py-2.5 px-3">Registered</th>
+                <tr className="border-b border-[var(--border-color)] text-[var(--text-muted)] uppercase text-[10px] font-mono tracking-wider">
+                  <th className="py-3 px-4 font-semibold">User</th>
+                  <th className="py-3 px-4 font-semibold">Email</th>
+                  <th className="py-3 px-4 font-semibold">Role</th>
+                  <th className="py-3 px-4 font-semibold">Status</th>
+                  <th className="py-3 px-4 font-semibold">Registered</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border-color)] font-mono">
                 {filtered.map((user) => (
-                  <tr key={user.id} className="hover:bg-[var(--bg-main)]/50 transition-colors">
-                    <td className="py-3 px-3 font-semibold text-[var(--text-main)]">
+                  <tr key={user.id} className="hover:bg-background transition-colors">
+                    <td className="py-4 px-4 font-bold text-[var(--text-main)]">
                       {user.full_name || user.email.split('@')[0]}
                     </td>
-                    <td className="py-3 px-3 text-[var(--text-muted)]">{user.email}</td>
-                    <td className="py-3 px-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase flex items-center gap-1 w-fit ${
+                    <td className="py-4 px-4 text-[var(--text-muted)]">{user.email}</td>
+                    <td className="py-4 px-4">
+                      <span className={`px-2.5 py-1 rounded-[4px] text-[10px] font-bold uppercase flex items-center gap-1.5 w-fit ${
                         user.role === 'ADMIN'
-                          ? 'bg-amber-500/15 text-amber-400 border border-amber-500/30'
-                          : 'bg-[var(--bg-main)] text-[var(--text-muted)] border border-[var(--border-color)]'
+                          ? 'bg-[var(--primary-dim)] text-[var(--primary)] border border-[rgba(255,90,31,0.3)]'
+                          : 'bg-[var(--surface2)] text-[var(--text-muted)] border border-[var(--border-color)]'
                       }`}>
                         {user.role === 'ADMIN'
-                          ? <ShieldCheck className="w-2.5 h-2.5" />
-                          : <ShieldAlert className="w-2.5 h-2.5" />}
+                          ? <ShieldCheck className="w-3 h-3" />
+                          : <ShieldAlert className="w-3 h-3" />}
                         {user.role}
                       </span>
                     </td>
-                    <td className="py-3 px-3">
-                      <span className={`flex items-center gap-1.5 text-[10px] font-bold uppercase ${
-                        user.is_active !== false ? 'text-emerald-400' : 'text-red-400'
+                    <td className="py-4 px-4">
+                      <span className={`flex items-center gap-2 text-[10px] font-bold uppercase ${
+                        user.is_active !== false ? 'text-[var(--success)]' : 'text-[var(--danger)]'
                       }`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${user.is_active !== false ? 'bg-emerald-400 animate-pulse' : 'bg-red-400'}`} />
+                        <span className={`w-2 h-2 rounded-full ${user.is_active !== false ? 'bg-[var(--success)] shadow-[0_0_8px_rgba(23,217,140,0.6)]' : 'bg-[var(--danger)]'}`} />
                         {user.is_active !== false ? 'ACTIVE' : 'RESTRICTED'}
                       </span>
                     </td>
-                    <td className="py-3 px-3 text-[var(--text-muted)]">
+                    <td className="py-4 px-4 text-[var(--text-muted)]">
                       {user.created_at
                         ? new Date(user.created_at).toLocaleDateString()
                         : '—'}
@@ -198,7 +189,7 @@ export const AdminUsersPage: React.FC = () => {
             </table>
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 };

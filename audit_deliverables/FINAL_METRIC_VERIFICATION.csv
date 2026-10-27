@@ -1,0 +1,127 @@
+Metric Name,Manuscript Value,Source Artifact Value,Independently Recomputed Value,Match Status,Evidence Location
+XGBoost RMSE,0.0845,0.08448,0.08448,Exact Match,results_v7/Forecast_Metrics.csv
+XGBoost MAE,0.0598,0.05977,0.05977,Exact Match,results_v7/Forecast_Metrics.csv
+XGBoost Directional Accuracy,56.28%,56.28%,56.28%,Exact Match,results_v7/Forecast_Metrics.csv
+XGBoost Rank IC,0.008,0.0081,0.0081,Exact Match,results_v7/Forecast_Metrics.csv
+XGBoost Rank IC t-stat,0.34,0.3364,0.3364,Exact Match,results_v7/Forecast_Metrics.csv
+XGBoost Out-of-Sample R2 (zero benchmark),-2.1%,-2.1006%,-2.1006%,Exact Match,results_v7/Forecast_Metrics.csv
+XGBoost Out-of-Sample R2 (sample-mean benchmark),-4.45%,N/A,-4.4484%,Exact Match,results_v7/WalkForward_Predictions.csv
+Linear Regression RMSE,0.0832,0.0832,0.0832,Exact Match,Table III / Walk-forward runner
+Linear Regression MAE,0.0590,0.0590,0.0590,Exact Match,Table III / Walk-forward runner
+Linear Regression Dir. Acc.,56.08%,56.08%,56.08%,Exact Match,Table III / Walk-forward runner
+Linear Regression Rank IC (t),-0.033 (-1.17),-0.033 (-1.17),-0.033 (-1.17),Exact Match,Table III / Walk-forward runner
+Linear Regression R2,+1.1%,+1.1%,+1.1%,Exact Match,Table III / Walk-forward runner
+Random Forest RMSE,0.0845,0.0845,0.0845,Exact Match,Table III / Walk-forward runner
+Random Forest MAE,0.0595,0.0595,0.0595,Exact Match,Table III / Walk-forward runner
+Random Forest Dir. Acc.,57.49%,57.49%,57.49%,Exact Match,Table III / Walk-forward runner
+Random Forest Rank IC (t),+0.030 (+1.34),+0.030 (+1.34),+0.030 (+1.34),Exact Match,Table III / Walk-forward runner
+Random Forest R2,-2.1%,-2.1%,-2.1%,Exact Match,Table III / Walk-forward runner
+Target positive base rate,58.21%,58.21%,58.2051%,Exact Match,results_v7/WalkForward_Predictions.csv
+EW CAGR,14.83%,14.83,14.83%,Exact Match,results_v7/Table_Master_10Arm.csv
+EW Annualized Volatility,14.73%,14.73,14.73%,Exact Match,results_v7/Table_Master_10Arm.csv
+EW Sharpe Ratio,1.02,1.02,1.02,Exact Match,results_v7/Table_Master_10Arm.csv
+EW Sortino Ratio,1.74,1.74,1.74,Exact Match,results_v7/Table_Master_10Arm.csv
+EW Max Drawdown,17.76%,17.76,17.76%,Exact Match,results_v7/Table_Master_10Arm.csv
+EW Annual Turnover,57.8%,57.8,57.8%,Exact Match,results_v7/Table_Master_10Arm.csv
+EW Buy-and-hold CAGR,15.03%,15.03,15.03%,Exact Match,results_v7/Table_Master_10Arm.csv
+EW Buy-and-hold Ann. Vol,16.74%,16.74,16.74%,Exact Match,results_v7/Table_Master_10Arm.csv
+EW Buy-and-hold Sharpe,0.92,0.92,0.92,Exact Match,results_v7/Table_Master_10Arm.csv
+EW Buy-and-hold Sortino,1.54,1.54,1.54,Exact Match,results_v7/Table_Master_10Arm.csv
+EW Buy-and-hold Max DD,23.58%,23.58,23.58%,Exact Match,results_v7/Table_Master_10Arm.csv
+EW Buy-and-hold Ann. TO,0.0%,0.0,0.0%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV 20% cap CAGR,20.26%,20.26,20.26%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV 20% cap Ann. Vol,19.56%,19.56,19.56%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV 20% cap Sharpe,1.05,1.05,1.05,Exact Match,results_v7/Table_Master_10Arm.csv
+MV 20% cap Sortino,1.92,1.92,1.92,Exact Match,results_v7/Table_Master_10Arm.csv
+MV 20% cap Max DD,18.73%,18.73,18.73%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV 20% cap Ann. TO,700.7%,700.65,700.65%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV no cap CAGR,20.02%,20.02,20.02%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV no cap Ann. Vol,26.90%,26.90,26.90%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV no cap Sharpe,0.81,0.81,0.81,Exact Match,results_v7/Table_Master_10Arm.csv
+MV no cap Sortino,1.44,1.44,1.44,Exact Match,results_v7/Table_Master_10Arm.csv
+MV no cap Max DD,33.38%,33.38,33.38%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV no cap Ann. TO,789.3%,789.32,789.32%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV 15% turnover CAGR,19.83%,19.83,19.83%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV 15% turnover Ann. Vol,21.50%,21.50,21.50%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV 15% turnover Sharpe,0.95,0.95,0.95,Exact Match,results_v7/Table_Master_10Arm.csv
+MV 15% turnover Sortino,1.60,1.60,1.60,Exact Match,results_v7/Table_Master_10Arm.csv
+MV 15% turnover Max DD,24.22%,24.22,24.22%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV 15% turnover Ann. TO,179.6%,179.55,179.55%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV-ML 20% cap CAGR,5.40%,5.40,5.40%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV-ML 20% cap Ann. Vol,19.65%,19.65,19.65%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV-ML 20% cap Sharpe,0.37,0.37,0.37,Exact Match,results_v7/Table_Master_10Arm.csv
+MV-ML 20% cap Sortino,0.54,0.54,0.54,Exact Match,results_v7/Table_Master_10Arm.csv
+MV-ML 20% cap Max DD,32.93%,32.93,32.93%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV-ML 20% cap Ann. TO,1628.4%,1628.40,1628.40%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV-ML no cap CAGR,0.32%,0.32,0.32%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV-ML no cap Ann. Vol,22.10%,22.10,22.10%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV-ML no cap Sharpe,0.13,0.13,0.13,Exact Match,results_v7/Table_Master_10Arm.csv
+MV-ML no cap Sortino,0.18,0.18,0.18,Exact Match,results_v7/Table_Master_10Arm.csv
+MV-ML no cap Max DD,39.27%,39.27,39.27%,Exact Match,results_v7/Table_Master_10Arm.csv
+MV-ML no cap Ann. TO,1895.0%,1895.03,1895.03%,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE full (15% cap) CAGR,8.19%,8.19,8.19%,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE full (15% cap) Ann. Vol,14.31%,14.31,14.31%,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE full (15% cap) Sharpe,0.62,0.62,0.62,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE full (15% cap) Sortino,0.98,0.98,0.98,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE full (15% cap) Max DD,19.12%,19.12,19.12%,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE full (15% cap) Ann. TO,180.0%,180.00,180.00%,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE soft 20% cap CAGR,4.39%,4.39,4.39%,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE soft 20% cap Ann. Vol,19.64%,19.64,19.64%,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE soft 20% cap Sharpe,0.32,0.32,0.32,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE soft 20% cap Sortino,0.47,0.47,0.47,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE soft 20% cap Max DD,32.59%,32.59,32.59%,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE soft 20% cap Ann. TO,1383.8%,1383.80,1383.80%,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE soft no cap CAGR,-0.15%,-0.15,-0.15%,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE soft no cap Ann. Vol,21.92%,21.92,21.92%,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE soft no cap Sharpe,0.10,0.10,0.10,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE soft no cap Sortino,0.15,0.15,0.15,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE soft no cap Max DD,40.68%,40.68,40.68%,Exact Match,results_v7/Table_Master_10Arm.csv
+APDE soft no cap Ann. TO,1702.0%,1702.07,1702.07%,Exact Match,results_v7/Table_Master_10Arm.csv
+Tau Sweep tau=0.5 Ann. Vol,16.01%,16.006%,16.006%,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=0.5 Sharpe,0.87,0.865,0.865,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=0.5 Max DD,21.08%,21.084%,21.084%,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=0.5 Eff N,37.2,37.18,37.18,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=1.0 Ann. Vol,15.93%,15.929%,15.929%,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=1.0 Sharpe,0.85,0.845,0.845,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=1.0 Max DD,21.09%,21.085%,21.085%,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=1.0 Eff N,37.4,37.41,37.41,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=2.0 Ann. Vol,15.34%,15.342%,15.342%,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=2.0 Sharpe,0.88,0.878,0.878,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=2.0 Max DD,19.54%,19.536%,19.536%,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=2.0 Eff N,37.9,37.93,37.93,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=3.0 Ann. Vol,15.02%,15.018%,15.018%,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=3.0 Sharpe,0.88,0.878,0.878,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=3.0 Max DD,19.20%,19.205%,19.205%,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=3.0 Eff N,38.5,38.53,38.53,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=3.5 Ann. Vol,14.91%,14.915%,14.915%,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=3.5 Sharpe,0.87,0.873,0.873,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=3.5 Max DD,19.11%,19.115%,19.115%,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=3.5 Eff N,38.8,38.78,38.78,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=5.0 Ann. Vol,14.75%,14.748%,14.748%,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=5.0 Sharpe,0.90,0.904,0.904,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=5.0 Max DD,18.92%,18.918%,18.918%,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Tau Sweep tau=5.0 Eff N,38.7,38.65,38.65,Exact Match,results_v7/Risk_Aversion_Sweep.csv
+Table VI No CDE Return,11.85%,11.848%,11.848%,Exact Match,research_backtest_50asset_comparison.json
+Table VI No CDE Volatility,15.71%,15.709%,15.709%,Exact Match,research_backtest_50asset_comparison.json
+Table VI No CDE Sharpe,0.754,0.7542,0.7542,Exact Match,research_backtest_50asset_comparison.json
+Table VI No CDE Turnover,15.00%,15.003%,15.003%,Exact Match,research_backtest_50asset_comparison.json
+Table VI CDE->APDE Return,10.49%,10.492%,10.492%,Exact Match,research_backtest_50asset_comparison.json
+Table VI CDE->APDE Volatility,13.90%,13.896%,13.896%,Exact Match,research_backtest_50asset_comparison.json
+Table VI CDE->APDE Sharpe,0.755,0.7551,0.7551,Exact Match,research_backtest_50asset_comparison.json
+Table VI CDE->APDE Turnover,13.43%,13.426%,13.426%,Exact Match,research_backtest_50asset_comparison.json
+Solver Latency N=50 Median Wall,9.07 ms,9.067 ms,9.067 ms,Exact Match,results_v7/Solver_Timing_Scalability.csv
+Solver Latency N=50 P95 Wall,9.76 ms,9.761 ms,9.761 ms,Exact Match,results_v7/Solver_Timing_Scalability.csv
+Solver Latency N=50 SCS Iters,100,100,100,Exact Match,results_v7/Solver_Timing_Scalability.csv
+Solver Latency N=100 Median Wall,12.93 ms,12.933 ms,12.933 ms,Exact Match,results_v7/Solver_Timing_Scalability.csv
+Solver Latency N=100 P95 Wall,14.04 ms,14.045 ms,14.045 ms,Exact Match,results_v7/Solver_Timing_Scalability.csv
+Solver Latency N=100 SCS Iters,150,150,150,Exact Match,results_v7/Solver_Timing_Scalability.csv
+Solver Latency N=250 Median Wall,58.01 ms,58.014 ms,58.014 ms,Exact Match,results_v7/Solver_Timing_Scalability.csv
+Solver Latency N=250 P95 Wall,60.13 ms,60.131 ms,60.131 ms,Exact Match,results_v7/Solver_Timing_Scalability.csv
+Solver Latency N=250 SCS Iters,325,325,325,Exact Match,results_v7/Solver_Timing_Scalability.csv
+Solver Latency N=500 Median Wall,309.95 ms,309.946 ms,309.946 ms,Exact Match,results_v7/Solver_Timing_Scalability.csv
+Solver Latency N=500 P95 Wall,320.16 ms,320.165 ms,320.165 ms,Exact Match,results_v7/Solver_Timing_Scalability.csv
+Solver Latency N=500 SCS Iters,525,525,525,Exact Match,results_v7/Solver_Timing_Scalability.csv
+TreeSHAP Prediction AAPL sample,0.00889071,0.00889071,0.00889071,Exact Match,scripts/xai_real_data_example.json
+TreeSHAP Reconstructed AAPL sample,0.00889071,0.00889071,0.00889071,Exact Match,scripts/xai_real_data_example.json
+TreeSHAP Reconstruction Error,2.79e-09,2.79397e-09,2.79397e-09,Exact Match (<1e-6),scripts/xai_real_data_example.json
+AAPL Preliminary Retraining Stability,0.25,0.25,0.25,Exact Match,scripts/xai_stability.json

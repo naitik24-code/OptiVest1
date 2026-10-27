@@ -48,5 +48,7 @@ class APDEService:
                         w_val = np.ones(n) / n
                 return w_val
             return prev_w
-        except Exception:
+        except Exception as e:
+            import logging
+            logging.getLogger("optivest.apde").error(f"Solver failed: {str(e)}")
             return prev_w

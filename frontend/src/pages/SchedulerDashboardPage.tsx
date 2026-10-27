@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from '../components/ui/Card';
 import { Clock, PlayCircle, PauseCircle, Activity, RefreshCw, Zap, CheckCircle2 } from 'lucide-react';
 import { apiClient as api } from '../services/apiClient';
 
@@ -30,9 +29,9 @@ export const SchedulerDashboardPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="p-8 text-center flex flex-col items-center gap-3 text-[var(--text-muted)]">
-        <RefreshCw className="w-6 h-6 animate-spin text-[#2563EB]" />
-        <span className="text-xs">Loading scheduler telemetry...</span>
+      <div className="p-[60px] text-center flex flex-col items-center gap-[16px]">
+        <RefreshCw className="w-8 h-8 animate-spin text-[var(--secondary)]" />
+        <span className="text-[13px] font-mono font-bold tracking-wider uppercase text-[var(--text-muted)]">Loading scheduler telemetry...</span>
       </div>
     );
   }
@@ -41,33 +40,33 @@ export const SchedulerDashboardPage: React.FC = () => {
   const jobs: any[] = schedulerStatus?.jobs ?? [];
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="max-w-[1120px] mx-auto space-y-6">
       {/* ── Header ── */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-orange-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[12px] font-mono font-bold text-[var(--primary)] uppercase tracking-wider mb-1">
             <Clock className="w-4 h-4" />
             <span>Infrastructure &bull; Job Scheduler</span>
           </div>
-          <h1 className="text-2xl font-extrabold font-heading tracking-tight text-[var(--text-main)]">
+          <h2 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)]">
             Scheduler Dashboard
-          </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
+          </h2>
+          <p className="text-[14px] text-[var(--text-muted)] m-0 mt-1 font-mono">
             Manage and monitor background scheduled autonomous jobs.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className={`px-3 py-1.5 rounded-lg text-xs font-bold border flex items-center gap-1.5 ${
+        <div className="flex flex-wrap items-center gap-[12px]">
+          <span className={`px-[16px] py-[10px] rounded-[6px] text-[11px] font-mono font-bold uppercase tracking-wider border flex items-center gap-2 ${
             isRunning
-              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30'
-              : 'bg-red-500/10 text-red-400 border-red-500/30'
+              ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30 shadow-[0_0_15px_rgba(23,217,140,0.1)]'
+              : 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30 shadow-[0_0_15px_rgba(255,74,99,0.1)]'
           }`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${isRunning ? 'bg-emerald-400 animate-pulse' : 'bg-red-400'}`} />
+            <span className={`w-2 h-2 rounded-full ${isRunning ? 'bg-[var(--success)] animate-pulse shadow-[0_0_5px_var(--success)]' : 'bg-[var(--danger)]'}`} />
             Engine: {isRunning ? 'RUNNING' : 'STOPPED'}
           </span>
           <button
             onClick={fetchStatus}
-            className="px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-color)] hover:bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-main)] rounded-lg flex items-center gap-2 transition-all"
+            className="px-[16px] py-[10px] bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--text-muted)] text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-main)] rounded-[6px] flex items-center gap-2 transition-all cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Refresh</span>
@@ -76,63 +75,66 @@ export const SchedulerDashboardPage: React.FC = () => {
       </div>
 
       {/* ── KPI Row ── */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-[16px]">
         {[
           { label: 'Total Jobs',  value: jobs.length,                                    color: 'text-[var(--text-main)]' },
-          { label: 'Running',     value: jobs.filter((j) => j.status === 'RUNNING').length, color: 'text-blue-400' },
-          { label: 'Paused',      value: jobs.filter((j) => j.status === 'PAUSED').length,  color: 'text-amber-400' },
+          { label: 'Running',     value: jobs.filter((j) => j.status === 'RUNNING').length, color: 'text-[var(--secondary)] drop-shadow-[0_0_5px_rgba(76,139,255,0.3)]' },
+          { label: 'Paused',      value: jobs.filter((j) => j.status === 'PAUSED').length,  color: 'text-[#eab308] drop-shadow-[0_0_5px_rgba(234,179,8,0.3)]' },
         ].map((item) => (
-          <Card key={item.label} className="p-4 text-center space-y-0.5">
-            <div className={`text-2xl font-extrabold font-mono ${item.color}`}>{item.value}</div>
-            <div className="text-[10px] uppercase font-bold text-[var(--text-muted)] tracking-wider">{item.label}</div>
-          </Card>
+          <div key={item.label} className="inst-card p-[24px] text-center flex flex-col justify-center items-center hover:border-[var(--primary)]/30 transition-colors">
+            <div className={`text-[36px] font-extrabold font-mono leading-none mb-2 ${item.color}`}>{item.value}</div>
+            <div className="text-[10px] uppercase font-bold font-mono text-[var(--text-muted)] tracking-wider">{item.label}</div>
+          </div>
         ))}
       </div>
 
       {/* ── Job Cards Grid ── */}
       {jobs.length === 0 ? (
-        <Card className="p-12 text-center">
-          <Clock className="w-10 h-10 text-[var(--text-muted)] mx-auto mb-3 opacity-40" />
-          <p className="text-sm text-[var(--text-muted)]">No scheduled jobs configured in the system yet.</p>
-        </Card>
+        <div className="inst-card p-[60px] text-center flex flex-col items-center justify-center">
+          <Clock className="w-12 h-12 text-[var(--text-muted)] mx-auto mb-4 opacity-50" />
+          <p className="text-[14px] font-bold font-heading text-[var(--text-main)] mb-1">No Jobs Found</p>
+          <p className="text-[13px] font-mono text-[var(--text-muted)]">No scheduled jobs configured in the system yet.</p>
+        </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[16px]">
           {jobs.map((job: any) => {
             const isActive = job.status === 'RUNNING';
             const isPaused = job.status === 'PAUSED';
             return (
-              <Card key={job.id} className={`p-5 space-y-4 border-l-4 ${
-                isActive ? 'border-l-blue-500' : isPaused ? 'border-l-amber-500' : 'border-l-emerald-500'
+              <div key={job.id} className={`inst-card p-[20px] relative overflow-hidden transition-colors hover:border-[var(--primary)]/30 border-t-4 ${
+                isActive ? 'border-t-[var(--secondary)]' : isPaused ? 'border-t-[#eab308]' : 'border-t-[var(--success)]'
               }`}>
-                <div className="flex items-start justify-between gap-2">
+                {isActive && <div className="absolute top-0 right-0 w-[100px] h-[100px] bg-[radial-gradient(ellipse_at_top_right,rgba(76,139,255,0.1)_0%,rgba(0,0,0,0)_60%)] pointer-events-none" />}
+                
+                <div className="flex items-start justify-between gap-4 mb-4 relative z-10">
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-bold text-[var(--text-main)] truncate">{job.name}</h3>
-                    <div className="flex items-center gap-1.5 text-[10px] text-[var(--text-muted)] mt-0.5">
-                      <Clock className="w-3 h-3" />
-                      <span className="font-mono">Interval: {job.interval}</span>
+                    <h3 className="text-[15px] font-bold font-heading text-[var(--text-main)] truncate m-0">{job.name}</h3>
+                    <div className="flex items-center gap-2 text-[10px] font-mono font-bold text-[var(--text-muted)] uppercase tracking-wider mt-2">
+                      <Clock className="w-3.5 h-3.5" />
+                      <span>Interval: {job.interval}</span>
                     </div>
                   </div>
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border shrink-0 ${
+                  <span className={`px-[8px] py-[4px] rounded-[4px] text-[9px] font-bold font-mono uppercase tracking-widest border shrink-0 flex items-center ${
                     isActive
-                      ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                      ? 'bg-[var(--secondary)]/10 text-[var(--secondary)] border-[var(--secondary)]/30 shadow-[0_0_10px_rgba(76,139,255,0.1)]'
                       : isPaused
-                      ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
-                      : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                      ? 'bg-[#eab308]/10 text-[#eab308] border-[#eab308]/30 shadow-[0_0_10px_rgba(234,179,8,0.1)]'
+                      : 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30 shadow-[0_0_10px_rgba(23,217,140,0.1)]'
                   }`}>
-                    {isActive && <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse mr-1" />}
+                    {isActive && <span className="inline-block w-1.5 h-1.5 rounded-full bg-[var(--secondary)] shadow-[0_0_5px_var(--secondary)] animate-pulse mr-1.5" />}
                     {job.status}
                   </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-[11px] text-[var(--text-muted)] font-mono bg-[var(--bg-main)] border border-[var(--border-color)] rounded-lg px-3 py-2">
-                  <Activity className="w-3 h-3 shrink-0" />
-                  <span>Next: {job.next_run ? new Date(job.next_run).toLocaleString() : 'N/A'}</span>
+                <div className="flex items-center gap-2 text-[11px] text-[var(--text-main)] font-mono font-bold bg-background border border-[var(--border-color)] rounded-[6px] px-[12px] py-[10px] mb-4 relative z-10">
+                  <Activity className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" />
+                  <span>Next: <span className="text-[var(--text-muted)] font-normal ml-1">{job.next_run ? new Date(job.next_run).toLocaleString() : 'N/A'}</span></span>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-1 border-t border-[var(--border-color)]">
+                <div className="flex items-center justify-end gap-[8px] pt-[16px] border-t border-[var(--border-color)] relative z-10">
                   <button
                     onClick={() => handleAction(job.id, 'run')}
-                    className="p-2 rounded-lg text-blue-400 hover:bg-blue-500/10 border border-transparent hover:border-blue-500/20 transition-all"
+                    className="p-[8px] rounded-[6px] text-[var(--text-main)] hover:text-[var(--secondary)] hover:bg-[var(--secondary)]/10 transition-all cursor-pointer"
                     title="Run Now"
                   >
                     <Zap className="w-4 h-4" />
@@ -140,7 +142,7 @@ export const SchedulerDashboardPage: React.FC = () => {
                   {isPaused ? (
                     <button
                       onClick={() => handleAction(job.id, 'resume')}
-                      className="p-2 rounded-lg text-emerald-400 hover:bg-emerald-500/10 border border-transparent hover:border-emerald-500/20 transition-all"
+                      className="p-[8px] rounded-[6px] text-[var(--text-main)] hover:text-[var(--success)] hover:bg-[var(--success)]/10 transition-all cursor-pointer"
                       title="Resume"
                     >
                       <PlayCircle className="w-4 h-4" />
@@ -148,7 +150,7 @@ export const SchedulerDashboardPage: React.FC = () => {
                   ) : (
                     <button
                       onClick={() => handleAction(job.id, 'pause')}
-                      className="p-2 rounded-lg text-amber-400 hover:bg-amber-500/10 border border-transparent hover:border-amber-500/20 transition-all"
+                      className="p-[8px] rounded-[6px] text-[var(--text-main)] hover:text-[#eab308] hover:bg-[#eab308]/10 transition-all cursor-pointer"
                       title="Pause"
                     >
                       <PauseCircle className="w-4 h-4" />
@@ -156,13 +158,13 @@ export const SchedulerDashboardPage: React.FC = () => {
                   )}
                   <button
                     onClick={() => handleAction(job.id, 'run')}
-                    className="p-2 rounded-lg text-emerald-400 hover:bg-emerald-500/10 border border-transparent hover:border-emerald-500/20 transition-all"
+                    className="p-[8px] rounded-[6px] text-[var(--text-main)] hover:text-[var(--success)] hover:bg-[var(--success)]/10 transition-all cursor-pointer"
                     title="Mark Done"
                   >
                     <CheckCircle2 className="w-4 h-4" />
                   </button>
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from '../components/ui/Card';
 import { FileText, Download, RefreshCw, AlertCircle, TrendingUp, BarChart3, ShieldCheck, Award } from 'lucide-react';
 
 const getH = (): HeadersInit => { const t = localStorage.getItem('access_token'); return t ? { Authorization: `Bearer ${t}` } : {}; };
@@ -74,136 +73,152 @@ Total Decisions:         ${report.total_decisions || 0}
   };
 
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="max-w-[1120px] mx-auto space-y-6">
       {/* ── Header ── */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[12px] font-mono font-bold text-[#14b8a6] uppercase tracking-wider mb-1">
             <FileText className="w-4 h-4" />
             <span>Analytics &bull; Dissertation &amp; Research Validation</span>
           </div>
-          <h1 className="text-2xl font-extrabold font-heading tracking-tight text-[var(--text-main)]">
+          <h2 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)]">
             Research Analytics Engine
-          </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
-            Empirical APDE performance reports • Publication-grade AI alpha metrics
+          </h2>
+          <p className="text-[14px] text-[var(--text-muted)] m-0 mt-1 font-mono">
+            Empirical APDE performance reports &bull; Publication-grade AI alpha metrics
           </p>
         </div>
         <button
           onClick={fetchReport}
           disabled={loading}
-          className="px-3 py-2 bg-[var(--bg-card)] border border-[var(--border-color)] hover:bg-[var(--bg-surface)] text-xs font-semibold text-[var(--text-main)] rounded-lg flex items-center gap-2 transition-all disabled:opacity-50"
+          className="px-[16px] py-[10px] bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--text-muted)] text-[13px] font-mono font-bold uppercase tracking-wider text-[var(--text-main)] rounded-[6px] flex items-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           Generate Report
         </button>
       </div>
 
       {/* ── Error State ── */}
       {error ? (
-        <Card className="p-12 text-center flex flex-col items-center gap-3 bg-amber-500/5 border-amber-500/20">
-          <AlertCircle className="w-10 h-10 text-amber-500" />
-          <div className="font-bold text-amber-500">Insufficient Data</div>
-          <div className="text-sm text-[var(--text-muted)]">{error}</div>
-        </Card>
+        <div className="inst-card p-[40px] text-center flex flex-col items-center gap-[16px] border-amber-500/30 shadow-[0_0_20px_rgba(245,158,11,0.05)] relative overflow-hidden">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.1)_0%,rgba(0,0,0,0)_60%)] pointer-events-none" />
+          <AlertCircle className="w-12 h-12 text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)] z-10 relative" />
+          <div className="z-10 relative">
+            <div className="font-extrabold font-heading text-[18px] text-amber-500 mb-1">Insufficient Data</div>
+            <div className="text-[13px] font-mono text-[var(--text-muted)]">{error}</div>
+          </div>
+        </div>
       ) : report ? (
         <>
           {/* ── KPI Row ── */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="p-4 bg-gradient-to-br from-emerald-950/20 to-[var(--bg-card)] border-emerald-900/30">
-              <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] mb-1">
-                <TrendingUp className="w-3.5 h-3.5" /> AI Portfolio Sharpe
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-[16px]">
+            <div className="inst-card p-[24px] bg-gradient-to-br from-[#14b8a6]/10 to-[#050608] border-[#14b8a6]/30 shadow-[0_0_15px_rgba(20,184,166,0.1)] relative overflow-hidden group">
+              <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3 z-10 relative">
+                <TrendingUp className="w-4 h-4 text-[#14b8a6]" /> AI Portfolio Sharpe
               </div>
-              <div className="text-2xl font-mono font-bold text-emerald-400">{report.ai_portfolio_sharpe?.toFixed(2) || '0.00'}</div>
-              <div className="text-[10px] text-emerald-500 mt-1">Benchmark: {report.benchmark_sharpe?.toFixed(2) || '0.00'}</div>
-            </Card>
+              <div className="text-[32px] font-mono font-extrabold text-[#14b8a6] leading-none mb-2 drop-shadow-[0_0_5px_rgba(20,184,166,0.3)] z-10 relative">
+                {report.ai_portfolio_sharpe?.toFixed(2) || '0.00'}
+              </div>
+              <div className="text-[11px] font-mono font-bold text-[var(--success)] z-10 relative">
+                Benchmark: {report.benchmark_sharpe?.toFixed(2) || '0.00'}
+              </div>
+            </div>
 
-            <Card className="p-4">
-              <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] mb-1">
-                <BarChart3 className="w-3.5 h-3.5" /> Sharpe Improvement
+            <div className="inst-card p-[24px] relative overflow-hidden group">
+              <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3 z-10 relative">
+                <BarChart3 className="w-4 h-4 text-[var(--secondary)]" /> Sharpe Improvement
               </div>
-              <div className="text-2xl font-mono font-bold text-sky-400">
+              <div className="text-[32px] font-mono font-extrabold text-[var(--secondary)] leading-none mb-2 drop-shadow-[0_0_5px_rgba(76,139,255,0.3)] z-10 relative">
                 +{((report.sharpe_improvement_pct || 0) * 100).toFixed(1)}%
               </div>
-              <div className="text-[10px] text-[var(--text-muted)] mt-1">Over Buy-and-Hold Benchmark</div>
-            </Card>
-
-            <Card className="p-4">
-              <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] mb-1">
-                <ShieldCheck className="w-3.5 h-3.5" /> Risk Reduction
+              <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] z-10 relative">
+                Over Buy-and-Hold Benchmark
               </div>
-              <div className="text-2xl font-mono font-bold text-purple-400">
+            </div>
+
+            <div className="inst-card p-[24px] relative overflow-hidden group">
+              <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3 z-10 relative">
+                <ShieldCheck className="w-4 h-4 text-[#a855f7]" /> Risk Reduction
+              </div>
+              <div className="text-[32px] font-mono font-extrabold text-[#a855f7] leading-none mb-2 drop-shadow-[0_0_5px_rgba(168,85,247,0.3)] z-10 relative">
                 -{((report.risk_reduction_pct || 0) * 100).toFixed(1)}%
               </div>
-              <div className="text-[10px] text-[var(--text-muted)] mt-1">Drawdown Volatility Delta</div>
-            </Card>
-
-            <Card className="p-4">
-              <div className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] mb-1">
-                <Award className="w-3.5 h-3.5" /> Decision Accuracy
+              <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] z-10 relative">
+                Drawdown Volatility Delta
               </div>
-              <div className="text-2xl font-mono font-bold text-amber-400">
+            </div>
+
+            <div className="inst-card p-[24px] relative overflow-hidden group">
+              <div className="flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] mb-3 z-10 relative">
+                <Award className="w-4 h-4 text-[#eab308]" /> Decision Accuracy
+              </div>
+              <div className="text-[32px] font-mono font-extrabold text-[#eab308] leading-none mb-2 drop-shadow-[0_0_5px_rgba(234,179,8,0.3)] z-10 relative">
                 {((report.decision_accuracy || 0) * 100).toFixed(1)}%
               </div>
-              <div className="text-[10px] text-[var(--text-muted)] mt-1">Over {report.total_decisions || 0} decisions</div>
-            </Card>
+              <div className="text-[11px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)] z-10 relative">
+                Over {report.total_decisions || 0} decisions
+              </div>
+            </div>
           </div>
 
           {/* ── Executive Report Card ── */}
-          <Card className="p-6 space-y-4">
-            <div className="flex justify-between items-start gap-4 pb-4 border-b border-[var(--border-color)]">
+          <div className="inst-card p-[32px]">
+            <div className="flex justify-between items-start gap-4 pb-[20px] mb-[20px] border-b border-[var(--border-color)]">
               <div>
-                <h2 className="text-base font-bold text-[var(--text-main)]">
+                <h3 className="text-[16px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] m-0">
                   {report.title || 'APDE Performance & Alpha Dissertation Report'}
-                </h2>
-                <div className="text-xs text-[var(--text-muted)] mt-0.5">
+                </h3>
+                <div className="text-[12px] font-mono font-bold text-[var(--text-muted)] mt-1">
                   Empirical research export for academic &amp; quantitative publications
                 </div>
               </div>
               <button
                 onClick={handleExport}
-                className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1.5 shadow-md transition-all shrink-0"
+                className="px-[16px] py-[10px] rounded-[6px] bg-[#14b8a6] hover:bg-[#0d9488] text-[#050608] font-bold font-mono text-[11px] uppercase tracking-wider flex items-center gap-2 shadow-[0_0_15px_rgba(20,184,166,0.3)] transition-all shrink-0 cursor-pointer"
               >
-                <Download className="w-3.5 h-3.5" /> Export Report
+                <Download className="w-4 h-4" /> Export Report
               </button>
             </div>
 
-            <div className="p-4 rounded-xl bg-[var(--bg-main)] border border-[var(--border-color)] text-xs leading-relaxed space-y-3 font-mono">
-              <div className="text-emerald-400 font-bold uppercase tracking-wider text-[10px]">Executive Abstract</div>
+            <div className="p-[20px] rounded-[8px] bg-background border border-[var(--border-color)] text-[13px] leading-[1.6] space-y-3 font-mono">
+              <div className="text-[#14b8a6] font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
+                <FileText className="w-3 h-3" />
+                Executive Abstract
+              </div>
               <p className="text-[var(--text-main)]">{report.summary || 'No summary text available.'}</p>
             </div>
-          </Card>
+          </div>
         </>
       ) : (
         !loading && (
-          <Card className="p-12 text-center flex flex-col items-center gap-3">
-            <FileText className="w-10 h-10 text-[var(--text-muted)] opacity-40" />
-            <div className="text-sm text-[var(--text-muted)]">No research report available yet.</div>
-          </Card>
+          <div className="inst-card p-[60px] text-center flex flex-col items-center gap-[16px]">
+            <FileText className="w-12 h-12 text-[var(--text-muted)] opacity-50" />
+            <div className="text-[13px] font-mono font-bold uppercase tracking-wider text-[var(--text-muted)]">No research report available yet.</div>
+          </div>
         )
       )}
 
       {/* ── Research Timeline — always shown ── */}
-      <Card className="p-5 space-y-4">
-        <h3 className="text-sm font-bold text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
-          <FileText className="w-4 h-4 text-emerald-400" />
+      <div className="inst-card p-[32px]">
+        <h3 className="text-[14px] font-bold font-heading uppercase tracking-wider text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-[16px] mb-[24px]">
+          <FileText className="w-5 h-5 text-[#14b8a6]" />
           <span>Research &amp; Development Timeline</span>
         </h3>
-        <div className="space-y-3">
+        <div className="space-y-[16px]">
           {RESEARCH_MILESTONES.map((m, i) => (
-            <div key={i} className="flex gap-4 items-start">
-              <div className="shrink-0 mt-0.5">
-                <div className="w-16 text-[10px] font-mono font-bold text-emerald-400 text-right">{m.phase}</div>
+            <div key={i} className="flex gap-[16px] items-start">
+              <div className="shrink-0 mt-1">
+                <div className="w-[100px] text-[10px] font-mono font-bold text-[#14b8a6] text-right uppercase tracking-wider">{m.phase}</div>
               </div>
-              <div className="w-px bg-[var(--border-color)] self-stretch mx-2 shrink-0" />
-              <div className="flex-1 pb-3 border-b border-[var(--border-color)] last:border-0">
-                <div className="text-xs font-bold text-[var(--text-main)]">{m.title}</div>
-                <div className="text-[11px] text-[var(--text-muted)] mt-0.5">{m.desc}</div>
+              <div className="w-px bg-[var(--border-color)] self-stretch mx-[8px] shrink-0" />
+              <div className="flex-1 pb-[16px] border-b border-[var(--border-color)]/50 last:border-0 last:pb-0">
+                <div className="text-[14px] font-bold font-heading text-[var(--text-main)]">{m.title}</div>
+                <div className="text-[12px] font-mono text-[var(--text-muted)] mt-1">{m.desc}</div>
               </div>
             </div>
           ))}
         </div>
-      </Card>
+      </div>
     </div>
   );
 };

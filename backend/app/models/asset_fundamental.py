@@ -55,6 +55,10 @@ class AssetFundamental(Base):
     
     shares_outstanding: Mapped[float] = mapped_column(Float, nullable=True)
 
+    pe_ratio: Mapped[float] = mapped_column(Float, nullable=True)
+    peg_ratio: Mapped[float] = mapped_column(Float, nullable=True)
+    pb_ratio: Mapped[float] = mapped_column(Float, nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=lambda: datetime.now(timezone.utc),

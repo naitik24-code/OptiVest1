@@ -1,23 +1,37 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '../components/ui/Button';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Home } from 'lucide-react';
 
 export const NotFoundPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] flex flex-col items-center justify-center p-4 text-center transition-colors duration-200">
-      <div className="w-16 h-16 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-500 flex items-center justify-center mb-4">
-        <AlertTriangle className="w-8 h-8" />
-      </div>
-      <h1 className="text-4xl font-extrabold font-heading text-[var(--text-main)]">404 — Page Not Found</h1>
-      <p className="text-sm text-[var(--text-muted)] mt-2 max-w-md">
-        The requested URL path does not exist or has been moved in the OptiVest AI route tree.
-      </p>
-      <div className="mt-6">
-        <Link to="/dashboard">
-          <Button>Return to Dashboard</Button>
-        </Link>
+    <div className="min-h-[calc(100vh-120px)] flex flex-col items-center justify-center p-4 text-center transition-colors duration-200">
+      <div className="inst-card p-12 max-w-lg w-full relative overflow-hidden">
+        {/* Glow Effects */}
+        <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(ellipse_at_center,rgba(255,90,31,0.05)_0%,rgba(0,0,0,0)_60%)] pointer-events-none" />
+        
+        <div className="w-20 h-20 mx-auto rounded-[16px] bg-[var(--primary)]/10 border border-[var(--primary)]/30 text-[var(--primary)] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(255,90,31,0.2)]">
+          <AlertTriangle className="w-10 h-10" />
+        </div>
+        
+        <h1 className="text-[42px] font-extrabold font-heading text-[var(--text-main)] leading-tight tracking-tight mb-2">
+          <span className="text-[var(--primary)]">404</span> Not Found
+        </h1>
+        
+        <p className="text-[14px] font-mono text-[var(--text-muted)] mt-2 mb-10 max-w-sm mx-auto leading-relaxed">
+          The requested system route does not exist or has been relocated in the OptiVest architecture.
+        </p>
+        
+        <div className="mt-6 flex flex-col sm:flex-row justify-center gap-4">
+          <Link to="/dashboard" className="w-full sm:w-auto">
+            <button className="w-full flex items-center justify-center gap-2 px-8 py-3 bg-[var(--primary)] hover:bg-[#ff7a45] text-[#08090b] text-[14px] font-bold font-mono rounded-[8px] shadow-[0_0_15px_rgba(255,90,31,0.3)] transition-all cursor-pointer">
+              <Home className="w-4 h-4" />
+              <span>Return to Dashboard</span>
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );
 };
+
+export default NotFoundPage;

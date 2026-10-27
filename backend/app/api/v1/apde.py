@@ -164,7 +164,7 @@ def discover_candidates(
     portfolio_id: str,
     candidate_type: str = Query(default="NEW_ALLOCATION", description="NEW_ALLOCATION or REPLACEMENT"),
     target_holding: Optional[str] = Query(default=None, description="Holding symbol to replace"),
-    limit: int = Query(default=5, le=20),
+    limit: int = Query(default=2, le=20),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -184,6 +184,65 @@ def discover_candidates(
         "candidates": candidates
     }
 
+@router.get("/replacement-options/{portfolio_id}")
+def replacement_options(
+    portfolio_id: str,
+    target_holding: str = Query(..., min_length=1, description="Held symbol to review"),
+    limit: int = Query(default=5, ge=1, le=20),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Return an auditable replacement shortlist with safe fallbacks.
+
+    This endpoint deliberately does not execute trades.  It gives the UI the
+    explicit decision set: hold, replace with each eligible candidate, or move
+    the capital to cash when no candidate clears the evidence bar.
+    """
+    _verify_portfolio_ownership(db, portfolio_id, current_user.id)
+    cde = CandidateDiscoveryService(db)
+    candidates = cde.discover_candidates(
+        portfolio_id=portfolio_id,
+        candidate_type="REPLACEMENT",
+        target_holding=target_holding,
+        top_n=limit,
+    )
+    return {
+        "portfolio_id": portfolio_id,
+        "target_holding": target_holding,
+        "options": [
+            {
+                "action": "HOLD",
+                "ticker": target_holding,
+                "score": None,
+                "reasons": ["Keep the current holding when no alternative clears the improvement threshold."],
+                "warnings": [],
+            },
+            *[
+                {
+                    "action": "REPLACE",
+                    "ticker": row["ticker"],
+                    "score": row["score"],
+                    "expected_return": row["expected_return"],
+                    "risk_metrics": row["risk_metrics"],
+                    "diversification_metrics": row["diversification_metrics"],
+                    "fundamental_quality": row["fundamental_quality"],
+                    "reasons": row["reasons"],
+                    "warnings": row["warnings"],
+                    "source_signals": row["source_signals"],
+                }
+                for row in candidates
+            ],
+            {
+                "action": "CASH",
+                "ticker": "CASH",
+                "score": None,
+                "reasons": ["Use cash when data quality, suitability, liquidity or expected improvement is insufficient."],
+                "warnings": ["Cash has an assumed risk-free return and is not a guaranteed return."],
+            },
+        ],
+        "selection_rule": "Recommend replacement only after portfolio-level APDE optimization, costs, taxes and guardrails produce a meaningful improvement.",
+    }
+
 # ─── Admin-Only: Global Portfolio Governance ─────────────────────────────────
 
 @router.get("/admin/portfolios/overview", dependencies=[Depends(require_admin)])
@@ -197,15 +256,23 @@ def admin_all_portfolios_overview(db: Session = Depends(get_db)):
         latest_health = (
             db.query(PortfolioHealth)
             .filter(PortfolioHealth.portfolio_id == str(p.id))
-            .order_by(PortfolioHealth.created_at.desc())
+            # PortfolioHealth records use `calculated_at` as their timestamp.
+            # Ordering by the non-existent legacy `created_at` column caused
+            # the admin portfolio overview to return HTTP 500.
+            .order_by(PortfolioHealth.calculated_at.desc())
             .first()
         )
         holding_count = db.query(Holding).filter(Holding.portfolio_id == p.id).count()
+        holdings = db.query(Holding).filter(Holding.portfolio_id == p.id).all()
+        total_value = sum(float(h.quantity or 0) * float(h.asset.price or 0) for h in holdings if h.asset)
         result.append({
             "portfolio_id": str(p.id),
             "portfolio_name": p.name,
             "user_id": str(p.user_id),
             "holding_count": holding_count,
+            "total_value": round(total_value, 2),
+            "cash_balance": 0.0,
+            "risk_profile": (p.risk_level if hasattr(p, "risk_level") else None) or (latest_health.overall_health_rating if latest_health else "UNANALYZED"),
             "health_score": latest_health.health_score if latest_health else None,
             "health_rating": latest_health.overall_health_rating if latest_health else None,
             "var_95_pct": getattr(latest_health, 'historical_var_95_pct', None) if latest_health else None,

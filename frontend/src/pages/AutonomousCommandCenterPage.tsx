@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import {
   Activity, Server, Zap, RefreshCw, Terminal,
@@ -16,28 +15,28 @@ const OVERRIDE_ACTIONS = [
     label:    'Force Market Regime Scan',
     job:      'market_regime',
     desc:     'Immediately reanalyze SPY / VIX regime conditions',
-    color:    'text-blue-400 bg-blue-500/10 border-blue-500/20 hover:bg-blue-500/20',
+    color:    'text-[#a855f7] bg-[#a855f7]/10 border border-[#a855f7]/20 hover:border-[#a855f7]',
     icon:     TrendingUp,
   },
   {
     label:    'Force Prediction Refresh',
     job:      'prediction_refresh',
     desc:     'Regenerate all asset forecasts from current models',
-    color:    'text-emerald-400 bg-emerald-500/10 border-emerald-500/20 hover:bg-emerald-500/20',
+    color:    'text-[var(--success)] bg-[var(--success)]/10 border border-[var(--success)]/20 hover:border-[var(--success)]',
     icon:     Activity,
   },
   {
     label:    'Force APDE Reallocation',
     job:      'apde_analysis',
     desc:     'Trigger adaptive portfolio reallocation engine',
-    color:    'text-amber-400 bg-amber-500/10 border-amber-500/20 hover:bg-amber-500/20',
+    color:    'text-[var(--primary)] bg-[var(--primary)]/10 border border-[var(--primary)]/20 hover:border-[var(--primary)]',
     icon:     Zap,
   },
   {
     label:    'Force Drift Analysis',
     job:      'health_watcher',
     desc:     'Run concept drift and PSI checks across all models',
-    color:    'text-purple-400 bg-purple-500/10 border-purple-500/20 hover:bg-purple-500/20',
+    color:    'text-[var(--secondary)] bg-[var(--secondary)]/10 border border-[var(--secondary)]/20 hover:border-[var(--secondary)]',
     icon:     ShieldCheck,
   },
 ];
@@ -50,12 +49,13 @@ export default function AutonomousCommandCenterPage() {
 
   const fetchStatus = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/v1/autonomous/status', { headers: getH() });
+      const response = await fetch('/api/v1/autonomous/status', { headers: getH() });
       if (response.ok) {
         const data = await response.json();
-        setStatus(data);
-        if (events.length === 0 && data.event_stream) {
-          setEvents(data.event_stream);
+        const payload = data?.data ?? data;
+        setStatus(payload);
+        if (events.length === 0 && payload?.event_stream) {
+          setEvents(payload.event_stream);
         }
       }
     } catch (_) {}
@@ -67,13 +67,30 @@ export default function AutonomousCommandCenterPage() {
 
     let ws: WebSocket | null = null;
     try {
-      ws = new WebSocket('ws://localhost:8000/api/v1/autonomous/ws');
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsHost = window.location.host;
+      // Connect to websocket via proxy or direct 8000
+      const wsUrl = `${wsProtocol}//${wsHost}/api/v1/autonomous/ws`;
+      ws = new WebSocket(wsUrl);
       ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.type === 'DOMAIN_EVENT' || data.type === 'SystemAlert') {
-          setEvents((prev) => [data, ...prev].slice(0, 50));
-          fetchStatus();
-        }
+        try {
+          const data = JSON.parse(event.data);
+          if (data.type === 'DOMAIN_EVENT' || data.type === 'SystemAlert') {
+            setEvents((prev) => [data, ...prev].slice(0, 50));
+            fetchStatus();
+          }
+        } catch (_) {}
+      };
+      ws.onerror = () => {
+        // Fallback to direct localhost:8000 if proxy websocket isn't supported
+        try {
+          const directWs = new WebSocket('ws://127.0.0.1:8000/api/v1/autonomous/ws');
+          directWs.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            setEvents((prev) => [data, ...prev].slice(0, 50));
+            fetchStatus();
+          };
+        } catch (_) {}
       };
     } catch (_) {}
 
@@ -87,46 +104,47 @@ export default function AutonomousCommandCenterPage() {
   const triggerJob = async (jobName: string) => {
     setTriggering(jobName);
     try {
-      await fetch(`http://localhost:8000/api/v1/autonomous/trigger/${jobName}`, {
+      await fetch(`/api/v1/autonomous/trigger/${jobName}`, {
         method: 'POST',
         headers: getH(),
       });
+      fetchStatus();
     } catch (_) {}
     setTimeout(() => setTriggering(null), 2000);
   };
 
   if (loading || !status) {
     return (
-      <div className="p-8 text-center flex flex-col items-center gap-3 text-[var(--text-muted)]">
-        <RefreshCw className="w-6 h-6 animate-spin text-amber-400" />
-        <span className="text-xs">Initialising Autonomous Systems...</span>
+      <div className="p-8 text-center flex flex-col items-center gap-3 text-[var(--text-muted)] font-mono">
+        <RefreshCw className="w-6 h-6 animate-spin text-[var(--primary)]" />
+        <span className="text-[13px]">Initialising Autonomous Systems...</span>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="max-w-[1120px] mx-auto space-y-6">
       {/* ── Header ── */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-amber-400 uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-[12px] font-mono font-bold text-[var(--secondary)] uppercase tracking-wider mb-1">
             <Zap className="w-4 h-4" />
             <span>Phase 9 &bull; Event-Driven Orchestration</span>
           </div>
-          <h1 className="text-2xl font-extrabold font-heading tracking-tight text-[var(--text-main)]">
+          <h2 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)]">
             Autonomous Command Center
-          </h1>
-          <p className="text-xs text-[var(--text-muted)] mt-1">
+          </h2>
+          <p className="text-[14px] text-[var(--text-muted)] m-0 mt-1 font-mono">
             Real-time event-driven orchestration, intelligence layer, and manual override controls.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="success" className="flex items-center gap-1.5 py-1 px-2.5 text-[11px]">
-            <Radio className="w-3 h-3" />
+        <div className="flex items-center gap-3">
+          <Badge variant="success" className="flex items-center gap-2 py-1.5 px-3 text-[11px] font-mono uppercase tracking-wider shadow-[0_0_10px_rgba(23,217,140,0.2)]">
+            <Radio className="w-3.5 h-3.5" />
             Event Bus Active
           </Badge>
-          <Badge variant="info" className="flex items-center gap-1.5 py-1 px-2.5 text-[11px]">
-            <Activity className="w-3 h-3" />
+          <Badge variant="info" className="flex items-center gap-2 py-1.5 px-3 text-[11px] font-mono uppercase tracking-wider shadow-[0_0_10px_rgba(76,139,255,0.2)]">
+            <Activity className="w-3.5 h-3.5" />
             {status.scheduler_status}
           </Badge>
         </div>
@@ -134,69 +152,71 @@ export default function AutonomousCommandCenterPage() {
 
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="p-4 bg-gradient-to-br from-blue-900/15 to-transparent border-blue-700/20">
-          <div className="text-xs text-[var(--text-muted)] mb-1 flex items-center gap-1.5">
-            <Clock className="w-3 h-3" /> Orchestrator Jobs
+        <div className="inst-card p-[20px]">
+          <div className="text-[11px] font-mono uppercase font-bold text-[var(--text-muted)] tracking-wider mb-[8px] flex items-center gap-2">
+            <Clock className="w-3.5 h-3.5" /> Orchestrator Jobs
           </div>
-          <div className="text-2xl font-extrabold font-mono text-blue-400">{status.active_jobs} Active</div>
-          <div className="text-[10px] text-[var(--text-muted)] mt-1">Autonomous Scheduled</div>
-        </Card>
+          <div className="text-[28px] font-extrabold font-mono text-[var(--secondary)] leading-none">{status.active_jobs} Active</div>
+          <div className="text-[11px] text-[var(--text-muted)] mt-[6px] font-mono">Autonomous Scheduled</div>
+        </div>
 
-        <Card className="p-4">
-          <div className="text-xs text-[var(--text-muted)] mb-1 flex items-center gap-1.5">
-            <Radio className="w-3 h-3" /> Event Stream
+        <div className="inst-card p-[20px]">
+          <div className="text-[11px] font-mono uppercase font-bold text-[var(--text-muted)] tracking-wider mb-[8px] flex items-center gap-2">
+            <Radio className="w-3.5 h-3.5" /> Event Stream
           </div>
-          <div className="text-2xl font-extrabold font-mono text-purple-400">{events.length}</div>
-          <div className="text-[10px] text-[var(--text-muted)] mt-1">Received via WebSocket</div>
-        </Card>
+          <div className="text-[28px] font-extrabold font-mono text-[#a855f7] leading-none">{events.length}</div>
+          <div className="text-[11px] text-[var(--text-muted)] mt-[6px] font-mono">Received via WebSocket</div>
+        </div>
 
-        <Card className="p-4">
-          <div className="text-xs text-[var(--text-muted)] mb-1 flex items-center gap-1.5">
-            <ShieldCheck className="w-3 h-3" /> Model Health
+        <div className="inst-card p-[20px]">
+          <div className="text-[11px] font-mono uppercase font-bold text-[var(--text-muted)] tracking-wider mb-[8px] flex items-center gap-2">
+            <ShieldCheck className="w-3.5 h-3.5" /> Model Health
           </div>
-          <div className="text-2xl font-extrabold font-mono text-emerald-400">Stable</div>
-          <div className="text-[10px] text-[var(--text-muted)] mt-1">No Drift Detected</div>
-        </Card>
+          <div className="text-[28px] font-extrabold font-mono text-[var(--success)] leading-none">Stable</div>
+          <div className="text-[11px] text-[var(--text-muted)] mt-[6px] font-mono">No Drift Detected</div>
+        </div>
 
-        <Card className="p-4">
-          <div className="text-xs text-[var(--text-muted)] mb-1 flex items-center gap-1.5">
-            <Activity className="w-3 h-3" /> Market Regime
+        <div className="inst-card p-[20px]">
+          <div className="text-[11px] font-mono uppercase font-bold text-[var(--text-muted)] tracking-wider mb-[8px] flex items-center gap-2">
+            <Activity className="w-3.5 h-3.5" /> Market Regime
           </div>
-          <div className="text-2xl font-extrabold font-mono text-amber-400">Monitoring</div>
-          <div className="text-[10px] text-[var(--text-muted)] mt-1">SPY Live Telemetry</div>
-        </Card>
+          <div className="text-[28px] font-extrabold font-mono text-[#eab308] leading-none">Monitoring</div>
+          <div className="text-[11px] text-[var(--text-muted)] mt-[6px] font-mono">SPY Live Telemetry</div>
+        </div>
       </div>
 
       {/* ── Main Grid ── */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Live Event Stream Terminal */}
-        <Card className="lg:col-span-2 p-5 space-y-3">
-          <h3 className="text-sm font-bold text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
-            <Terminal className="w-4 h-4 text-emerald-400" />
-            <span>Live Event Stream (WebSocket)</span>
+        <div className="inst-card p-[24px] lg:col-span-2 space-y-4">
+          <h3 className="text-[14px] font-bold text-[var(--text-main)] flex items-center justify-between border-b border-[var(--border-color)] pb-3 mb-2 font-heading tracking-wider">
+            <div className="flex items-center gap-2">
+              <Terminal className="w-4 h-4 text-[var(--success)]" />
+              <span>Live Event Stream (WebSocket)</span>
+            </div>
             {events.length > 0 && (
-              <span className="ml-auto text-[10px] font-mono text-[var(--text-muted)] bg-[var(--bg-main)] border border-[var(--border-color)] px-2 py-0.5 rounded">
+              <span className="text-[10px] font-mono text-[var(--text-muted)] bg-background border border-[var(--border-color)] px-2 py-1 rounded-[4px] uppercase tracking-wider">
                 {events.length} events
               </span>
             )}
           </h3>
-          <div className="h-80 overflow-y-auto space-y-2 pr-1">
+          <div className="h-[320px] overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-[var(--surface2)] scrollbar-track-transparent">
             {events.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-xs text-[var(--text-muted)] italic">
+              <div className="flex items-center justify-center h-full text-[13px] text-[var(--text-muted)] italic font-mono">
                 Waiting for domain events...
               </div>
             ) : (
               events.map((e, idx) => (
                 <div
                   key={idx}
-                  className="bg-[var(--bg-main)] border border-[var(--border-color)] p-3 rounded-xl flex items-start gap-3 transition-colors hover:border-amber-500/30"
+                  className="bg-background border border-[var(--border-color)] p-[16px] rounded-[10px] flex items-start gap-4 transition-colors hover:border-[var(--primary)]"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                    <Activity className="w-3.5 h-3.5 text-amber-400" />
+                  <div className="w-[32px] h-[32px] rounded-[8px] bg-[var(--primary)]/10 border border-[var(--primary)]/30 flex items-center justify-center shrink-0">
+                    <Activity className="w-4 h-4 text-[var(--primary)]" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold text-[var(--text-main)]">{e.event_type || e.type}</div>
-                    <div className="text-[10px] text-[var(--text-muted)] mt-0.5 font-mono break-all">
+                    <div className="text-[13px] font-bold text-[var(--text-main)] mb-[4px] font-heading">{e.event_type || e.type}</div>
+                    <div className="text-[11px] text-[var(--text-muted)] font-mono break-all leading-relaxed bg-[var(--surface2)] p-2 rounded-[6px] border border-[var(--border-color)]/50 mt-2">
                       {JSON.stringify(e.payload || e.data)}
                     </div>
                   </div>
@@ -204,17 +224,17 @@ export default function AutonomousCommandCenterPage() {
               ))
             )}
           </div>
-        </Card>
+        </div>
 
         {/* Right Column */}
-        <div className="space-y-5">
+        <div className="space-y-6">
           {/* Manual Overrides */}
-          <Card className="p-5 space-y-3">
-            <h3 className="text-sm font-bold text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
-              <Zap className="w-4 h-4 text-amber-400" />
+          <div className="inst-card p-[24px]">
+            <h3 className="text-[14px] font-bold font-heading tracking-wider text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-3 mb-4">
+              <Zap className="w-4 h-4 text-[var(--primary)]" />
               <span>Manual Overrides</span>
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-3">
               {OVERRIDE_ACTIONS.map((action) => {
                 const Icon = action.icon;
                 const isActive = triggering === action.job;
@@ -223,31 +243,31 @@ export default function AutonomousCommandCenterPage() {
                     key={action.job}
                     onClick={() => triggerJob(action.job)}
                     disabled={isActive}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border text-left transition-all disabled:opacity-75 ${action.color}`}
+                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-[10px] text-left transition-all disabled:opacity-75 cursor-pointer ${action.color}`}
                   >
-                    <Icon className="w-4 h-4 shrink-0" />
+                    <Icon className="w-5 h-5 shrink-0" />
                     <div className="flex-1 min-w-0">
-                      <div className="text-xs font-bold">{isActive ? 'Triggering...' : action.label}</div>
-                      <div className="text-[10px] text-[var(--text-muted)] truncate">{action.desc}</div>
+                      <div className="text-[13px] font-bold font-heading">{isActive ? 'Triggering...' : action.label}</div>
+                      <div className="text-[11px] font-mono mt-[2px] opacity-80 truncate">{action.desc}</div>
                     </div>
-                    {isActive && <RefreshCw className="w-3 h-3 animate-spin shrink-0" />}
+                    {isActive && <RefreshCw className="w-4 h-4 animate-spin shrink-0" />}
                   </button>
                 );
               })}
             </div>
-          </Card>
+          </div>
 
           {/* System Components */}
-          <Card className="p-5 space-y-3">
-            <h3 className="text-sm font-bold text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
-              <Server className="w-4 h-4 text-blue-400" />
+          <div className="inst-card p-[24px]">
+            <h3 className="text-[14px] font-bold font-heading tracking-wider text-[var(--text-main)] flex items-center gap-2 border-b border-[var(--border-color)] pb-3 mb-4">
+              <Server className="w-4 h-4 text-[var(--secondary)]" />
               <span>System Components</span>
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {status.health?.map((h: any, i: number) => (
-                <div key={i} className="flex items-center justify-between py-1.5 border-b border-[var(--border-color)] last:border-0">
-                  <span className="text-xs text-[var(--text-muted)]">{h.component}</span>
-                  <Badge variant={h.status === 'HEALTHY' ? 'success' : 'danger'} className="text-[10px] py-0.5 px-2">
+                <div key={i} className="flex items-center justify-between py-[10px] border-b border-[var(--border-color)]/50 last:border-0">
+                  <span className="text-[12px] font-mono text-[var(--text-muted)] uppercase tracking-wider">{h.component}</span>
+                  <Badge variant={h.status === 'HEALTHY' ? 'success' : 'danger'} className="text-[10px] py-1 px-2 font-mono shadow-md">
                     {h.status}
                   </Badge>
                 </div>
@@ -259,15 +279,15 @@ export default function AutonomousCommandCenterPage() {
                     { name: 'Job Scheduler',status: 'RUNNING' },
                     { name: 'WebSockets',   status: 'CONNECTED' },
                   ].map((comp) => (
-                    <div key={comp.name} className="flex items-center justify-between py-1.5 border-b border-[var(--border-color)] last:border-0">
-                      <span className="text-xs text-[var(--text-muted)]">{comp.name}</span>
-                      <Badge variant="success" className="text-[10px] py-0.5 px-2">{comp.status}</Badge>
+                    <div key={comp.name} className="flex items-center justify-between py-[10px] border-b border-[var(--border-color)]/50 last:border-0">
+                      <span className="text-[12px] font-mono text-[var(--text-muted)] uppercase tracking-wider">{comp.name}</span>
+                      <Badge variant="success" className="text-[10px] py-1 px-2 font-mono shadow-[0_0_10px_rgba(23,217,140,0.2)]">{comp.status}</Badge>
                     </div>
                   ))}
                 </>
               )}
             </div>
-          </Card>
+          </div>
         </div>
       </div>
     </div>

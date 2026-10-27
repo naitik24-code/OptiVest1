@@ -205,6 +205,12 @@ class YahooFinanceProvider(BaseMarketDataProvider):
         except Exception:
             pass
 
+        full_info = None
+        try:
+            full_info = ticker.info
+        except Exception:
+            pass
+
         shares = None
         if info and hasattr(info, "shares") and info.shares is not None and not math.isnan(info.shares):
             shares = float(info.shares)
@@ -234,7 +240,10 @@ class YahooFinanceProvider(BaseMarketDataProvider):
                 "operating_cash_flow": safe_get(cashflow, ["Operating Cash Flow", "Cash Flow From Continuing Operating Activities"], d),
                 "capital_expenditure": safe_get(cashflow, ["Capital Expenditure"], d),
                 "free_cash_flow": safe_get(cashflow, ["Free Cash Flow"], d),
-                "shares_outstanding": shares
+                "shares_outstanding": shares,
+                "pe_ratio": full_info.get("trailingPE") if full_info else None,
+                "peg_ratio": full_info.get("pegRatio") if full_info else None,
+                "pb_ratio": full_info.get("priceToBook") if full_info else None
             }
 
             has_data = any(

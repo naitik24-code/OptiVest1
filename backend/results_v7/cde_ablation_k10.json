@@ -1,0 +1,30 @@
+{
+    "universe_size": 50,
+    "date_range": "2013-12-31 to 2023-12-31",
+    "model": "XGBRegressor",
+    "rebalance_frequency": "Monthly",
+    "number_of_rebalances": 82,
+    "cde_configuration": {
+        "top_k": 10
+    },
+    "original_metrics": {
+        "portfolio_return": 0.12141695962418778,
+        "volatility": 0.1529204502536323,
+        "sharpe": 0.79398771990801,
+        "avg_turnover": 0.15002489683931225,
+        "n_rebalances": 82
+    },
+    "cde_metrics": {
+        "portfolio_return": 0.10801330842932953,
+        "volatility": 0.1410618865502073,
+        "sharpe": 0.7657157512272815,
+        "avg_turnover": 0.14819876071649382,
+        "n_rebalances": 82
+    },
+    "differences": {
+        "return": -0.013403651194858243,
+        "volatility": -0.011858563703425001,
+        "sharpe": -0.028271968680728454,
+        "turnover": -0.001826136122818428
+    }
+}

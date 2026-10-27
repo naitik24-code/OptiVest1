@@ -183,5 +183,17 @@ export const portfolioService = {
       throw new Error(extractErrorMessage(err, 'Failed to remove item from watchlist'));
     }
   },
+
+  // --- Explainable replacement workflow ---
+  async getReplacementOptions(portfolioId: string, targetHolding: string, limit = 5): Promise<any> {
+    try {
+      const res = await apiClient.get(`/apde/replacement-options/${portfolioId}`, {
+        params: { target_holding: targetHolding, limit },
+      });
+      return res.data;
+    } catch (err) {
+      throw new Error(extractErrorMessage(err, 'Failed to fetch replacement options'));
+    }
+  },
 };
 

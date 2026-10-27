@@ -1,0 +1,16 @@
+{
+  "python": "3.14.3",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "numpy": "2.5.1",
+  "pandas": "3.0.5",
+  "cvxpy": "1.9.2",
+  "source_commit": "9bc17d7bdde2e27386c6159b7ee3b6379514ee0b",
+  "sha256": {
+    "market_data_cache.pkl": "ccd244362a482d553a9a4a2e9950f14bd9ac7b9856a73859e133f8b02d020d01",
+    "results_v7\\Table_Master_10Arm.csv": "66501b5e9cb9c2808ac43c01ec010952370ff5532c5806720b08660e912fd94f",
+    "results_v7\\Controls.csv": "c310dbf74a43836ad6914cce14f6d0b3b5d55ac13a592e5279c2870bc0080461",
+    "results_v7\\Cap_Sweep.csv": "3ba3a4d69cfd8db00aff5fd57af238ba6586f49ad79aaaad603554fa376f43f6",
+    "results_v7\\Forecast_Metrics.csv": "370e937dea0981a5797e94f1f6101b8e568a373fc9679cfc8bbbab35e2600f0c",
+    "results_v7\\Solver_Benchmark.csv": "4ea73c9da8e99ecfe31a602394789ff7ff08d4a7f50d27752159171ddbd53d72"
+  }
+}

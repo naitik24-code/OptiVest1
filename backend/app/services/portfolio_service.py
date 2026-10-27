@@ -106,6 +106,28 @@ class PortfolioService:
             )
         return results
 
+    def list_all_portfolios(self, skip: int = 0, limit: int = 200) -> List[PortfolioResponse]:
+        portfolios = self.portfolio_repo.list_all(skip=skip, limit=limit)
+        results: List[PortfolioResponse] = []
+        for p in portfolios:
+            calc_result = PortfolioCalculationEngine.calculate_portfolio_metrics(p)
+            results.append(
+                PortfolioResponse(
+                    id=p.id,
+                    user_id=p.user_id,
+                    name=p.name,
+                    description=p.description,
+                    currency=p.currency,
+                    is_default=p.is_default,
+                    created_at=p.created_at,
+                    updated_at=p.updated_at,
+                    metrics=calc_result["metrics"],
+                    holdings=calc_result["calculated_holdings"],
+                    recent_transactions=[]
+                )
+            )
+        return results
+
     def create_portfolio(self, user_id: UUID, req: PortfolioCreate) -> PortfolioResponse:
         existing = self.portfolio_repo.list_by_user(user_id)
         is_first = len(existing) == 0

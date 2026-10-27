@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { LogOut, Sun, Moon, ArrowRight, TrendingUp, ShieldCheck } from 'lucide-react';
+import { LogOut, Sun, Moon, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { useCurrency, SUPPORTED_CURRENCIES } from '../../context/CurrencyContext';
@@ -12,25 +12,16 @@ export const Navbar: React.FC = () => {
   const { currency, setCurrency } = useCurrency();
 
   return (
-    <header className="h-16 shrink-0 border-b border-[var(--border-color)] bg-[var(--bg-surface)] backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-50 transition-colors duration-200">
+    <header className="h-16 shrink-0 border-b border-[var(--border-color)] bg-surface backdrop-blur-md px-6 flex items-center justify-between sticky top-0 z-50 transition-colors duration-200">
       <div className="flex items-center gap-8">
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-bold text-white shadow-md shadow-primary/30">
-            <TrendingUp className="w-4 h-4 text-white" />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-heading font-extrabold text-lg text-foreground tracking-tight group-hover:text-primary transition-colors">
-              OptiVest <span className="text-primary">Intelligence</span>
-            </span>
-          </div>
+        <Link to="/" className="flex items-center gap-2.5 group focus-ring" aria-label="OptiVest home">
+          <img src="/optivest_emblem.png" alt="" aria-hidden="true" className="h-8 w-8 md:h-9 md:w-9 object-contain drop-shadow-[0_0_12px_rgba(76,139,255,0.35)] group-hover:scale-105 transition-transform duration-200" />
+          <span className="text-xl md:text-2xl font-bold tracking-[-0.06em] bg-gradient-to-r from-[#1677ff] via-[#2b9bff] to-[#ff5a1f] bg-clip-text text-transparent">OptiVest</span>
         </Link>
 
         {/* Institutional Nav Links */}
-        <nav className="hidden md:flex items-center gap-6 text-xs font-semibold text-[var(--text-muted)]">
-          <Link to="/markets" className="hover:text-[var(--text-main)] transition-colors">Markets</Link>
-          <Link to="/insights" className="hover:text-[var(--text-main)] transition-colors">Intelligence</Link>
-          <Link to="/analytics" className="hover:text-[var(--text-main)] transition-colors">Analytics</Link>
-          <Link to="/paper-trading" className="hover:text-[var(--text-main)] transition-colors">Paper Sandbox</Link>
+        <nav className="hidden md:flex items-center gap-1 text-xs font-semibold text-[var(--text-muted)]">
+          {[['/markets','Markets'],['/insights','Intelligence'],['/analytics','Analytics'],['/paper-trading','Paper Sandbox']].map(([to,label]) => <Link key={to} to={to} className="px-3 py-2 rounded-lg hover:text-[var(--text-main)] hover:bg-[var(--bg-card)] transition-colors">{label}</Link>)}
         </nav>
       </div>
 
@@ -44,14 +35,14 @@ export const Navbar: React.FC = () => {
             className="bg-transparent border-none outline-none font-bold cursor-pointer text-primary"
           >
             {Object.keys(SUPPORTED_CURRENCIES).map((code) => (
-              <option key={code} value={code} className="bg-[var(--bg-surface)] text-[var(--text-main)]">
+              <option key={code} value={code} className="bg-surface text-[var(--text-main)]">
                 {code} ({SUPPORTED_CURRENCIES[code].symbol})
               </option>
             ))}
           </select>
         </div>
 
-        <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded bg-[var(--bg-main)] border border-[var(--border-color)] text-[11px] font-mono text-[var(--text-muted)]">
+        <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded bg-background border border-[var(--border-color)] text-[11px] font-mono text-[var(--text-muted)]">
           <ShieldCheck className="w-3.5 h-3.5 text-[#16A34A]" />
           <span>INSTITUTIONAL GRADE</span>
         </div>

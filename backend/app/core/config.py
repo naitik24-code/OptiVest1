@@ -11,6 +11,12 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     PORT: int = 8000
 
+    # Portfolio policy defaults.  These are configurable per deployment; the
+    # APDE still receives the user's suitability profile before optimizing.
+    APDE_TAX_RATE: float = 0.20
+    APDE_MAX_ASSET_WEIGHT: float = 0.20
+    APDE_MAX_TURNOVER: float = 0.15
+
     # PostgreSQL Database Connection
     POSTGRES_USER: str = "postgres"
     POSTGRES_PASSWORD: str = "postgres_password_dev"
@@ -30,6 +36,8 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5174",
         "http://localhost:80"
     ]
 

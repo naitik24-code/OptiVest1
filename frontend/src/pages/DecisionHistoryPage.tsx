@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from '../components/ui/Card';
 import { History, RefreshCw } from 'lucide-react';
 
 const getH = (): HeadersInit => { const t = localStorage.getItem('access_token'); return t ? { Authorization: `Bearer ${t}` } : {}; };
@@ -51,70 +50,79 @@ export const DecisionHistoryPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-[1120px] mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[var(--border-color)] pb-4">
+      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-[var(--text-main)] flex items-center gap-2">
-            <History className="w-6 h-6 text-indigo-400" />
-            APDE Decision History Audit Log
-          </h1>
-          <p className="text-sm text-[var(--text-muted)]">
-            Module 9 — Persistent audit trail of all accepted, rejected, and modified portfolio governance decisions
+          <div className="flex items-center gap-2 text-[12px] font-mono font-bold text-[var(--secondary)] uppercase tracking-wider mb-1">
+            <History className="w-4 h-4" />
+            <span>Module 9 &bull; Audit Trail</span>
+          </div>
+          <h2 className="text-[26px] tracking-[-0.02em] m-0 font-heading font-bold text-[var(--text-main)]">
+            APDE Decision History Log
+          </h2>
+          <p className="text-[14px] text-[var(--text-muted)] m-0 mt-1 font-mono">
+            Persistent audit trail of all accepted, rejected, and modified portfolio governance decisions
           </p>
         </div>
         <button
           onClick={fetchHistory}
           disabled={loading}
-          className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-sm px-3.5 py-1.5 rounded-lg transition-all"
+          className="flex items-center gap-2 px-4 py-2 rounded-[8px] text-[13px] font-bold bg-[var(--surface2)] border border-[var(--border-color)] hover:border-[var(--primary)] text-[var(--text-main)] transition-all cursor-pointer"
         >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[var(--primary)]' : ''}`} />
           Refresh Audit Log
         </button>
       </div>
 
       {/* History Table */}
-      <Card className="p-6 bg-[var(--bg-card)] border border-[var(--border-color)]">
+      <div className="inst-card p-[24px]">
         {history.length === 0 ? (
-          <p className="text-sm text-[var(--text-muted)]">No decision history logs recorded yet.</p>
+          <div className="py-12 flex flex-col items-center justify-center gap-3 text-[var(--text-muted)] font-mono text-[13px]">
+             {loading ? (
+               <RefreshCw className="w-5 h-5 animate-spin text-[var(--primary)]" />
+             ) : (
+               <span>No decision history logs recorded yet.</span>
+             )}
+          </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-[var(--border-color)] text-xs uppercase text-[var(--text-muted)]">
-                <tr>
-                  <th className="py-2.5 px-3">Timestamp</th>
-                  <th className="py-2.5 px-3">Action</th>
-                  <th className="py-2.5 px-3">Recommendation</th>
-                  <th className="py-2.5 px-3">Reallocation</th>
-                  <th className="py-2.5 px-3">Market Regime</th>
-                  <th className="py-2.5 px-3">Confidence</th>
+            <table className="w-full text-left">
+              <thead>
+                <tr className="border-b border-[var(--border-color)] text-[10px] uppercase font-mono text-[var(--text-muted)] tracking-wider">
+                  <th className="py-3 px-3 font-semibold">Timestamp</th>
+                  <th className="py-3 px-3 font-semibold">Action</th>
+                  <th className="py-3 px-3 font-semibold">Recommendation</th>
+                  <th className="py-3 px-3 font-semibold">Reallocation</th>
+                  <th className="py-3 px-3 font-semibold">Market Regime</th>
+                  <th className="py-3 px-3 font-semibold">Confidence</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--border-color)]">
                 {history.map((row) => (
-                  <tr key={row.id} className="hover:bg-white/5 transition-colors">
-                    <td className="py-3 px-3 font-mono text-xs text-[var(--text-muted)]">
+                  <tr key={row.id} className="hover:bg-background transition-colors">
+                    <td className="py-4 px-3 font-mono text-[12px] text-[var(--text-muted)]">
                       {row.timestamp ? new Date(row.timestamp).toLocaleString() : 'N/A'}
                     </td>
-                    <td className="py-3 px-3">
-                      <span className={`px-2.5 py-0.5 rounded text-xs font-bold ${
-                        row.action_taken === 'ACCEPTED' ? 'bg-emerald-500/20 text-emerald-300' :
-                        row.action_taken === 'REJECTED' ? 'bg-red-500/20 text-red-300' :
-                        'bg-amber-500/20 text-amber-300'
+                    <td className="py-4 px-3">
+                      <span className={`px-[10px] py-[4px] rounded-[6px] text-[10px] font-bold font-mono tracking-wider uppercase border ${
+                        row.action_taken === 'ACCEPTED' ? 'bg-[var(--success)]/10 text-[var(--success)] border-[var(--success)]/30' :
+                        row.action_taken === 'REJECTED' ? 'bg-[var(--danger)]/10 text-[var(--danger)] border-[var(--danger)]/30' :
+                        'bg-[#eab308]/10 text-[#eab308] border-[#eab308]/30'
                       }`}>
                         {row.action_taken}
                       </span>
                     </td>
-                    <td className="py-3 px-3 font-bold text-[var(--text-main)]">
+                    <td className="py-4 px-3 font-bold font-heading text-[14px] text-[var(--text-main)]">
                       {row.recommendation_type.replace('_', ' ')}
                     </td>
-                    <td className="py-3 px-3 font-mono text-xs">
-                      {(row.reallocation_pct * 100).toFixed(0)}% ({row.source_asset || 'CASH'} → {row.target_asset})
+                    <td className="py-4 px-3 font-mono text-[13px]">
+                      {(row.reallocation_pct * 100).toFixed(0)}% ({row.source_asset || 'CASH'} &rarr; {row.target_asset})
                     </td>
-                    <td className="py-3 px-3 text-xs text-[var(--text-muted)]">
+                    <td className="py-4 px-3 text-[12px] font-mono text-[var(--text-muted)]">
                       {row.market_regime}
                     </td>
-                    <td className="py-3 px-3 font-mono font-semibold text-indigo-400">
+                    <td className="py-4 px-3 font-mono font-extrabold text-[15px] text-[var(--secondary)]">
                       {(row.confidence_score * 100).toFixed(0)}%
                     </td>
                   </tr>
@@ -123,7 +131,9 @@ export const DecisionHistoryPage: React.FC = () => {
             </table>
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 };
+
+export default DecisionHistoryPage;

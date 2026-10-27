@@ -1,0 +1,2 @@
+n_observations,n_dates,rmse,mae,directional_accuracy,rank_ic_mean,rank_ic_t_stat,out_of_sample_r2_vs_zero,diebold_mariano_stat_vs_zero,diebold_mariano_dates
+3900,78,0.08448237016015006,0.05976735797747302,0.5628205128205128,0.008124028709155687,0.3364339722117236,-0.02100583866487238,0.6040427382943369,78

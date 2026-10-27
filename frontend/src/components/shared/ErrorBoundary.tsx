@@ -32,7 +32,7 @@ export class ErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-[var(--bg-main)] text-[var(--text-main)] flex items-center justify-center p-6">
+        <div className="min-h-screen bg-background text-[var(--text-main)] flex items-center justify-center p-6">
           <div className="max-w-md w-full p-6 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-color)] shadow-2xl space-y-6 text-center">
             <div className="w-16 h-16 rounded-full bg-rose-950/40 border border-rose-800 text-rose-400 flex items-center justify-center mx-auto">
               <ShieldAlert className="w-8 h-8" />
@@ -46,7 +46,7 @@ export class ErrorBoundary extends Component<Props, State> {
             </div>
 
             {this.state.error && (
-              <div className="p-3 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] text-left font-mono text-[11px] text-rose-400 overflow-x-auto max-h-32">
+              <div className="p-3 rounded-lg bg-background border border-[var(--border-color)] text-left font-mono text-[11px] text-rose-400 overflow-x-auto max-h-32">
                 {this.state.error.message}
               </div>
             )}
@@ -60,7 +60,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </button>
               <a
                 href="/dashboard"
-                className="px-4 py-2.5 rounded-lg bg-[var(--bg-main)] border border-[var(--border-color)] text-[var(--text-main)] font-semibold text-xs flex items-center justify-center gap-1.5 hover:border-emerald-500 transition-all"
+                className="px-4 py-2.5 rounded-lg bg-background border border-[var(--border-color)] text-[var(--text-main)] font-semibold text-xs flex items-center justify-center gap-1.5 hover:border-emerald-500 transition-all"
               >
                 <Home className="w-4 h-4" /> Dashboard
               </a>

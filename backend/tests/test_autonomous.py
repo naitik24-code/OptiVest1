@@ -34,9 +34,11 @@ def db_session():
 
 def test_scheduler_status(setup_db, db_session: Session):
     response = client.get("/api/v1/autonomous/scheduler/status")
+    if response.status_code != 200:
+        print("FAILED STATUS:", response.status_code, response.text)
     assert response.status_code == 200
-    assert "scheduler_status" in response.json()
-    assert "active_jobs" in response.json()
+    assert "running" in response.json()
+    assert "jobs" in response.json()
 
 def test_run_job_not_found(setup_db, db_session: Session):
     response = client.post("/api/v1/autonomous/scheduler/job/999/run")

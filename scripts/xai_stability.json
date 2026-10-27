@@ -1,0 +1,78 @@
+{
+  "model": "XGBRegressor",
+  "asset": "AAPL",
+  "features": [
+    "mom_1m",
+    "vol_1m",
+    "returns_1d"
+  ],
+  "records": [
+    {
+      "cutoff_fraction": 0.65,
+      "date": "2022-12-02",
+      "prediction": -0.06293026357889175,
+      "base_value": 0.006201361771672964,
+      "shap_values": {
+        "mom_1m": -0.014461814425885677,
+        "vol_1m": -0.054326560348272324,
+        "returns_1d": -0.0003432484809309244
+      },
+      "reconstruction_error": 2.0954757928848267e-09
+    },
+    {
+      "cutoff_fraction": 0.725,
+      "date": "2023-02-21",
+      "prediction": -0.06400083750486374,
+      "base_value": 0.010200150310993195,
+      "shap_values": {
+        "mom_1m": -0.022153932601213455,
+        "vol_1m": -0.057979755103588104,
+        "returns_1d": 0.0059326947666704655
+      },
+      "reconstruction_error": 5.122274160385132e-09
+    },
+    {
+      "cutoff_fraction": 0.8,
+      "date": "2023-05-08",
+      "prediction": 0.02617385797202587,
+      "base_value": 0.014858807437121868,
+      "shap_values": {
+        "mom_1m": 0.000742051110137254,
+        "vol_1m": 0.00467584328725934,
+        "returns_1d": 0.005897157359868288
+      },
+      "reconstruction_error": 1.2223608791828156e-09
+    },
+    {
+      "cutoff_fraction": 0.875,
+      "date": "2023-07-26",
+      "prediction": 0.004252791404724121,
+      "base_value": 0.015358857810497284,
+      "shap_values": {
+        "mom_1m": -0.002726383972913027,
+        "vol_1m": 0.01239571813493967,
+        "returns_1d": -0.02077539451420307
+      },
+      "reconstruction_error": 6.05359673500061e-09
+    },
+    {
+      "cutoff_fraction": 0.95,
+      "date": "2023-10-10",
+      "prediction": 0.05132784694433212,
+      "base_value": 0.012832870706915855,
+      "shap_values": {
+        "mom_1m": 0.0057433065958321095,
+        "vol_1m": 0.028195394203066826,
+        "returns_1d": 0.004556277301162481
+      },
+      "reconstruction_error": 1.862645149230957e-09
+    }
+  ],
+  "consecutive_spearman_mean": 0.25,
+  "consecutive_spearman_values": [
+    1.0,
+    -0.5,
+    1.0,
+    -0.5
+  ]
+}
